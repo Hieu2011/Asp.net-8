@@ -1,0 +1,22 @@
+27-12-2024 10:09:32.604 +07:00 [INF] Now listening on: https://localhost:7068
+27-12-2024 10:09:32.733 +07:00 [INF] Now listening on: http://localhost:5138
+27-12-2024 10:09:32.770 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+27-12-2024 10:09:32.772 +07:00 [INF] Hosting environment: Development
+27-12-2024 10:09:32.773 +07:00 [INF] Content root path: D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8
+27-12-2024 10:09:33.612 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/index.html - null null
+27-12-2024 10:09:33.801 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/index.html - 200 null text/html;charset=utf-8 196.6605ms
+27-12-2024 10:09:33.811 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - null null
+27-12-2024 10:09:33.820 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - 200 13752 application/javascript; charset=utf-8 8.9349ms
+27-12-2024 10:09:33.877 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_vs/browserLink - null null
+27-12-2024 10:09:33.918 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_vs/browserLink - 200 null text/javascript; charset=UTF-8 41.8698ms
+27-12-2024 10:09:34.187 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - null null
+27-12-2024 10:09:34.267 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 80.6282ms
+27-12-2024 10:09:37.262 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/WeatherForecast - null null
+27-12-2024 10:09:37.273 +07:00 [INF] Executing endpoint 'ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8)'
+27-12-2024 10:09:37.296 +07:00 [INF] Route matched with {action = "Get", controller = "WeatherForecast"}. Executing controller action with signature System.Collections.Generic.IEnumerable`1[ApiCore8.WeatherForecast] Get() on controller ApiCore8.Controllers.WeatherForecastController (ApiCore8).
+27-12-2024 10:09:37.316 +07:00 [INF] ha
+27-12-2024 10:09:38.818 +07:00 [INF] GET /WeatherForecast hip. . None. 200.  10.152.244.201. 2024-12-27 03:09:37.304. 2024-12-27 03:09:37.320. 15.2306
+27-12-2024 10:09:38.827 +07:00 [INF] Executing ObjectResult, writing value of type 'ApiCore8.WeatherForecast[]'.
+27-12-2024 10:09:38.840 +07:00 [INF] Executed action ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8) in 1536.5587ms
+27-12-2024 10:09:38.842 +07:00 [INF] Executed endpoint 'ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8)'
+27-12-2024 10:09:38.844 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/WeatherForecast - 200 null application/json; charset=utf-8 1582.084ms

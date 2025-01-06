@@ -1,0 +1,119 @@
+2024-12-30 14:23:33.828 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2024-12-30 14:23:34.125 +07:00 [WRN] The WebRootPath was not found: D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8\wwwroot. Static files may be unavailable.
+2024-12-30 14:23:34.300 +07:00 [INF] Now listening on: https://localhost:7068
+2024-12-30 14:23:34.302 +07:00 [INF] Now listening on: http://localhost:5138
+2024-12-30 14:23:34.352 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-12-30 14:23:34.354 +07:00 [INF] Hosting environment: Development
+2024-12-30 14:23:34.355 +07:00 [INF] Content root path: D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8
+2024-12-30 14:23:35.108 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger - null null
+2024-12-30 14:23:35.290 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/index.html - null null
+2024-12-30 14:23:35.284 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger - 301 0 null 187.0976ms
+2024-12-30 14:23:35.355 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/index.html - 200 null text/html;charset=utf-8 65.473ms
+2024-12-30 14:23:35.378 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/swagger-ui.css - null null
+2024-12-30 14:23:35.378 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - null null
+2024-12-30 14:23:35.378 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/swagger-ui-bundle.js - null null
+2024-12-30 14:23:35.378 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/swagger-ui-standalone-preset.js - null null
+2024-12-30 14:23:35.397 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - 200 13752 application/javascript; charset=utf-8 18.7412ms
+2024-12-30 14:23:35.456 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_vs/browserLink - null null
+2024-12-30 14:23:35.457 +07:00 [INF] Sending file. Request path: '/swagger-ui.css'. Physical path: 'N/A'
+2024-12-30 14:23:35.457 +07:00 [INF] Sending file. Request path: '/swagger-ui-standalone-preset.js'. Physical path: 'N/A'
+2024-12-30 14:23:35.468 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/swagger-ui-standalone-preset.js - 200 230280 text/javascript 89.4712ms
+2024-12-30 14:23:35.468 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/swagger-ui.css - 200 152034 text/css 89.9988ms
+2024-12-30 14:23:35.501 +07:00 [INF] Sending file. Request path: '/swagger-ui-bundle.js'. Physical path: 'N/A'
+2024-12-30 14:23:35.504 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/swagger-ui-bundle.js - 200 1456926 text/javascript 126.3939ms
+2024-12-30 14:23:35.612 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_vs/browserLink - 200 null text/javascript; charset=UTF-8 155.8631ms
+2024-12-30 14:23:35.913 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - null null
+2024-12-30 14:23:36.029 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 116.0004ms
+2024-12-30 14:24:27.599 +07:00 [ERR] Lỗi khi khởi chạy  -External Service. Lỗi build -External, exception: Request_Id: REQ-097794da-d913-43e7-ae6f-926411ea2831
+-> Cannot instantiate implementation type 'Core.LogHelper' for service type 'Core.LogHelper'.
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.Populate()
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory..ctor(ICollection`1 descriptors)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider..ctor(ICollection`1 serviceDescriptors, ServiceProviderOptions options)
+   at Microsoft.Extensions.DependencyInjection.ServiceCollectionContainerBuilderExtensions.BuildServiceProvider(IServiceCollection services, ServiceProviderOptions options)
+   at Microsoft.Extensions.Hosting.HostApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Builder.WebApplicationBuilder.Build()
+   at Program.Main(String[] args) in D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8\Program.cs:line 69
+.
+2024-12-30 14:24:43.826 +07:00 [ERR] Lỗi khi khởi chạy  -External Service. Lỗi build -External, exception: Request_Id: REQ-1a6327e5-1fbf-4926-ada6-67a7691bafb0
+-> Cannot instantiate implementation type 'Core.LogHelper' for service type 'Core.LogHelper'.
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.Populate()
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory..ctor(ICollection`1 descriptors)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider..ctor(ICollection`1 serviceDescriptors, ServiceProviderOptions options)
+   at Microsoft.Extensions.DependencyInjection.ServiceCollectionContainerBuilderExtensions.BuildServiceProvider(IServiceCollection services, ServiceProviderOptions options)
+   at Microsoft.Extensions.Hosting.HostApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Builder.WebApplicationBuilder.Build()
+   at Program.Main(String[] args) in D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8\Program.cs:line 69
+.
+2024-12-30 14:24:54.122 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2024-12-30 14:24:54.437 +07:00 [WRN] The WebRootPath was not found: D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8\wwwroot. Static files may be unavailable.
+2024-12-30 14:24:54.616 +07:00 [INF] Now listening on: https://localhost:7068
+2024-12-30 14:24:54.618 +07:00 [INF] Now listening on: http://localhost:5138
+2024-12-30 14:24:54.659 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-12-30 14:24:54.660 +07:00 [INF] Hosting environment: Development
+2024-12-30 14:24:54.663 +07:00 [INF] Content root path: D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8
+2024-12-30 14:24:55.442 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/index.html - null null
+2024-12-30 14:24:55.585 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/index.html - 200 null text/html;charset=utf-8 148.6915ms
+2024-12-30 14:24:55.596 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - null null
+2024-12-30 14:24:55.605 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - 200 13752 application/javascript; charset=utf-8 9.435ms
+2024-12-30 14:24:55.663 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_vs/browserLink - null null
+2024-12-30 14:24:55.698 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_vs/browserLink - 200 null text/javascript; charset=UTF-8 35.0621ms
+2024-12-30 14:24:55.975 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - null null
+2024-12-30 14:24:56.052 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 78.1584ms
+2024-12-30 14:25:34.010 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2024-12-30 14:25:34.305 +07:00 [WRN] The WebRootPath was not found: D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8\wwwroot. Static files may be unavailable.
+2024-12-30 14:25:34.456 +07:00 [INF] Now listening on: https://localhost:7068
+2024-12-30 14:25:34.457 +07:00 [INF] Now listening on: http://localhost:5138
+2024-12-30 14:25:34.510 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-12-30 14:25:34.512 +07:00 [INF] Hosting environment: Development
+2024-12-30 14:25:34.514 +07:00 [INF] Content root path: D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8
+2024-12-30 14:25:35.040 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/index.html - null null
+2024-12-30 14:25:35.226 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/index.html - 200 null text/html;charset=utf-8 191.7878ms
+2024-12-30 14:25:35.240 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - null null
+2024-12-30 14:25:35.250 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - 200 13752 application/javascript; charset=utf-8 9.8644ms
+2024-12-30 14:25:35.311 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_vs/browserLink - null null
+2024-12-30 14:25:35.359 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_vs/browserLink - 200 null text/javascript; charset=UTF-8 47.5748ms
+2024-12-30 14:25:35.577 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - null null
+2024-12-30 14:25:35.649 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 71.9801ms
+2024-12-30 14:29:04.374 +07:00 [WRN] The WebRootPath was not found: D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8\wwwroot. Static files may be unavailable.
+2024-12-30 14:30:00.463 +07:00 [WRN] The WebRootPath was not found: D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8\wwwroot. Static files may be unavailable.
+2024-12-30 14:35:48.014 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2024-12-30 14:35:48.280 +07:00 [WRN] The WebRootPath was not found: D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8\wwwroot. Static files may be unavailable.
+2024-12-30 14:35:48.422 +07:00 [INF] Now listening on: https://localhost:7068
+2024-12-30 14:35:48.425 +07:00 [INF] Now listening on: http://localhost:5138
+2024-12-30 14:35:48.480 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-12-30 14:35:48.481 +07:00 [INF] Hosting environment: Development
+2024-12-30 14:35:48.482 +07:00 [INF] Content root path: D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8
+2024-12-30 14:35:48.753 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/index.html - null null
+2024-12-30 14:35:48.901 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/index.html - 200 null text/html;charset=utf-8 154.0194ms
+2024-12-30 14:35:48.915 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - null null
+2024-12-30 14:35:48.928 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - 200 13752 application/javascript; charset=utf-8 12.4251ms
+2024-12-30 14:35:48.985 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_vs/browserLink - null null
+2024-12-30 14:35:49.032 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_vs/browserLink - 200 null text/javascript; charset=UTF-8 46.3878ms
+2024-12-30 14:35:49.261 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - null null
+2024-12-30 14:35:49.336 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 75.8634ms
+2024-12-30 14:36:53.936 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2024-12-30 14:36:54.207 +07:00 [WRN] The WebRootPath was not found: D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8\wwwroot. Static files may be unavailable.
+2024-12-30 14:37:13.603 +07:00 [INF] ha. . . 0.  10.152.244.201. 2024-12-30 14:37:13.596. 2024-12-30 14:37:13.596. 0.003
+2024-12-30 14:37:15.250 +07:00 [INF] GET /WeatherForecast. . None. 200.  10.152.244.201. 2024-12-30 14:37:13.582. 2024-12-30 14:37:13.617. 34.856
+2024-12-30 14:37:15.268 +07:00 [INF] HTTP GET /WeatherForecast responded 200 in 1711.6429 ms
+2024-12-30 14:41:29.639 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2024-12-30 14:41:29.920 +07:00 [WRN] The WebRootPath was not found: D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8\wwwroot. Static files may be unavailable.
+2024-12-30 14:41:30.048 +07:00 [INF] Now listening on: https://localhost:7068
+2024-12-30 14:41:30.049 +07:00 [INF] Now listening on: http://localhost:5138
+2024-12-30 14:41:30.090 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-12-30 14:41:30.091 +07:00 [INF] Hosting environment: Development
+2024-12-30 14:41:30.092 +07:00 [INF] Content root path: D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8
+2024-12-30 14:41:30.424 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/index.html - null null
+2024-12-30 14:41:30.578 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/index.html - 200 null text/html;charset=utf-8 158.5736ms
+2024-12-30 14:41:30.714 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_vs/browserLink - null null
+2024-12-30 14:41:30.714 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - null null
+2024-12-30 14:41:30.733 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - 200 13752 application/javascript; charset=utf-8 19.6259ms
+2024-12-30 14:41:30.759 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_vs/browserLink - 200 null text/javascript; charset=UTF-8 46.2297ms
+2024-12-30 14:41:30.965 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - null null
+2024-12-30 14:41:31.048 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 83.5011ms
+2024-12-30 14:48:57.015 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2024-12-30 14:48:57.288 +07:00 [WRN] The WebRootPath was not found: D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8\wwwroot. Static files may be unavailable.
+2024-12-30 14:49:03.921 +07:00 [INF] ha. . . 0.  10.152.244.201. 2024-12-30 14:49:03.901. 2024-12-30 14:49:03.901. 0.0074
+2024-12-30 14:49:06.612 +07:00 [INF] GET /WeatherForecast. . None. 200.  10.152.244.201. 2024-12-30 14:49:03.887. 2024-12-30 14:49:03.938. 50.6324
+2024-12-30 14:49:06.630 +07:00 [INF] HTTP GET /WeatherForecast responded 200 in 2768.6824 ms
+2024-12-30 14:53:19.822 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.

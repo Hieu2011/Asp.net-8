@@ -1,0 +1,33 @@
+26-12-2024 23:07:54.828 +07:00 [INF] Now listening on: https://localhost:7068
+26-12-2024 23:07:55.010 +07:00 [INF] Now listening on: http://localhost:5138
+26-12-2024 23:07:55.058 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+26-12-2024 23:07:55.060 +07:00 [INF] Hosting environment: Development
+26-12-2024 23:07:55.064 +07:00 [INF] Content root path: D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8
+26-12-2024 23:07:55.919 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger - null null
+26-12-2024 23:07:56.326 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/index.html - null null
+26-12-2024 23:07:56.320 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger - 301 0 null 409.4399ms
+26-12-2024 23:07:56.685 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/index.html - 200 null text/html;charset=utf-8 358.0264ms
+26-12-2024 23:07:56.704 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/swagger-ui.css - null null
+26-12-2024 23:07:56.704 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/swagger-ui-bundle.js - null null
+26-12-2024 23:07:56.714 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/swagger-ui-standalone-preset.js - null null
+26-12-2024 23:07:56.975 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_vs/browserLink - null null
+26-12-2024 23:07:56.998 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - null null
+26-12-2024 23:07:57.240 +07:00 [INF] Sending file. Request path: '/swagger-ui-standalone-preset.js'. Physical path: 'N/A'
+26-12-2024 23:07:57.240 +07:00 [INF] Sending file. Request path: '/swagger-ui.css'. Physical path: 'N/A'
+26-12-2024 23:07:57.255 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/swagger-ui-standalone-preset.js - 200 230280 text/javascript 544.4486ms
+26-12-2024 23:07:57.288 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/swagger-ui.css - 200 152034 text/css 584.507ms
+26-12-2024 23:07:57.319 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - 200 13752 application/javascript; charset=utf-8 328.8242ms
+26-12-2024 23:07:57.550 +07:00 [INF] Sending file. Request path: '/swagger-ui-bundle.js'. Physical path: 'N/A'
+26-12-2024 23:07:57.583 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/swagger-ui-bundle.js - 200 1456926 text/javascript 879.1041ms
+26-12-2024 23:07:57.656 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_vs/browserLink - 200 null text/javascript; charset=UTF-8 684.305ms
+26-12-2024 23:07:59.673 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - null null
+26-12-2024 23:07:59.889 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 216.5893ms
+26-12-2024 23:08:29.794 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/WeatherForecast - null null
+26-12-2024 23:08:29.803 +07:00 [INF] Executing endpoint 'ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8)'
+26-12-2024 23:08:29.839 +07:00 [INF] Route matched with {action = "Get", controller = "WeatherForecast"}. Executing controller action with signature System.Collections.Generic.IEnumerable`1[ApiCore8.WeatherForecast] Get() on controller ApiCore8.Controllers.WeatherForecastController (ApiCore8).
+26-12-2024 23:08:29.861 +07:00 [INF] ha
+26-12-2024 23:08:33.126 +07:00 [INF] GET /WeatherForecast hip. . None. 200.  192.168.48.1. 2024-12-26 16:08:29.849. 2024-12-26 16:08:29.865. 16.7793
+26-12-2024 23:08:33.136 +07:00 [INF] Executing ObjectResult, writing value of type 'ApiCore8.WeatherForecast[]'.
+26-12-2024 23:08:33.152 +07:00 [INF] Executed action ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8) in 3307.0331ms
+26-12-2024 23:08:33.154 +07:00 [INF] Executed endpoint 'ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8)'
+26-12-2024 23:08:33.159 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/WeatherForecast - 200 null application/json; charset=utf-8 3365.0025ms

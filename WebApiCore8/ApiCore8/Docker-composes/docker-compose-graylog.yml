@@ -1,0 +1,75 @@
+﻿version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:6.0
+    container_name: graylog_mongodb
+    volumes:
+      - mongodb_data:/data/db
+      - mongodb_config:/data/configdb
+    restart: always
+    networks:
+      - graylog_network
+    ports:
+      - "27018:27017"  # Port 27018 trên host
+
+  datanode:
+    image: graylog/graylog-datanode:6.1
+    container_name: graylog_datanode
+    hostname: datanode
+    environment:
+      GRAYLOG_DATANODE_NODE_ID_FILE: "/var/lib/graylog-datanode/node-id"
+      GRAYLOG_DATANODE_PASSWORD_SECRET: "Hieupromen@201198"   # Thay mật khẩu bảo mật
+      GRAYLOG_DATANODE_ROOT_PASSWORD_SHA2: "4C91A148B34B647FE25A247126B0DB5B716C032A28787236F567057FF8BFF29D"
+      GRAYLOG_DATANODE_MONGODB_URI: "mongodb://mongodb:27017/graylog"
+      GRAYLOG_TIMEZONE: "Asia/Ho_Chi_Minh"
+    volumes:
+      - graylog_datanode:/var/lib/graylog-datanode
+    ports:
+      - "9200:9200"   # API truy cập
+      - "9300:9300"   # Giao tiếp cụm
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    restart: always
+    networks:
+      - graylog_network
+
+  graylog:
+    image: graylog/graylog:6.1
+    container_name: graylog_server
+    depends_on:
+      - mongodb
+      - datanode
+    environment:
+      GRAYLOG_NODE_ID_FILE: "/usr/share/graylog/data/config/node-id"
+      GRAYLOG_HTTP_BIND_ADDRESS: ${GRAYLOG_HTTP_BIND_ADDRESS}
+      GRAYLOG_HTTP_EXTERNAL_URI: ${GRAYLOG_HTTP_EXTERNAL_URI}
+      GRAYLOG_MONGODB_URI: "mongodb://mongodb:27017/graylog"
+      GRAYLOG_PASSWORD_SECRET: "Hieupromen@201198"  # Thay mật khẩu bảo mật
+      GRAYLOG_ROOT_PASSWORD_SHA2: "4C91A148B34B647FE25A247126B0DB5B716C032A28787236F567057FF8BFF29D"
+      GRAYLOG_TIMEZONE: "Asia/Ho_Chi_Minh"
+    volumes:
+      - graylog_data:/usr/share/graylog/data
+    ports:
+      - "9000:9000"   # Giao diện web và REST API
+      - "5044:5044"   # Beats input
+      - "5140:5140/udp" # Syslog UDP
+      - "12201:12201/udp" # GELF UDP Input
+    restart: always
+    networks:
+      - graylog_network
+
+volumes:
+  mongodb_data:
+  mongodb_config:
+  graylog_datanode:
+  graylog_data:
+
+networks:
+  graylog_network:
+    driver: bridge

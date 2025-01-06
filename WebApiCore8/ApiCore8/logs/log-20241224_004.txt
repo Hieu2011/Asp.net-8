@@ -1,0 +1,31 @@
+2024-12-24 16:00:51.892 +07:00 [INF] Now listening on: https://localhost:7068
+2024-12-24 16:00:52.015 +07:00 [INF] Now listening on: http://localhost:5138
+2024-12-24 16:00:52.055 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-12-24 16:00:52.057 +07:00 [INF] Hosting environment: Development
+2024-12-24 16:00:52.058 +07:00 [INF] Content root path: D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8
+2024-12-24 16:00:52.309 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/index.html - null null
+2024-12-24 16:00:52.481 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/index.html - 200 null text/html;charset=utf-8 177.7459ms
+2024-12-24 16:00:52.508 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - null null
+2024-12-24 16:00:52.528 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - 200 13752 application/javascript; charset=utf-8 19.539ms
+2024-12-24 16:00:52.587 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_vs/browserLink - null null
+2024-12-24 16:00:52.637 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_vs/browserLink - 200 null text/javascript; charset=UTF-8 50.9517ms
+2024-12-24 16:00:52.936 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - null null
+2024-12-24 16:00:53.007 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 71.9825ms
+2024-12-24 16:00:56.474 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/WeatherForecast - null null
+2024-12-24 16:00:56.484 +07:00 [INF] Executing endpoint 'ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8)'
+2024-12-24 16:00:56.505 +07:00 [INF] Route matched with {action = "Get", controller = "WeatherForecast"}. Executing controller action with signature System.Collections.Generic.IEnumerable`1[ApiCore8.WeatherForecast] Get() on controller ApiCore8.Controllers.WeatherForecastController (ApiCore8).
+2024-12-24 16:00:56.521 +07:00 [INF] ha
+2024-12-24 16:00:57.874 +07:00 [INF] GET /WeatherForecast hip. . None. 200.  10.152.244.201. 2024-12-24 09:00:56.510. 2024-12-24 09:00:56.525. 15.0624
+2024-12-24 16:00:57.885 +07:00 [INF] Executing ObjectResult, writing value of type 'ApiCore8.WeatherForecast[]'.
+2024-12-24 16:00:57.900 +07:00 [INF] Executed action ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8) in 1389.2736ms
+2024-12-24 16:00:57.902 +07:00 [INF] Executed endpoint 'ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8)'
+2024-12-24 16:00:57.904 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/WeatherForecast - 200 null application/json; charset=utf-8 1429.908ms
+2024-12-24 16:03:28.872 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/WeatherForecast - null null
+2024-12-24 16:03:28.879 +07:00 [INF] Executing endpoint 'ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8)'
+2024-12-24 16:03:28.882 +07:00 [INF] Route matched with {action = "Get", controller = "WeatherForecast"}. Executing controller action with signature System.Collections.Generic.IEnumerable`1[ApiCore8.WeatherForecast] Get() on controller ApiCore8.Controllers.WeatherForecastController (ApiCore8).
+2024-12-24 16:03:28.884 +07:00 [INF] ha
+2024-12-24 16:03:30.315 +07:00 [INF] GET /WeatherForecast hip. . None. 200.  10.152.244.201. 2024-12-24 09:03:28.884. 2024-12-24 09:03:28.885. 1.1457
+2024-12-24 16:03:30.318 +07:00 [INF] Executing ObjectResult, writing value of type 'ApiCore8.WeatherForecast[]'.
+2024-12-24 16:03:30.320 +07:00 [INF] Executed action ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8) in 1436.4663ms
+2024-12-24 16:03:30.322 +07:00 [INF] Executed endpoint 'ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8)'
+2024-12-24 16:03:30.324 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/WeatherForecast - 200 null application/json; charset=utf-8 1452.7522ms

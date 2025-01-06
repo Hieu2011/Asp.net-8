@@ -1,0 +1,544 @@
+2024-12-27 10:09:32.604 +07:00 [INF] Now listening on: https://localhost:7068
+2024-12-27 10:09:32.733 +07:00 [INF] Now listening on: http://localhost:5138
+2024-12-27 10:09:32.770 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-12-27 10:09:32.772 +07:00 [INF] Hosting environment: Development
+2024-12-27 10:09:32.773 +07:00 [INF] Content root path: D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8
+2024-12-27 10:09:33.612 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/index.html - null null
+2024-12-27 10:09:33.801 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/index.html - 200 null text/html;charset=utf-8 196.6605ms
+2024-12-27 10:09:33.811 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - null null
+2024-12-27 10:09:33.820 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - 200 13752 application/javascript; charset=utf-8 8.9349ms
+2024-12-27 10:09:33.877 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_vs/browserLink - null null
+2024-12-27 10:09:33.918 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_vs/browserLink - 200 null text/javascript; charset=UTF-8 41.8698ms
+2024-12-27 10:09:34.187 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - null null
+2024-12-27 10:09:34.267 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 80.6282ms
+2024-12-27 10:09:37.262 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/WeatherForecast - null null
+2024-12-27 10:09:37.273 +07:00 [INF] Executing endpoint 'ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8)'
+2024-12-27 10:09:37.296 +07:00 [INF] Route matched with {action = "Get", controller = "WeatherForecast"}. Executing controller action with signature System.Collections.Generic.IEnumerable`1[ApiCore8.WeatherForecast] Get() on controller ApiCore8.Controllers.WeatherForecastController (ApiCore8).
+2024-12-27 10:09:37.316 +07:00 [INF] ha
+2024-12-27 10:09:38.818 +07:00 [INF] GET /WeatherForecast hip. . None. 200.  10.152.244.201. 2024-12-27 03:09:37.304. 2024-12-27 03:09:37.320. 15.2306
+2024-12-27 10:09:38.827 +07:00 [INF] Executing ObjectResult, writing value of type 'ApiCore8.WeatherForecast[]'.
+2024-12-27 10:09:38.840 +07:00 [INF] Executed action ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8) in 1536.5587ms
+2024-12-27 10:09:38.842 +07:00 [INF] Executed endpoint 'ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8)'
+2024-12-27 10:09:38.844 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/WeatherForecast - 200 null application/json; charset=utf-8 1582.084ms
+2024-12-27 10:56:20.279 +07:00 [INF] Now listening on: https://localhost:7068
+2024-12-27 10:56:20.395 +07:00 [INF] Now listening on: http://localhost:5138
+2024-12-27 10:56:20.434 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-12-27 10:56:20.436 +07:00 [INF] Hosting environment: Development
+2024-12-27 10:56:20.438 +07:00 [INF] Content root path: D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8
+2024-12-27 10:56:20.939 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/index.html - null null
+2024-12-27 10:56:21.095 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/index.html - 200 null text/html;charset=utf-8 163.2766ms
+2024-12-27 10:56:21.111 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - null null
+2024-12-27 10:56:21.121 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - 200 13752 application/javascript; charset=utf-8 10.3429ms
+2024-12-27 10:56:21.173 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_vs/browserLink - null null
+2024-12-27 10:56:21.250 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_vs/browserLink - 200 null text/javascript; charset=UTF-8 76.9771ms
+2024-12-27 10:56:21.457 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - null null
+2024-12-27 10:56:21.523 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 66.4022ms
+2024-12-27 10:56:23.991 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/WeatherForecast - null null
+2024-12-27 10:56:24.000 +07:00 [INF] Executing endpoint 'ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8)'
+2024-12-27 10:56:24.019 +07:00 [INF] Route matched with {action = "Get", controller = "WeatherForecast"}. Executing controller action with signature System.Collections.Generic.IEnumerable`1[ApiCore8.WeatherForecast] Get() on controller ApiCore8.Controllers.WeatherForecastController (ApiCore8).
+2024-12-27 10:56:24.034 +07:00 [INF] ha
+2024-12-27 10:56:27.357 +07:00 [INF] GET /WeatherForecast hip. . None. 200.  10.152.244.201. 2024-12-27 03:56:24.026. 2024-12-27 03:56:24.037. 11.2588
+2024-12-27 10:56:27.366 +07:00 [INF] Executing ObjectResult, writing value of type 'ApiCore8.WeatherForecast[]'.
+2024-12-27 10:56:27.379 +07:00 [INF] Executed action ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8) in 3353.4211ms
+2024-12-27 10:56:27.380 +07:00 [INF] Executed endpoint 'ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8)'
+2024-12-27 10:56:27.382 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/WeatherForecast - 200 null application/json; charset=utf-8 3391.5435ms
+27-12-2024 10:58:41.868 +07:00 [INF] Now listening on: https://localhost:7068
+27-12-2024 10:58:41.968 +07:00 [INF] Now listening on: http://localhost:5138
+27-12-2024 10:58:42.007 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+27-12-2024 10:58:42.009 +07:00 [INF] Hosting environment: Development
+27-12-2024 10:58:42.011 +07:00 [INF] Content root path: D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8
+27-12-2024 10:58:42.398 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/index.html - null null
+27-12-2024 10:58:42.556 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/index.html - 200 null text/html;charset=utf-8 165.2992ms
+27-12-2024 10:58:42.569 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - null null
+27-12-2024 10:58:42.577 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - 200 13752 application/javascript; charset=utf-8 8.4998ms
+27-12-2024 10:58:42.628 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_vs/browserLink - null null
+27-12-2024 10:58:42.670 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_vs/browserLink - 200 null text/javascript; charset=UTF-8 42.2127ms
+27-12-2024 10:58:42.868 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - null null
+27-12-2024 10:58:42.934 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 66.3667ms
+27-12-2024 10:58:45.480 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/WeatherForecast - null null
+27-12-2024 10:58:45.487 +07:00 [INF] Executing endpoint 'ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8)'
+27-12-2024 10:58:45.502 +07:00 [INF] Route matched with {action = "Get", controller = "WeatherForecast"}. Executing controller action with signature System.Collections.Generic.IEnumerable`1[ApiCore8.WeatherForecast] Get() on controller ApiCore8.Controllers.WeatherForecastController (ApiCore8).
+27-12-2024 10:58:45.517 +07:00 [INF] ha
+27-12-2024 10:58:47.727 +07:00 [INF] GET /WeatherForecast hip. . None. 200.  10.152.244.201. 2024-12-27 03:58:45.508. 2024-12-27 03:58:45.519. 10.3809
+27-12-2024 10:58:47.734 +07:00 [INF] Executing ObjectResult, writing value of type 'ApiCore8.WeatherForecast[]'.
+27-12-2024 10:58:47.746 +07:00 [INF] Executed action ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8) in 2236.9448ms
+27-12-2024 10:58:47.748 +07:00 [INF] Executed endpoint 'ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8)'
+27-12-2024 10:58:47.749 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/WeatherForecast - 200 null application/json; charset=utf-8 2269.131ms
+2024-12-27 10:59:46.432 +07:00 [INF] Now listening on: https://localhost:7068
+2024-12-27 10:59:46.615 +07:00 [INF] Now listening on: http://localhost:5138
+2024-12-27 10:59:46.770 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-12-27 10:59:46.772 +07:00 [INF] Hosting environment: Development
+2024-12-27 10:59:46.774 +07:00 [INF] Content root path: D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8
+2024-12-27 10:59:46.956 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/index.html - null null
+2024-12-27 10:59:47.116 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/index.html - 200 null text/html;charset=utf-8 164.0153ms
+2024-12-27 10:59:47.131 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - null null
+2024-12-27 10:59:47.140 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - 200 13752 application/javascript; charset=utf-8 8.9197ms
+2024-12-27 10:59:47.202 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_vs/browserLink - null null
+2024-12-27 10:59:47.252 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_vs/browserLink - 200 null text/javascript; charset=UTF-8 49.4601ms
+2024-12-27 10:59:47.464 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - null null
+2024-12-27 10:59:47.543 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 79.7133ms
+2024-12-27 13:54:16.642 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2024-12-27 13:54:17.472 +07:00 [INF] Now listening on: https://localhost:7068
+2024-12-27 13:54:17.479 +07:00 [INF] Now listening on: http://localhost:5138
+2024-12-27 13:54:17.524 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-12-27 13:54:17.526 +07:00 [INF] Hosting environment: Development
+2024-12-27 13:54:17.527 +07:00 [INF] Content root path: D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8
+2024-12-27 13:54:18.290 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/index.html - null null
+2024-12-27 13:54:18.483 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/index.html - 200 null text/html;charset=utf-8 200.8774ms
+2024-12-27 13:54:18.490 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - null null
+2024-12-27 13:54:18.512 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - 200 13752 application/javascript; charset=utf-8 22.7816ms
+2024-12-27 13:54:18.570 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_vs/browserLink - null null
+2024-12-27 13:54:18.618 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_vs/browserLink - 200 null text/javascript; charset=UTF-8 48.6692ms
+2024-12-27 13:54:18.876 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - null null
+2024-12-27 13:54:18.964 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 87.5149ms
+2024-12-27 13:54:55.861 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/WeatherForecast - null null
+2024-12-27 13:54:55.879 +07:00 [INF] Executing endpoint 'ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8)'
+2024-12-27 13:54:55.904 +07:00 [INF] Route matched with {action = "Get", controller = "WeatherForecast"}. Executing controller action with signature System.Collections.Generic.IEnumerable`1[ApiCore8.WeatherForecast] Get() on controller ApiCore8.Controllers.WeatherForecastController (ApiCore8).
+2024-12-27 13:54:55.924 +07:00 [INF] ha
+2024-12-27 13:54:55.935 +07:00 [INF] GET /WeatherForecast hip. . None. 200.  10.152.244.201. 2024-12-27 06:54:55.911. 2024-12-27 06:54:55.928. 16.9493
+2024-12-27 13:54:55.942 +07:00 [INF] Executing ObjectResult, writing value of type 'ApiCore8.WeatherForecast[]'.
+2024-12-27 13:54:55.956 +07:00 [INF] Executed action ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8) in 46.516ms
+2024-12-27 13:54:55.957 +07:00 [INF] Executed endpoint 'ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8)'
+2024-12-27 13:54:55.960 +07:00 [INF] HTTP GET /WeatherForecast responded 200 in 83.6081 ms
+2024-12-27 13:54:55.965 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/WeatherForecast - 200 null application/json; charset=utf-8 103.4788ms
+2024-12-27 13:55:42.605 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2024-12-27 13:55:43.071 +07:00 [INF] Now listening on: https://localhost:7068
+2024-12-27 13:55:43.080 +07:00 [INF] Now listening on: http://localhost:5138
+2024-12-27 13:55:43.132 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-12-27 13:55:43.135 +07:00 [INF] Hosting environment: Development
+2024-12-27 13:55:43.136 +07:00 [INF] Content root path: D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8
+2024-12-27 13:55:43.711 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/index.html - null null
+2024-12-27 13:55:43.889 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/index.html - 200 null text/html;charset=utf-8 182.0052ms
+2024-12-27 13:55:43.921 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - null null
+2024-12-27 13:55:43.941 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - 200 13752 application/javascript; charset=utf-8 19.3512ms
+2024-12-27 13:55:44.004 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_vs/browserLink - null null
+2024-12-27 13:55:44.052 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_vs/browserLink - 200 null text/javascript; charset=UTF-8 48.8021ms
+2024-12-27 13:55:44.181 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - null null
+2024-12-27 13:55:44.246 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 65.7455ms
+2024-12-27 13:55:55.307 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/WeatherForecast - null null
+2024-12-27 13:55:55.321 +07:00 [INF] Executing endpoint 'ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8)'
+2024-12-27 13:55:55.350 +07:00 [INF] Route matched with {action = "Get", controller = "WeatherForecast"}. Executing controller action with signature System.Collections.Generic.IEnumerable`1[ApiCore8.WeatherForecast] Get() on controller ApiCore8.Controllers.WeatherForecastController (ApiCore8).
+2024-12-27 13:55:55.368 +07:00 [INF] ha
+2024-12-27 13:55:55.377 +07:00 [INF] Executing ObjectResult, writing value of type 'ApiCore8.WeatherForecast[]'.
+2024-12-27 13:55:55.391 +07:00 [INF] Executed action ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8) in 34.9145ms
+2024-12-27 13:55:55.392 +07:00 [INF] Executed endpoint 'ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8)'
+2024-12-27 13:55:55.395 +07:00 [INF] HTTP GET /WeatherForecast responded 200 in 78.1435 ms
+2024-12-27 13:55:55.398 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/WeatherForecast - 200 null application/json; charset=utf-8 91.1283ms
+2024-12-27 14:00:09.819 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/WeatherForecast - null null
+2024-12-27 14:00:09.825 +07:00 [INF] Executing endpoint 'ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8)'
+2024-12-27 14:00:09.827 +07:00 [INF] Route matched with {action = "Get", controller = "WeatherForecast"}. Executing controller action with signature System.Collections.Generic.IEnumerable`1[ApiCore8.WeatherForecast] Get() on controller ApiCore8.Controllers.WeatherForecastController (ApiCore8).
+2024-12-27 14:00:09.829 +07:00 [INF] ha
+2024-12-27 14:00:09.830 +07:00 [INF] Executing ObjectResult, writing value of type 'ApiCore8.WeatherForecast[]'.
+2024-12-27 14:00:09.832 +07:00 [INF] Executed action ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8) in 3.0442ms
+2024-12-27 14:00:09.833 +07:00 [INF] Executed endpoint 'ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8)'
+2024-12-27 14:00:09.835 +07:00 [INF] HTTP GET /WeatherForecast responded 200 in 10.3261 ms
+2024-12-27 14:00:09.838 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/WeatherForecast - 200 null application/json; charset=utf-8 19.5476ms
+2024-12-27 14:04:40.081 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2024-12-27 14:04:40.427 +07:00 [INF] Now listening on: https://localhost:7068
+2024-12-27 14:04:40.434 +07:00 [INF] Now listening on: http://localhost:5138
+2024-12-27 14:04:40.469 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-12-27 14:04:40.470 +07:00 [INF] Hosting environment: Development
+2024-12-27 14:04:40.471 +07:00 [INF] Content root path: D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8
+2024-12-27 14:04:40.896 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/index.html - null null
+2024-12-27 14:04:41.048 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/index.html - 200 null text/html;charset=utf-8 156.1908ms
+2024-12-27 14:04:41.059 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - null null
+2024-12-27 14:04:41.068 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - 200 13752 application/javascript; charset=utf-8 9.8ms
+2024-12-27 14:04:41.128 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_vs/browserLink - null null
+2024-12-27 14:04:41.167 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_vs/browserLink - 200 null text/javascript; charset=UTF-8 39.5301ms
+2024-12-27 14:04:41.399 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - null null
+2024-12-27 14:04:41.471 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 72.2284ms
+2024-12-27 14:19:01.101 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2024-12-27 14:19:35.195 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2024-12-27 14:19:39.045 +07:00 [INF] GET /WeatherForecast. . None. 200.  10.152.244.201. 2024-12-27 07:19:39.015. 2024-12-27 07:19:39.031. 16.0078
+2024-12-27 14:34:32.690 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2024-12-27 14:34:47.808 +07:00 [INF] GET /WeatherForecast. . None. 200.  10.152.244.201. 2024-12-27 07:34:47.786. 2024-12-27 07:34:47.801. 15.0022
+2024-12-27 14:59:06.316 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2024-12-27 14:59:06.793 +07:00 [ERR] Lỗi khi khởi chạy  -External Service. Lỗi build -External, exception: Request_Id: REQ-cff40327-84a1-4670-a970-b3ee3d24d0bb
+-> Unable to resolve service for type 'Serilog.Extensions.Hosting.DiagnosticContext' while attempting to activate 'Serilog.AspNetCore.RequestLoggingMiddleware'.
+   at Microsoft.Extensions.Internal.ActivatorUtilities.ConstructorMatcher.CreateInstance(IServiceProvider provider)
+   at Microsoft.Extensions.Internal.ActivatorUtilities.CreateInstance(IServiceProvider provider, Type instanceType, Object[] parameters)
+   at Microsoft.AspNetCore.Builder.UseMiddlewareExtensions.ReflectionMiddlewareBinder.CreateMiddleware(RequestDelegate next)
+   at Microsoft.AspNetCore.Builder.ApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Builder.ApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__15_1(IHostedService service, CancellationToken token)
+   at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)
+   at Microsoft.Extensions.Hosting.Internal.Host.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.RunAsync(IHost host, CancellationToken token)
+   at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.RunAsync(IHost host, CancellationToken token)
+   at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.Run(IHost host)
+   at Program.Main(String[] args) in D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8\Program.cs:line 88
+.
+2024-12-27 14:59:10.499 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2024-12-27 14:59:10.927 +07:00 [ERR] Lỗi khi khởi chạy  -External Service. Lỗi build -External, exception: Request_Id: REQ-3ea17203-1ba0-4267-ba90-dcb48315269e
+-> Unable to resolve service for type 'Serilog.Extensions.Hosting.DiagnosticContext' while attempting to activate 'Serilog.AspNetCore.RequestLoggingMiddleware'.
+   at Microsoft.Extensions.Internal.ActivatorUtilities.ConstructorMatcher.CreateInstance(IServiceProvider provider)
+   at Microsoft.Extensions.Internal.ActivatorUtilities.CreateInstance(IServiceProvider provider, Type instanceType, Object[] parameters)
+   at Microsoft.AspNetCore.Builder.UseMiddlewareExtensions.ReflectionMiddlewareBinder.CreateMiddleware(RequestDelegate next)
+   at Microsoft.AspNetCore.Builder.ApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Builder.ApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__15_1(IHostedService service, CancellationToken token)
+   at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)
+   at Microsoft.Extensions.Hosting.Internal.Host.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.RunAsync(IHost host, CancellationToken token)
+   at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.RunAsync(IHost host, CancellationToken token)
+   at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.Run(IHost host)
+   at Program.Main(String[] args) in D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8\Program.cs:line 88
+.
+2024-12-27 14:59:26.392 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2024-12-27 14:59:26.803 +07:00 [ERR] Lỗi khi khởi chạy  -External Service. Lỗi build -External, exception: Request_Id: REQ-4037e226-7576-4fd2-bd69-115ca3049831
+-> Unable to resolve service for type 'Serilog.Extensions.Hosting.DiagnosticContext' while attempting to activate 'Serilog.AspNetCore.RequestLoggingMiddleware'.
+   at Microsoft.Extensions.Internal.ActivatorUtilities.ConstructorMatcher.CreateInstance(IServiceProvider provider)
+   at Microsoft.Extensions.Internal.ActivatorUtilities.CreateInstance(IServiceProvider provider, Type instanceType, Object[] parameters)
+   at Microsoft.AspNetCore.Builder.UseMiddlewareExtensions.ReflectionMiddlewareBinder.CreateMiddleware(RequestDelegate next)
+   at Microsoft.AspNetCore.Builder.ApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Builder.ApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__15_1(IHostedService service, CancellationToken token)
+   at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)
+   at Microsoft.Extensions.Hosting.Internal.Host.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.RunAsync(IHost host, CancellationToken token)
+   at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.RunAsync(IHost host, CancellationToken token)
+   at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.Run(IHost host)
+   at Program.Main(String[] args) in D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8\Program.cs:line 88
+.
+2024-12-27 14:59:32.613 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2024-12-27 14:59:33.524 +07:00 [ERR] Lỗi khi khởi chạy  -External Service. Lỗi build -External, exception: Request_Id: REQ-10d7ed68-41c6-48e0-8147-e40b0542425b
+-> Unable to resolve service for type 'Serilog.Extensions.Hosting.DiagnosticContext' while attempting to activate 'Serilog.AspNetCore.RequestLoggingMiddleware'.
+   at Microsoft.Extensions.Internal.ActivatorUtilities.ConstructorMatcher.CreateInstance(IServiceProvider provider)
+   at Microsoft.Extensions.Internal.ActivatorUtilities.CreateInstance(IServiceProvider provider, Type instanceType, Object[] parameters)
+   at Microsoft.AspNetCore.Builder.UseMiddlewareExtensions.ReflectionMiddlewareBinder.CreateMiddleware(RequestDelegate next)
+   at Microsoft.AspNetCore.Builder.ApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Builder.ApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__15_1(IHostedService service, CancellationToken token)
+   at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)
+   at Microsoft.Extensions.Hosting.Internal.Host.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.RunAsync(IHost host, CancellationToken token)
+   at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.RunAsync(IHost host, CancellationToken token)
+   at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.Run(IHost host)
+   at Program.Main(String[] args) in D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8\Program.cs:line 88
+.
+2024-12-27 14:59:40.437 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2024-12-27 14:59:41.118 +07:00 [ERR] Lỗi khi khởi chạy  -External Service. Lỗi build -External, exception: Request_Id: REQ-dc812ad9-46a0-47d8-a8fa-4f23ccaef0e3
+-> Unable to resolve service for type 'Serilog.Extensions.Hosting.DiagnosticContext' while attempting to activate 'Serilog.AspNetCore.RequestLoggingMiddleware'.
+   at Microsoft.Extensions.Internal.ActivatorUtilities.ConstructorMatcher.CreateInstance(IServiceProvider provider)
+   at Microsoft.Extensions.Internal.ActivatorUtilities.CreateInstance(IServiceProvider provider, Type instanceType, Object[] parameters)
+   at Microsoft.AspNetCore.Builder.UseMiddlewareExtensions.ReflectionMiddlewareBinder.CreateMiddleware(RequestDelegate next)
+   at Microsoft.AspNetCore.Builder.ApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Builder.ApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__15_1(IHostedService service, CancellationToken token)
+   at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)
+   at Microsoft.Extensions.Hosting.Internal.Host.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.RunAsync(IHost host, CancellationToken token)
+   at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.RunAsync(IHost host, CancellationToken token)
+   at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.Run(IHost host)
+   at Program.Main(String[] args) in D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8\Program.cs:line 88
+.
+2024-12-27 15:00:30.402 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2024-12-27 15:00:59.835 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2024-12-27 15:01:21.667 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2024-12-27 15:01:32.089 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2024-12-27 15:01:45.438 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2024-12-27 15:01:45.948 +07:00 [ERR] Lỗi khi khởi chạy  -External Service. Lỗi build -External, exception: Request_Id: REQ-cc8c9b46-ae26-414c-abdd-f35031751372
+-> Unable to resolve service for type 'Serilog.Extensions.Hosting.DiagnosticContext' while attempting to activate 'Serilog.AspNetCore.RequestLoggingMiddleware'.
+   at Microsoft.Extensions.Internal.ActivatorUtilities.ConstructorMatcher.CreateInstance(IServiceProvider provider)
+   at Microsoft.Extensions.Internal.ActivatorUtilities.CreateInstance(IServiceProvider provider, Type instanceType, Object[] parameters)
+   at Microsoft.AspNetCore.Builder.UseMiddlewareExtensions.ReflectionMiddlewareBinder.CreateMiddleware(RequestDelegate next)
+   at Microsoft.AspNetCore.Builder.ApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Builder.ApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__15_1(IHostedService service, CancellationToken token)
+   at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)
+   at Microsoft.Extensions.Hosting.Internal.Host.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.RunAsync(IHost host, CancellationToken token)
+   at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.RunAsync(IHost host, CancellationToken token)
+   at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.Run(IHost host)
+   at Program.Main(String[] args) in D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8\Program.cs:line 88
+.
+2024-12-27 15:02:06.241 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2024-12-27 15:02:06.611 +07:00 [INF] Now listening on: https://localhost:7068
+2024-12-27 15:02:06.620 +07:00 [INF] Now listening on: http://localhost:5138
+2024-12-27 15:02:06.660 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-12-27 15:02:06.662 +07:00 [INF] Hosting environment: Development
+2024-12-27 15:02:06.664 +07:00 [INF] Content root path: D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8
+2024-12-27 15:02:06.960 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/index.html - null null
+2024-12-27 15:02:07.128 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/index.html - 200 null text/html;charset=utf-8 172.6529ms
+2024-12-27 15:02:07.170 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - null null
+2024-12-27 15:02:07.198 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - 200 13752 application/javascript; charset=utf-8 28.3988ms
+2024-12-27 15:02:07.277 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_vs/browserLink - null null
+2024-12-27 15:02:07.723 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_vs/browserLink - 200 null text/javascript; charset=UTF-8 445.7142ms
+2024-12-27 15:02:07.804 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - null null
+2024-12-27 15:02:07.888 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 84.6657ms
+2024-12-27 15:02:32.923 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/WeatherForecast - null null
+2024-12-27 15:02:32.936 +07:00 [INF] Executing endpoint 'ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8)'
+2024-12-27 15:02:32.962 +07:00 [INF] Route matched with {action = "Get", controller = "WeatherForecast"}. Executing controller action with signature System.Collections.Generic.IEnumerable`1[ApiCore8.WeatherForecast] Get() on controller ApiCore8.Controllers.WeatherForecastController (ApiCore8).
+2024-12-27 15:02:32.987 +07:00 [INF] ha
+2024-12-27 15:02:33.002 +07:00 [INF] GET /WeatherForecast hip. . None. 200.  10.152.244.201. 2024-12-27 08:02:32.969. 2024-12-27 08:02:32.991. 21.805
+2024-12-27 15:02:33.013 +07:00 [INF] Executing ObjectResult, writing value of type 'ApiCore8.WeatherForecast[]'.
+2024-12-27 15:02:33.031 +07:00 [INF] Executed action ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8) in 62.4257ms
+2024-12-27 15:02:33.033 +07:00 [INF] Executed endpoint 'ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8)'
+2024-12-27 15:02:33.036 +07:00 [INF] HTTP GET /WeatherForecast responded 200 in 103.8047 ms
+2024-12-27 15:02:33.040 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/WeatherForecast - 200 null application/json; charset=utf-8 117.5316ms
+27-12-2024 15:02:52.117 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+27-12-2024 15:02:52.455 +07:00 [INF] Now listening on: https://localhost:7068
+27-12-2024 15:02:52.463 +07:00 [INF] Now listening on: http://localhost:5138
+27-12-2024 15:02:52.496 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+27-12-2024 15:02:52.499 +07:00 [INF] Hosting environment: Development
+27-12-2024 15:02:52.500 +07:00 [INF] Content root path: D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8
+27-12-2024 15:02:52.776 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/index.html - null null
+27-12-2024 15:02:52.942 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/index.html - 200 null text/html;charset=utf-8 172.2422ms
+27-12-2024 15:02:52.956 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - null null
+27-12-2024 15:02:52.963 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - 200 13752 application/javascript; charset=utf-8 7.4658ms
+27-12-2024 15:02:53.017 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_vs/browserLink - null null
+27-12-2024 15:02:53.054 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_vs/browserLink - 200 null text/javascript; charset=UTF-8 36.7467ms
+27-12-2024 15:02:53.297 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - null null
+27-12-2024 15:02:53.382 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 85.8468ms
+27-12-2024 15:02:59.476 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/WeatherForecast - null null
+27-12-2024 15:02:59.485 +07:00 [INF] Executing endpoint 'ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8)'
+27-12-2024 15:02:59.505 +07:00 [INF] Route matched with {action = "Get", controller = "WeatherForecast"}. Executing controller action with signature System.Collections.Generic.IEnumerable`1[ApiCore8.WeatherForecast] Get() on controller ApiCore8.Controllers.WeatherForecastController (ApiCore8).
+27-12-2024 15:02:59.521 +07:00 [INF] ha
+27-12-2024 15:02:59.531 +07:00 [INF] GET /WeatherForecast hip. . None. 200.  10.152.244.201. 2024-12-27 08:02:59.510. 2024-12-27 08:02:59.523. 13.1862
+27-12-2024 15:02:59.538 +07:00 [INF] Executing ObjectResult, writing value of type 'ApiCore8.WeatherForecast[]'.
+27-12-2024 15:02:59.553 +07:00 [INF] Executed action ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8) in 42.5593ms
+27-12-2024 15:02:59.555 +07:00 [INF] Executed endpoint 'ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8)'
+27-12-2024 15:02:59.558 +07:00 [INF] HTTP GET /WeatherForecast responded 200 in 74.9226 ms
+27-12-2024 15:02:59.561 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/WeatherForecast - 200 null application/json; charset=utf-8 85.2629ms
+27-12-2024 15:03:27.012 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+27-12-2024 15:03:27.450 +07:00 [INF] Now listening on: https://localhost:7068
+27-12-2024 15:03:27.459 +07:00 [INF] Now listening on: http://localhost:5138
+27-12-2024 15:03:27.499 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+27-12-2024 15:03:27.501 +07:00 [INF] Hosting environment: Development
+27-12-2024 15:03:27.502 +07:00 [INF] Content root path: D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8
+27-12-2024 15:03:28.042 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/index.html - null null
+27-12-2024 15:03:28.205 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/index.html - 200 null text/html;charset=utf-8 168.0754ms
+27-12-2024 15:03:28.229 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - null null
+27-12-2024 15:03:28.243 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - 200 13752 application/javascript; charset=utf-8 14.0167ms
+27-12-2024 15:03:28.313 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_vs/browserLink - null null
+27-12-2024 15:03:28.360 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_vs/browserLink - 200 null text/javascript; charset=UTF-8 47.9303ms
+27-12-2024 15:03:28.486 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - null null
+27-12-2024 15:03:28.558 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 72.3284ms
+27-12-2024 15:03:38.487 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/WeatherForecast - null null
+27-12-2024 15:03:38.496 +07:00 [INF] Executing endpoint 'ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8)'
+27-12-2024 15:03:38.514 +07:00 [INF] Route matched with {action = "Get", controller = "WeatherForecast"}. Executing controller action with signature System.Collections.Generic.IEnumerable`1[ApiCore8.WeatherForecast] Get() on controller ApiCore8.Controllers.WeatherForecastController (ApiCore8).
+27-12-2024 15:03:38.529 +07:00 [INF] ha
+27-12-2024 15:03:38.537 +07:00 [INF] GET /WeatherForecast hip. . None. 200.  10.152.244.201. 2024-12-27 08:03:38.519. 2024-12-27 08:03:38.531. 12.397
+27-12-2024 15:03:38.545 +07:00 [INF] Executing ObjectResult, writing value of type 'ApiCore8.WeatherForecast[]'.
+27-12-2024 15:03:38.557 +07:00 [INF] Executed action ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8) in 37.6912ms
+27-12-2024 15:03:38.558 +07:00 [INF] Executed endpoint 'ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8)'
+27-12-2024 15:03:38.560 +07:00 [INF] HTTP GET /WeatherForecast responded 200 in 65.9648 ms
+27-12-2024 15:03:38.563 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/WeatherForecast - 200 null application/json; charset=utf-8 76.3745ms
+2024-12-27 15:03:58.389 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2024-12-27 15:03:58.807 +07:00 [ERR] Lỗi khi khởi chạy  -External Service. Lỗi build -External, exception: Request_Id: REQ-afdee2fa-04bd-4c44-abbd-460b75aa0d1d
+-> Unable to resolve service for type 'Serilog.Extensions.Hosting.DiagnosticContext' while attempting to activate 'Serilog.AspNetCore.RequestLoggingMiddleware'.
+   at Microsoft.Extensions.Internal.ActivatorUtilities.ConstructorMatcher.CreateInstance(IServiceProvider provider)
+   at Microsoft.Extensions.Internal.ActivatorUtilities.CreateInstance(IServiceProvider provider, Type instanceType, Object[] parameters)
+   at Microsoft.AspNetCore.Builder.UseMiddlewareExtensions.ReflectionMiddlewareBinder.CreateMiddleware(RequestDelegate next)
+   at Microsoft.AspNetCore.Builder.ApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Builder.ApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__15_1(IHostedService service, CancellationToken token)
+   at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)
+   at Microsoft.Extensions.Hosting.Internal.Host.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.RunAsync(IHost host, CancellationToken token)
+   at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.RunAsync(IHost host, CancellationToken token)
+   at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.Run(IHost host)
+   at Program.Main(String[] args) in D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8\Program.cs:line 88
+.
+2024-12-27 15:04:04.071 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2024-12-27 15:04:04.606 +07:00 [ERR] Lỗi khi khởi chạy  -External Service. Lỗi build -External, exception: Request_Id: REQ-2e264352-4c10-4612-ae6b-f99dee60c749
+-> Unable to resolve service for type 'Serilog.Extensions.Hosting.DiagnosticContext' while attempting to activate 'Serilog.AspNetCore.RequestLoggingMiddleware'.
+   at Microsoft.Extensions.Internal.ActivatorUtilities.ConstructorMatcher.CreateInstance(IServiceProvider provider)
+   at Microsoft.Extensions.Internal.ActivatorUtilities.CreateInstance(IServiceProvider provider, Type instanceType, Object[] parameters)
+   at Microsoft.AspNetCore.Builder.UseMiddlewareExtensions.ReflectionMiddlewareBinder.CreateMiddleware(RequestDelegate next)
+   at Microsoft.AspNetCore.Builder.ApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Builder.ApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__15_1(IHostedService service, CancellationToken token)
+   at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)
+   at Microsoft.Extensions.Hosting.Internal.Host.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.RunAsync(IHost host, CancellationToken token)
+   at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.RunAsync(IHost host, CancellationToken token)
+   at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.Run(IHost host)
+   at Program.Main(String[] args) in D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8\Program.cs:line 88
+.
+2024-12-27 15:04:26.568 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2024-12-27 15:05:37.660 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2024-12-27 15:06:34.373 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2024-12-27 15:06:37.768 +07:00 [INF] GET /WeatherForecast. . None. 200.  10.152.244.201. 2024-12-27 08:06:37.750. 2024-12-27 08:06:37.762. 12.1022
+2024-12-27 15:07:28.174 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2024-12-27 15:07:28.635 +07:00 [ERR] Lỗi khi khởi chạy  -External Service. Lỗi build -External, exception: Request_Id: REQ-f1923efc-47ba-4666-a32c-fbcf3fbbc65b
+-> Unable to resolve service for type 'Serilog.Extensions.Hosting.DiagnosticContext' while attempting to activate 'Serilog.AspNetCore.RequestLoggingMiddleware'.
+   at Microsoft.Extensions.Internal.ActivatorUtilities.ConstructorMatcher.CreateInstance(IServiceProvider provider)
+   at Microsoft.Extensions.Internal.ActivatorUtilities.CreateInstance(IServiceProvider provider, Type instanceType, Object[] parameters)
+   at Microsoft.AspNetCore.Builder.UseMiddlewareExtensions.ReflectionMiddlewareBinder.CreateMiddleware(RequestDelegate next)
+   at Microsoft.AspNetCore.Builder.ApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Builder.ApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__15_1(IHostedService service, CancellationToken token)
+   at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)
+   at Microsoft.Extensions.Hosting.Internal.Host.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.RunAsync(IHost host, CancellationToken token)
+   at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.RunAsync(IHost host, CancellationToken token)
+   at Microsoft.Extensions.Hosting.HostingAbstractionsHostExtensions.Run(IHost host)
+   at Program.Main(String[] args) in D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8\Program.cs:line 88
+.
+2024-12-27 15:07:47.050 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2024-12-27 15:07:50.622 +07:00 [INF] GET /WeatherForecast. . None. 200.  10.152.244.201. 2024-12-27 08:07:50.604. 2024-12-27 08:07:50.615. 11.606
+2024-12-27 15:07:58.811 +07:00 [INF] GET /WeatherForecast. . None. 200.  10.152.244.201. 2024-12-27 08:07:58.807. 2024-12-27 08:07:58.809. 1.859
+2024-12-27 15:07:59.847 +07:00 [INF] GET /WeatherForecast. . None. 200.  10.152.244.201. 2024-12-27 08:07:59.844. 2024-12-27 08:07:59.846. 1.6794
+2024-12-27 15:08:00.070 +07:00 [INF] GET /WeatherForecast. . None. 200.  10.152.244.201. 2024-12-27 08:08:00.065. 2024-12-27 08:08:00.068. 2.5958
+2024-12-27 15:08:08.463 +07:00 [INF] GET /WeatherForecast. . None. 200.  10.152.244.201. 2024-12-27 08:08:08.460. 2024-12-27 08:08:08.461. 1.6726
+2024-12-27 15:09:29.004 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2024-12-27 15:09:32.670 +07:00 [INF] GET /WeatherForecast. . None. 200.  10.152.244.201. 2024-12-27 08:09:32.653. 2024-12-27 08:09:32.664. 11.2097
+2024-12-27 15:43:10.168 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2024-12-27 15:43:15.060 +07:00 [INF] GET /WeatherForecast. . None. 200.  10.152.244.201. 2024-12-27 08:43:15.038. 2024-12-27 08:43:15.058. 20.1299
+27-12-2024 15:44:57.808 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+27-12-2024 15:44:58.308 +07:00 [INF] Now listening on: https://localhost:7068
+27-12-2024 15:44:58.321 +07:00 [INF] Now listening on: http://localhost:5138
+27-12-2024 15:44:58.364 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+27-12-2024 15:44:58.366 +07:00 [INF] Hosting environment: Development
+27-12-2024 15:44:58.367 +07:00 [INF] Content root path: D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8
+27-12-2024 15:44:58.838 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/index.html - null null
+27-12-2024 15:44:59.026 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/index.html - 200 null text/html;charset=utf-8 194.5256ms
+27-12-2024 15:44:59.059 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - null null
+27-12-2024 15:44:59.075 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - 200 13752 application/javascript; charset=utf-8 15.4945ms
+27-12-2024 15:44:59.146 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_vs/browserLink - null null
+27-12-2024 15:44:59.194 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_vs/browserLink - 200 null text/javascript; charset=UTF-8 47.8327ms
+27-12-2024 15:44:59.452 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - null null
+27-12-2024 15:44:59.538 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 85.9729ms
+27-12-2024 15:45:07.443 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/WeatherForecast - null null
+27-12-2024 15:45:07.453 +07:00 [INF] Executing endpoint 'ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8)'
+27-12-2024 15:45:07.472 +07:00 [INF] Route matched with {action = "Get", controller = "WeatherForecast"}. Executing controller action with signature System.Collections.Generic.IEnumerable`1[ApiCore8.WeatherForecast] Get() on controller ApiCore8.Controllers.WeatherForecastController (ApiCore8).
+27-12-2024 15:45:07.498 +07:00 [INF] ha. . . 0.  10.152.244.201. 2024-12-27 08:45:07.492. 2024-12-27 08:45:07.492. 0.0005
+27-12-2024 15:45:07.507 +07:00 [INF] GET /WeatherForecast. . None. 200.  10.152.244.201. 2024-12-27 08:45:07.480. 2024-12-27 08:45:07.502. 22.6322
+27-12-2024 15:45:07.514 +07:00 [INF] Executing ObjectResult, writing value of type 'ApiCore8.WeatherForecast[]'.
+27-12-2024 15:45:07.527 +07:00 [INF] Executed action ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8) in 46.8446ms
+27-12-2024 15:45:07.529 +07:00 [INF] Executed endpoint 'ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8)'
+27-12-2024 15:45:07.531 +07:00 [INF] HTTP GET /WeatherForecast responded 200 in 80.8287 ms
+27-12-2024 15:45:07.535 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/WeatherForecast - 200 null application/json; charset=utf-8 91.8959ms
+2024-12-27 15:45:31.528 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2024-12-27 15:45:31.955 +07:00 [INF] Now listening on: https://localhost:7068
+2024-12-27 15:45:31.963 +07:00 [INF] Now listening on: http://localhost:5138
+2024-12-27 15:45:32.093 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-12-27 15:45:32.095 +07:00 [INF] Hosting environment: Development
+2024-12-27 15:45:32.097 +07:00 [INF] Content root path: D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8
+2024-12-27 15:45:32.312 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/index.html - null null
+2024-12-27 15:45:32.490 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/index.html - 200 null text/html;charset=utf-8 182.4831ms
+2024-12-27 15:45:32.510 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - null null
+2024-12-27 15:45:32.523 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - 200 13752 application/javascript; charset=utf-8 13.0318ms
+2024-12-27 15:45:32.588 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_vs/browserLink - null null
+2024-12-27 15:45:32.639 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_vs/browserLink - 200 null text/javascript; charset=UTF-8 51.7283ms
+2024-12-27 15:45:32.872 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - null null
+2024-12-27 15:45:32.948 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 75.6233ms
+2024-12-27 15:45:35.230 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/WeatherForecast - null null
+2024-12-27 15:45:35.244 +07:00 [INF] Executing endpoint 'ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8)'
+2024-12-27 15:45:35.266 +07:00 [INF] Route matched with {action = "Get", controller = "WeatherForecast"}. Executing controller action with signature System.Collections.Generic.IEnumerable`1[ApiCore8.WeatherForecast] Get() on controller ApiCore8.Controllers.WeatherForecastController (ApiCore8).
+2024-12-27 15:45:35.290 +07:00 [INF] ha. . . 0.  10.152.244.201. 2024-12-27 08:45:35.284. 2024-12-27 08:45:35.284. 0.0007
+2024-12-27 15:45:35.297 +07:00 [INF] GET /WeatherForecast. . None. 200.  10.152.244.201. 2024-12-27 08:45:35.271. 2024-12-27 08:45:35.294. 23.2261
+2024-12-27 15:45:35.306 +07:00 [INF] Executing ObjectResult, writing value of type 'ApiCore8.WeatherForecast[]'.
+2024-12-27 15:45:35.319 +07:00 [INF] Executed action ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8) in 47.903ms
+2024-12-27 15:45:35.321 +07:00 [INF] Executed endpoint 'ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8)'
+2024-12-27 15:45:35.323 +07:00 [INF] HTTP GET /WeatherForecast responded 200 in 81.5227 ms
+2024-12-27 15:45:35.327 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/WeatherForecast - 200 null application/json; charset=utf-8 96.6021ms
+2024-12-27 15:55:21.277 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2024-12-27 15:55:21.700 +07:00 [INF] Now listening on: https://localhost:7068
+2024-12-27 15:55:21.711 +07:00 [INF] Now listening on: http://localhost:5138
+2024-12-27 15:55:21.753 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-12-27 15:55:21.754 +07:00 [INF] Hosting environment: Development
+2024-12-27 15:55:21.755 +07:00 [INF] Content root path: D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8
+2024-12-27 15:55:22.236 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/index.html - null null
+2024-12-27 15:55:22.398 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/index.html - 200 null text/html;charset=utf-8 167.263ms
+2024-12-27 15:55:22.415 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - null null
+2024-12-27 15:55:22.424 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - 200 13752 application/javascript; charset=utf-8 9.6094ms
+2024-12-27 15:55:22.479 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_vs/browserLink - null null
+2024-12-27 15:55:22.518 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_vs/browserLink - 200 null text/javascript; charset=UTF-8 38.9964ms
+2024-12-27 15:55:22.765 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - null null
+2024-12-27 15:55:22.855 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 91.0274ms
+2024-12-27 16:02:44.634 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2024-12-27 16:02:44.919 +07:00 [WRN] The WebRootPath was not found: D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8\wwwroot. Static files may be unavailable.
+2024-12-27 16:02:45.057 +07:00 [INF] Now listening on: https://localhost:7068
+2024-12-27 16:02:45.059 +07:00 [INF] Now listening on: http://localhost:5138
+2024-12-27 16:02:45.099 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-12-27 16:02:45.101 +07:00 [INF] Hosting environment: Development
+2024-12-27 16:02:45.102 +07:00 [INF] Content root path: D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8
+2024-12-27 16:02:45.424 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/index.html - null null
+2024-12-27 16:02:45.573 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/index.html - 200 null text/html;charset=utf-8 152.518ms
+2024-12-27 16:02:45.593 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - null null
+2024-12-27 16:02:45.616 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - 200 13752 application/javascript; charset=utf-8 21.8738ms
+2024-12-27 16:02:45.673 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_vs/browserLink - null null
+2024-12-27 16:02:45.741 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_vs/browserLink - 200 null text/javascript; charset=UTF-8 67.8278ms
+2024-12-27 16:02:45.989 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - null null
+2024-12-27 16:02:46.059 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 70.4784ms
+2024-12-27 16:04:18.764 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2024-12-27 16:04:19.013 +07:00 [WRN] The WebRootPath was not found: D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8\wwwroot. Static files may be unavailable.
+2024-12-27 16:04:19.140 +07:00 [INF] Now listening on: https://localhost:7068
+2024-12-27 16:04:19.140 +07:00 [INF] Now listening on: http://localhost:5138
+2024-12-27 16:04:19.187 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-12-27 16:04:19.189 +07:00 [INF] Hosting environment: Development
+2024-12-27 16:04:19.189 +07:00 [INF] Content root path: D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8
+2024-12-27 16:04:19.816 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/index.html - null null
+2024-12-27 16:04:20.000 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/index.html - 200 null text/html;charset=utf-8 191.7356ms
+2024-12-27 16:04:20.015 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - null null
+2024-12-27 16:04:20.023 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - 200 13752 application/javascript; charset=utf-8 7.8226ms
+2024-12-27 16:04:20.075 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_vs/browserLink - null null
+2024-12-27 16:04:20.107 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_vs/browserLink - 200 null text/javascript; charset=UTF-8 32.9162ms
+2024-12-27 16:04:20.353 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - null null
+2024-12-27 16:04:20.424 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 71.5944ms
+2024-12-27 16:11:45.047 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2024-12-27 16:11:45.366 +07:00 [WRN] The WebRootPath was not found: D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8\wwwroot. Static files may be unavailable.
+2024-12-27 16:11:45.536 +07:00 [INF] Now listening on: https://localhost:7068
+2024-12-27 16:11:45.541 +07:00 [INF] Now listening on: http://localhost:5138
+2024-12-27 16:11:45.599 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-12-27 16:11:45.603 +07:00 [INF] Hosting environment: Development
+2024-12-27 16:11:45.606 +07:00 [INF] Content root path: D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8
+2024-12-27 16:11:46.221 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/index.html - null null
+2024-12-27 16:11:46.375 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/index.html - 200 null text/html;charset=utf-8 157.8971ms
+2024-12-27 16:11:46.391 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - null null
+2024-12-27 16:11:46.409 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - 200 13752 application/javascript; charset=utf-8 17.6341ms
+2024-12-27 16:11:46.477 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_vs/browserLink - null null
+2024-12-27 16:11:46.578 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_vs/browserLink - 200 null text/javascript; charset=UTF-8 101.6238ms
+2024-12-27 16:11:46.794 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - null null
+2024-12-27 16:11:46.874 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 80.944ms
+2024-12-27 16:13:36.493 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2024-12-27 16:13:36.752 +07:00 [WRN] The WebRootPath was not found: D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8\wwwroot. Static files may be unavailable.
+2024-12-27 16:13:36.875 +07:00 [INF] Now listening on: https://localhost:7068
+2024-12-27 16:13:36.877 +07:00 [INF] Now listening on: http://localhost:5138
+2024-12-27 16:13:37.049 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-12-27 16:13:37.051 +07:00 [INF] Hosting environment: Development
+2024-12-27 16:13:37.054 +07:00 [INF] Content root path: D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8
+2024-12-27 16:13:37.286 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/index.html - null null
+2024-12-27 16:13:37.456 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/index.html - 200 null text/html;charset=utf-8 174.9234ms
+2024-12-27 16:13:37.488 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - null null
+2024-12-27 16:13:37.501 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - 200 13752 application/javascript; charset=utf-8 13.3569ms
+2024-12-27 16:13:37.554 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_vs/browserLink - null null
+2024-12-27 16:13:37.602 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_vs/browserLink - 200 null text/javascript; charset=UTF-8 48.9509ms
+2024-12-27 16:13:37.892 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - null null
+2024-12-27 16:13:37.971 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 79.5805ms
+2024-12-27 16:21:13.527 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2024-12-27 16:21:13.845 +07:00 [WRN] The WebRootPath was not found: D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8\wwwroot. Static files may be unavailable.
+2024-12-27 16:21:13.980 +07:00 [INF] Now listening on: https://localhost:7068
+2024-12-27 16:21:13.981 +07:00 [INF] Now listening on: http://localhost:5138
+2024-12-27 16:21:14.031 +07:00 [INF] Application started. Press Ctrl+C to shut down.
+2024-12-27 16:21:14.033 +07:00 [INF] Hosting environment: Development
+2024-12-27 16:21:14.034 +07:00 [INF] Content root path: D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8
+2024-12-27 16:21:14.617 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/index.html - null null
+2024-12-27 16:21:14.764 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/index.html - 200 null text/html;charset=utf-8 153.2099ms
+2024-12-27 16:21:14.778 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - null null
+2024-12-27 16:21:14.785 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_framework/aspnetcore-browser-refresh.js - 200 13752 application/javascript; charset=utf-8 8.0977ms
+2024-12-27 16:21:14.839 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/_vs/browserLink - null null
+2024-12-27 16:21:14.877 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/_vs/browserLink - 200 null text/javascript; charset=UTF-8 38.7415ms
+2024-12-27 16:21:15.101 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - null null
+2024-12-27 16:21:15.168 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 67.8508ms
+2024-12-27 16:21:19.555 +07:00 [INF] Request starting HTTP/2 GET https://localhost:7068/WeatherForecast - null null
+2024-12-27 16:21:19.597 +07:00 [INF] Executing endpoint 'ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8)'
+2024-12-27 16:21:19.620 +07:00 [INF] Route matched with {action = "Get", controller = "WeatherForecast"}. Executing controller action with signature System.Collections.Generic.IEnumerable`1[ApiCore8.WeatherForecast] Get() on controller ApiCore8.Controllers.WeatherForecastController (ApiCore8).
+2024-12-27 16:21:19.648 +07:00 [INF] ha. . . 0.  10.152.244.201. 2024-12-27 09:21:19.642. 2024-12-27 09:21:19.642. 0.001
+2024-12-27 16:21:19.655 +07:00 [INF] GET /WeatherForecast. . None. 200.  10.152.244.201. 2024-12-27 09:21:19.628. 2024-12-27 09:21:19.653. 24.6146
+2024-12-27 16:21:19.664 +07:00 [INF] Executing ObjectResult, writing value of type 'ApiCore8.WeatherForecast[]'.
+2024-12-27 16:21:19.679 +07:00 [INF] Executed action ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8) in 50.761ms
+2024-12-27 16:21:19.681 +07:00 [INF] Executed endpoint 'ApiCore8.Controllers.WeatherForecastController.Get (ApiCore8)'
+2024-12-27 16:21:19.683 +07:00 [INF] HTTP GET /WeatherForecast responded 200 in 119.8277 ms
+2024-12-27 16:21:19.686 +07:00 [INF] Request finished HTTP/2 GET https://localhost:7068/WeatherForecast - 200 null application/json; charset=utf-8 131.8973ms
