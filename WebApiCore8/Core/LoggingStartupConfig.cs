@@ -23,7 +23,6 @@ namespace Core
             var loggerConfig = new LoggerConfiguration()
                 .ReadFrom.Configuration(builder.Configuration)
                 .Enrich.FromLogContext();
-
             // Khởi tạo Logger
             Log.Logger = loggerConfig.CreateLogger();
 
