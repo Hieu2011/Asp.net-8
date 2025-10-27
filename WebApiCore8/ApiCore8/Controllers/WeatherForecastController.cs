@@ -1,13 +1,16 @@
 ﻿using ApiCore8.Midleware;
 using Core;
+using Core.Database;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
+using System.Data;
+using System.Dynamic;
 
 namespace ApiCore8.Controllers
 {
     [ApiController]
     [TypeFilter(typeof(LogApiAttribute))] // Gắn attribute tại đây
-    [Route("[controller]")]
+    [Route("api/[controller]/")]
     public class WeatherForecastController : ControllerBase
     {
         private static readonly string[] Summaries = new[]
@@ -16,24 +19,45 @@ namespace ApiCore8.Controllers
         };
 
         private readonly ILogger<WeatherForecastController> _logger;
-
+        private readonly PostgresDbHelper _db;
         public WeatherForecastController(ILogger<WeatherForecastController> logger)
         {
             _logger = logger;
+            //_db = objPostgresDbHelper;
         }
 
-        [HttpGet(Name = "GetWeatherForecast")]
-        public IEnumerable<WeatherForecast> Get()
+        [HttpGet("GetWeatherForecastf")]
+        public async Task<dynamic> GetWeatherForecast()
         {
             //LogHelper.LogInformation("Ứng dụng khởi động thành công!");
-            _logger.AddLog("ha");
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+            try
             {
-                Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-            })
-            .ToArray();
+                var db = new PostgresDbHelper();
+                await db.StartTransactionScopeAsync();
+                //db.AddParameter("@v_username", "hpm");
+                //db.AddParameter("@v_email", "hpm@gmail.com");
+                //db.AddParameter("@v_password", "admin");
+                db.AddParameter("@v_name", "admin");
+                //int i = await db.ExecuteNonQueryAsync("public.user_getbyname");
+                DataTable dataTable = await db.ExecuteStoreDataTableAsync("public.user_getbyname");
+                var users = new List<object>();
+                foreach (DataRow row in dataTable.Rows)
+                {
+                    users.Add(new
+                    {
+                        Id = row["id"].ToString(),
+                        Name = row["name"].ToString(),
+                        Email = row["email"].ToString()
+                    });
+                }
+                await db.CommitTransactionAsync();
+                return Ok(users);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error: {ex.Message}");
+            }
+
         }
     }
 }

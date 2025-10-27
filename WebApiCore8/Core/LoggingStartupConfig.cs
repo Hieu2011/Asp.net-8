@@ -12,6 +12,8 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using static Core.LogHelper;
+using Serilog.Core;
+using Serilog.Events;
 
 namespace Core
 {
@@ -19,14 +21,46 @@ namespace Core
     {
         public static void AddSerilog(this WebApplicationBuilder builder)
         {
-            // Đọc cấu hình từ appsettings.json
+            //// Đọc cấu hình từ appsettings.json
+            //var loggerConfig = new LoggerConfiguration()
+            //    .ReadFrom.Configuration(builder.Configuration)
+            //    .Enrich.FromLogContext();
+            //// Khởi tạo Logger
+            //Log.Logger = loggerConfig.CreateLogger();
+
+            //// Tích hợp Serilog vào hệ thống log của ứng dụng
+            //builder.Host.UseSerilog();
+            var configuration = builder.Configuration;
+
             var loggerConfig = new LoggerConfiguration()
-                .ReadFrom.Configuration(builder.Configuration)
+                .ReadFrom.Configuration(configuration) // Đọc cấu hình cơ bản
                 .Enrich.FromLogContext();
-            // Khởi tạo Logger
+
+            // Thêm logic kiểm tra cờ bật/tắt
+            if (configuration.GetValue<bool>("Serilog:EnableLogging:Console"))
+            {
+                loggerConfig.WriteTo.Console(outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level:u3}] {Message:lj}{NewLine}{Exception}");
+            }
+
+            if (configuration.GetValue<bool>("Serilog:EnableLogging:File"))
+            {
+                loggerConfig.WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 7,
+                    outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}");
+            }
+
+            if (configuration.GetValue<bool>("Serilog:EnableLogging:Graylog"))
+            {
+                loggerConfig.WriteTo.Graylog(new GraylogSinkOptions
+                {
+                    HostnameOrAddress = configuration["Serilog:Graylog:Hostname"] ?? "127.0.0.1",
+                    Port = configuration.GetValue<int>("Serilog:Graylog:Port", 12201),
+                    TransportType = TransportType.Udp,
+                    Facility = configuration["Serilog:Graylog:Facility"] ?? "HPM"
+                });
+            }
+
             Log.Logger = loggerConfig.CreateLogger();
 
-            // Tích hợp Serilog vào hệ thống log của ứng dụng
             builder.Host.UseSerilog();
         }
         public static void SerilogConfig(this ConfigureHostBuilder hostBuilder)

@@ -1,0 +1,83 @@
+2025-03-10 23:19:24.875 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2025-03-10 23:19:54.801 +07:00 [INF] GET /api/WeatherForecast/GetWeatherForecastf. . None. 200.  172.24.128.1. 2025-03-10 23:19:32.276. 2025-03-10 23:19:54.794. 22517.5203
+2025-03-10 23:19:55.044 +07:00 [INF] Lỗi gọi API HPM-Internal (28N78586F9). Request_Id: 28N78586F9
+-> 42809: user_getall() is not a procedure
+
+POSITION: 6
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at Core.Database.PostgresDbHelper.ExecuteStoredProcedureWithRefCursorAsync(String procName) in D:\Asp.net-source\Asp.net-8\WebApiCore8\Core\Database\PostgresDbHelper.cs:line 341
+   at ApiCore8.Controllers.WeatherForecastController.GetWeatherForecast() in D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8\Controllers\WeatherForecastController.cs:line 34
+   at lambda_method6(Closure, Object)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.AwaitableObjectResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at ApiCore8.Midleware.GlobalExceptionMiddleware.InvokeAsync(HttpContext context) in D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8\Midleware\GlobalExceptionMiddleware.cs:line 21
+. . 0.  172.24.128.1. 2025-03-10 23:19:55.040. 2025-03-10 23:19:55.040. 0.0035
+2025-03-10 23:19:55.062 +07:00 [INF] HTTP GET /api/WeatherForecast/GetWeatherForecastf responded 200 in 22824.6376 ms
+2025-03-10 23:20:47.928 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2025-03-10 23:20:57.037 +07:00 [INF] GET /api/WeatherForecast/GetWeatherForecastf. . None. 200.  172.24.128.1. 2025-03-10 23:20:53.801. 2025-03-10 23:20:57.027. 3225.5677
+2025-03-10 23:20:57.285 +07:00 [INF] Lỗi gọi API HPM-Internal (733KQIQ1VF). Request_Id: 733KQIQ1VF
+-> 42809: public.user_getall() is not a procedure
+
+POSITION: 6
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at Core.Database.PostgresDbHelper.ExecuteStoredProcedureWithRefCursorAsync(String procName) in D:\Asp.net-source\Asp.net-8\WebApiCore8\Core\Database\PostgresDbHelper.cs:line 341
+   at ApiCore8.Controllers.WeatherForecastController.GetWeatherForecast() in D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8\Controllers\WeatherForecastController.cs:line 34
+   at lambda_method6(Closure, Object)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.AwaitableObjectResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at ApiCore8.Midleware.GlobalExceptionMiddleware.InvokeAsync(HttpContext context) in D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8\Midleware\GlobalExceptionMiddleware.cs:line 21
+. . 0.  172.24.128.1. 2025-03-10 23:20:57.280. 2025-03-10 23:20:57.280. 0.0027
+2025-03-10 23:20:57.299 +07:00 [INF] HTTP GET /api/WeatherForecast/GetWeatherForecastf responded 200 in 3530.5295 ms
+2025-03-10 23:24:03.286 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2025-03-10 23:24:11.939 +07:00 [INF] GET /api/WeatherForecast/GetWeatherForecastf. . None. 200.  172.24.128.1. 2025-03-10 23:24:08.448. 2025-03-10 23:24:11.931. 3482.9902
+2025-03-10 23:24:12.152 +07:00 [INF] Lỗi gọi API HPM-Internal (KLW130HN99). Request_Id: KLW130HN99
+-> 42809: public.user_getall() is not a procedure
+
+POSITION: 6
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Core.Database.PostgresDbHelper.ExecuteStoredProcedureWithRefCursorAsync(String procName) in D:\Asp.net-source\Asp.net-8\WebApiCore8\Core\Database\PostgresDbHelper.cs:line 341
+   at ApiCore8.Controllers.WeatherForecastController.GetWeatherForecast() in D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8\Controllers\WeatherForecastController.cs:line 34
+   at lambda_method6(Closure, Object)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.AwaitableObjectResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at ApiCore8.Midleware.GlobalExceptionMiddleware.InvokeAsync(HttpContext context) in D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8\Midleware\GlobalExceptionMiddleware.cs:line 21
+. . 0.  172.24.128.1. 2025-03-10 23:24:12.149. 2025-03-10 23:24:12.149. 0.0026
+2025-03-10 23:24:12.165 +07:00 [INF] HTTP GET /api/WeatherForecast/GetWeatherForecastf responded 200 in 3750.5870 ms

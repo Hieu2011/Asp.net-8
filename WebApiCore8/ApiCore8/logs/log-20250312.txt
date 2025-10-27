@@ -1,0 +1,66 @@
+2025-03-12 20:19:49.056 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2025-03-12 20:36:00.021 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2025-03-12 20:36:15.449 +07:00 [INF] GET /api/WeatherForecast/GetWeatherForecastf. . None. 200.  172.24.128.1. 2025-03-12 20:36:07.279. 2025-03-12 20:36:15.441. 8161.8376
+2025-03-12 20:36:15.653 +07:00 [INF] Lỗi gọi API HPM-Internal (Z4BI2859IK). Request_Id: Z4BI2859IK
+-> 42P01: missing FROM-clause entry for table "public"
+
+POSITION: 8
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Core.Database.PostgresDbHelper.ExecuteStoredDatatable(String storedProcedureName) in D:\Asp.net-source\Asp.net-8\WebApiCore8\Core\Database\PostgresDbHelper.cs:line 378
+   at ApiCore8.Controllers.WeatherForecastController.GetWeatherForecast() in D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8\Controllers\WeatherForecastController.cs:line 34
+   at lambda_method6(Closure, Object)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.AwaitableObjectResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at ApiCore8.Midleware.GlobalExceptionMiddleware.InvokeAsync(HttpContext context) in D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8\Midleware\GlobalExceptionMiddleware.cs:line 21
+. . 0.  172.24.128.1. 2025-03-12 20:36:15.650. 2025-03-12 20:36:15.650. 0.0033
+2025-03-12 20:36:15.671 +07:00 [INF] HTTP GET /api/WeatherForecast/GetWeatherForecastf responded 200 in 8435.4556 ms
+2025-03-12 20:57:49.873 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2025-03-12 21:00:30.063 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2025-03-12 21:00:35.861 +07:00 [INF] GET /api/WeatherForecast/GetWeatherForecastf. . None. 200.  172.24.128.1. 2025-03-12 21:00:34.122. 2025-03-12 21:00:35.853. 1731.276
+2025-03-12 21:00:35.992 +07:00 [INF] Lỗi gọi API HPM-Internal (5S1RH8367V). Request_Id: 5S1RH8367V
+-> Can't close, connection is in state Connecting
+   at Npgsql.NpgsqlConnection.Close(Boolean async)
+   at Npgsql.NpgsqlConnection.Close()
+   at Core.Database.PostgresDbHelper.Dispose(Boolean disposing) in D:\Asp.net-source\Asp.net-8\WebApiCore8\Core\Database\PostgresDbHelper.cs:line 417
+   at Core.Database.PostgresDbHelper.Dispose() in D:\Asp.net-source\Asp.net-8\WebApiCore8\Core\Database\PostgresDbHelper.cs:line 404
+   at ApiCore8.Controllers.WeatherForecastController.GetWeatherForecast() in D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8\Controllers\WeatherForecastController.cs:line 50
+   at lambda_method6(Closure, Object)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.AwaitableObjectResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.InvokeInnerFilterAsync()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at ApiCore8.Midleware.GlobalExceptionMiddleware.InvokeAsync(HttpContext context) in D:\Asp.net-source\Asp.net-8\WebApiCore8\ApiCore8\Midleware\GlobalExceptionMiddleware.cs:line 21
+. . 0.  172.24.128.1. 2025-03-12 21:00:35.989. 2025-03-12 21:00:35.989. 0.0022
+2025-03-12 21:00:36.004 +07:00 [INF] HTTP GET /api/WeatherForecast/GetWeatherForecastf responded 200 in 1910.0649 ms
+2025-03-12 21:11:10.247 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2025-03-12 21:11:51.219 +07:00 [INF] GET /api/WeatherForecast/GetWeatherForecastf. . None. 200.  172.24.128.1. 2025-03-12 21:11:16.488. 2025-03-12 21:11:51.206. 34717.638
+2025-03-12 21:11:51.265 +07:00 [INF] HTTP GET /api/WeatherForecast/GetWeatherForecastf responded 200 in 34828.6538 ms
+2025-03-12 21:31:11.833 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2025-03-12 21:31:49.666 +07:00 [INF] GET /api/WeatherForecast/GetWeatherForecastf. . None. 200.  172.24.128.1. 2025-03-12 21:31:22.895. 2025-03-12 21:31:49.657. 26761.3509
+2025-03-12 21:31:49.704 +07:00 [ERR] HTTP GET /api/WeatherForecast/GetWeatherForecastf responded 500 in 26950.6342 ms
+2025-03-12 21:33:15.233 +07:00 [INF] GET /api/WeatherForecast/GetWeatherForecastf. . None. 200.  172.24.128.1. 2025-03-12 21:32:33.621. 2025-03-12 21:33:13.644. 40022.9654
+2025-03-12 21:33:15.237 +07:00 [ERR] HTTP GET /api/WeatherForecast/GetWeatherForecastf responded 500 in 41617.2418 ms
+2025-03-12 21:40:42.363 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2025-03-12 21:41:51.502 +07:00 [INF] GET /api/WeatherForecast/GetWeatherForecastf. . None. 200.  172.24.128.1. 2025-03-12 21:40:47.774. 2025-03-12 21:41:51.493. 63719.1111
+2025-03-12 21:41:51.563 +07:00 [INF] HTTP GET /api/WeatherForecast/GetWeatherForecastf responded 200 in 63848.4336 ms
+2025-03-12 23:28:44.435 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2025-03-12 23:29:46.206 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
+2025-03-12 23:32:03.080 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.

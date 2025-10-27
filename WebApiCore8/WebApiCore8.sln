@@ -17,9 +17,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BLL", "BLL\BLL.csproj", "{5
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "Core\Core.csproj", "{C098385A-D5C7-4354-A5B1-6E892A08F2BF}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{C5067033-A395-4233-BDCD-1CC273F9C093}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{EC54B5E3-E21B-451E-9AB4-938536D7F9B0}"
 	ProjectSection(SolutionItems) = preProject
+		Docker\.env = Docker\.env
 		docker-compose.yml = docker-compose.yml
+		Dockerfile = Dockerfile
+		Docker\webapi-compose.yml = Docker\webapi-compose.yml
 	EndProjectSection
 EndProject
 Global

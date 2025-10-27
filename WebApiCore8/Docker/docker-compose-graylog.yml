@@ -9,7 +9,7 @@ services:
       - mongodb_config:/data/configdb
     restart: always
     networks:
-      - graylog_network
+      - aspnet8-network
     ports:
       - "27018:27017"  # Port 27018 trên host
 
@@ -37,7 +37,7 @@ services:
         hard: 65536
     restart: always
     networks:
-      - graylog_network
+      - aspnet8-network
 
   graylog:
     image: graylog/graylog:6.1
@@ -47,8 +47,8 @@ services:
       - datanode
     environment:
       GRAYLOG_NODE_ID_FILE: "/usr/share/graylog/data/config/node-id"
-      GRAYLOG_HTTP_BIND_ADDRESS: ${GRAYLOG_HTTP_BIND_ADDRESS}
-      GRAYLOG_HTTP_EXTERNAL_URI: ${GRAYLOG_HTTP_EXTERNAL_URI}
+      GRAYLOG_HTTP_BIND_ADDRESS: 0.0.0.0:9000
+      GRAYLOG_HTTP_EXTERNAL_URI: http://graylognet8.com:9000/
       GRAYLOG_MONGODB_URI: "mongodb://mongodb:27017/graylog"
       GRAYLOG_PASSWORD_SECRET: "Hieupromen@201198"  # Thay mật khẩu bảo mật
       GRAYLOG_ROOT_PASSWORD_SHA2: "4C91A148B34B647FE25A247126B0DB5B716C032A28787236F567057FF8BFF29D"
@@ -62,7 +62,7 @@ services:
       - "12201:12201/udp" # GELF UDP Input
     restart: always
     networks:
-      - graylog_network
+      - aspnet8-network
 
 volumes:
   mongodb_data:
@@ -71,5 +71,5 @@ volumes:
   graylog_data:
 
 networks:
-  graylog_network:
+  aspnet8-network:
     driver: bridge

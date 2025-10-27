@@ -3,8 +3,6 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 using System.Diagnostics;
 using System.Text;
-using static Core.LogHelper;
-
 namespace ApiCore8.Midleware
 {
     public class LogApiAttribute : ActionFilterAttribute

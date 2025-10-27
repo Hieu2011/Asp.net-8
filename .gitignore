@@ -9,3 +9,5 @@ WebApiCore8/DAL/bin
 WebApiCore8/DAL/obj
 WebApiCore8/ML/bin
 WebApiCore8/ML/obj
+.vs
+WebApiCore8/.vscode

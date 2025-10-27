@@ -32,7 +32,7 @@ namespace ApiCore8.Midleware
             context.Response.StatusCode = (int)HttpStatusCode.OK;
             string requestID = StringUtilities.GenarateRandomString(10);
             _logger.AddLog($"Lỗi gọi API HPM-Internal ({requestID})", exception.CreateExceptionMessage(requestID));
-            var responseMessage = new { isError = true, status = 200, message = $"Lỗi gọi API HPM-Internal ({requestID})", messageDetail = $"Lỗi {exception.Message}, vui lòng liên hệ IT Tận Tâm, team HPM-Internal" };
+            var responseMessage = new { isError = true, status = 200, message = $"Lỗi gọi API HPM-Internal ({requestID})", messageDetail = $"Lỗi {exception.Message}, vui lòng liên hệ IT , team HPM-Internal" };
             return context.Response.WriteAsJsonAsync(responseMessage);
         }
     }

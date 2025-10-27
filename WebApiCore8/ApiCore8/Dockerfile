@@ -1,32 +1,26 @@
-# See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
-
-# Depending on the operating system of the host machines(s) that will build or run the containers, the image specified in the FROM statement may need to be changed.
-# For more information, please see https://aka.ms/containercompat
-
-# This stage is used when running from VS in fast mode (Default for Debug configuration)
-FROM mcr.microsoft.com/dotnet/aspnet:8.0-nanoserver-1809 AS base
-WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
-
-
-# This stage is used to build the service project
-FROM mcr.microsoft.com/dotnet/sdk:8.0-nanoserver-1809 AS build
-ARG BUILD_CONFIGURATION=Release
+﻿# Bước 1: Sử dụng hình ảnh SDK để xây dựng ứng dụng
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
+
+# Bước 2: Sao chép tất cả các file .csproj và khôi phục các phụ thuộc
 COPY ["ApiCore8/ApiCore8.csproj", "ApiCore8/"]
-RUN dotnet restore "./ApiCore8/ApiCore8.csproj"
+COPY ["BLL/BLL.csproj", "BLL/"]
+COPY ["DAL/DAL.csproj", "DAL/"]
+COPY ["ML/ML.csproj", "ML/"]
+COPY ["Core/Core.csproj", "Core/"]
+
+RUN dotnet restore "ApiCore8/ApiCore8.csproj"
+
+# Bước 3: Sao chép toàn bộ mã nguồn và xây dựng ứng dụng
 COPY . .
-WORKDIR "/src/ApiCore8"
-RUN dotnet build "./ApiCore8.csproj" -c %BUILD_CONFIGURATION% -o /app/build
+RUN dotnet build "ApiCore8/ApiCore8.csproj" -c Release -o /app/build
 
-# This stage is used to publish the service project to be copied to the final stage
+# Bước 4: Xuất bản ứng dụng
 FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./ApiCore8.csproj" -c %BUILD_CONFIGURATION% -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "ApiCore8/ApiCore8.csproj" -c Release -o /app/publish
 
-# This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
-FROM base AS final
+# Bước 5: Tạo hình ảnh cuối cùng chỉ với ứng dụng đã xuất bản
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=publish /app/publish ./
 ENTRYPOINT ["dotnet", "ApiCore8.dll"]

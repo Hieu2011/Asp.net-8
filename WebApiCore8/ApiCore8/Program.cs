@@ -1,8 +1,10 @@
 ﻿using ApiCore8.Midleware;
 using Core;
+using Core.Database;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 using Serilog.Sinks.Graylog;
+using System.Reflection.PortableExecutable;
 
 internal class Program
 {
@@ -15,30 +17,29 @@ internal class Program
         {
             var builder = WebApplication.CreateBuilder(args);
             builder.AddSerilog();
-
             // Add services to the container.
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-
+            //builder.Services.AddTransient<PostgresDbHelper>(sp =>
+            //        new PostgresDbHelper(builder.Configuration.GetConnectionString("DefaultConnection")));
             app = builder.Build();
             // Configure the HTTP request pipeline.
-          
-            if (app.Environment.IsProduction() == false)
-            {
+
+            //if (app.Environment.IsProduction() == false)
+            //{
                 object[] arrayLog = new object[] { "Môi trường chạy HPM Service", $"Environment : {app.Environment.EnvironmentName}" };
                 Log.Logger.Information(templateLog, arrayLog);
                 app.UseSwagger();
                 app.UseSwaggerUI();
                 app.UseSerilogRequestLogging();
-            }
+            //}
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthorization();
             app.UseMiddleware<GlobalExceptionMiddleware>();
-
             app.MapControllers();
             //DefaultFilesOptions options = new DefaultFilesOptions();
             //options.DefaultFileNames.Clear();

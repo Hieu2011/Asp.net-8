@@ -1,0 +1,26 @@
+﻿version: '3.8'
+
+services:
+  apicore8:
+    image: apicore8:${VERSION}  # Dùng giá trị từ file .env
+    build:
+      context: ..  # Trỏ đến thư mục cha của Docker (cùng cấp với Dockerfile)
+      dockerfile: Dockerfile  # Đường dẫn tới Dockerfile
+      args:
+        BUILD_CONFIGURATION: Release
+    ports:
+      - "2020:80"
+      - "2022:443"
+    environment:
+      ASPNETCORE_URLS: "http://+:80"
+      DOTNET_RUNNING_IN_CONTAINER: "true"
+      DOTNET_SYSTEM_GLOBALIZATION_INVARIANT: "false"
+    volumes:
+      # - ./:/app  # Mount thư mục hiện tại vào /app trong container
+      - ./Docker/logs:/app/logs  # Đảm bảo thư mục logs tồn tại trong thư mục Docker
+    networks:
+      - aspnet8-network
+
+networks:
+  aspnet8-network:
+    external: true

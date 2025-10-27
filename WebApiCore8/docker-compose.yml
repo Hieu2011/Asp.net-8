@@ -1,92 +1,118 @@
-﻿version: '3'
+version: '3.8'
+
 services:
-  # MongoDB: https://hub.docker.com/_/mongo/
   mongodb:
-    image: "mongo:6.0.18"
-    ports:
-      - "27017:27017"   
-    restart: "on-failure"
-    networks:
-      - graylog
+    image: mongo:6.0
+    container_name: graylog_mongodb
     volumes:
-      - "mongodb_data:/data/db"
-      - "mongodb_config:/data/configdb"  
-  #Graylog Data Node: https://hub.docker.com/r/graylog/graylog-datanode
+      - mongodb_data:/data/db
+      - mongodb_config:/data/configdb
+    restart: always
+    networks:
+      - aspnet8-network
+    ports:
+      - "27018:27017"  # Port 27018 trên host
+
   datanode:
-    image: "graylog/graylog-datanode:6.1"
-    hostname: "datanode"
+    image: graylog/graylog-datanode:6.1
+    container_name: graylog_datanode
+    hostname: datanode
     environment:
       GRAYLOG_DATANODE_NODE_ID_FILE: "/var/lib/graylog-datanode/node-id"
-      GRAYLOG_DATANODE_PASSWORD_SECRET: "Hieupromen@201198"
-      GRAYLOG_DATANODE_ROOT_PASSWORD_SHA2: "4C91A148B34B647FE25A247126B0DB5B716C032A28787236F567057FF8BFF29D"
+      GRAYLOG_DATANODE_PASSWORD_SECRET: "${GRAYLOG_PASSWORD_SECRET}"
+      GRAYLOG_DATANODE_ROOT_PASSWORD_SHA2: "${GRAYLOG_ROOT_PASSWORD_SHA2}"
       GRAYLOG_DATANODE_MONGODB_URI: "mongodb://mongodb:27017/graylog"
-      TZ: Asia/Ho_Chi_Minh # Múi giờ Việt Nam
+      GRAYLOG_TIMEZONE: "Asia/Ho_Chi_Minh"
+    volumes:
+      - graylog_datanode:/var/lib/graylog-datanode
+    ports:
+      - "9200:9200"
+      - "9300:9300"
     ulimits:
       memlock:
-        hard: -1
         soft: -1
+        hard: -1
       nofile:
         soft: 65536
         hard: 65536
-    ports:
-      - "8999:8999/tcp"   # DataNode API
-      - "9200:9200/tcp"
-      - "9300:9300/tcp"
+    restart: always
     networks:
-      - graylog  
-    volumes:
-      - "graylog-datanode:/var/lib/graylog-datanode"
-    restart: "on-failure"  
-  # Graylog: https://hub.docker.com/r/graylog/graylog/
+      - aspnet8-network
+
   graylog:
-    hostname: "server"
-    image: "graylog/graylog-enterprise:6.1"
-    # To install Graylog Open: "graylog/graylog:6.1"
+    image: graylog/graylog:6.1
+    container_name: graylog_server
     depends_on:
-      mongodb:
-        condition: "service_started"
-      datanode:
-        condition: "service_started"
-    entrypoint: "/usr/bin/tini -- /docker-entrypoint.sh"
+      - mongodb
+      - datanode
+      - redis
     environment:
       GRAYLOG_NODE_ID_FILE: "/usr/share/graylog/data/config/node-id"
-      GRAYLOG_HTTP_BIND_ADDRESS: "0.0.0.0:9000"
+      GRAYLOG_HTTP_BIND_ADDRESS: 0.0.0.0:9000
+      GRAYLOG_HTTP_EXTERNAL_URI: "http://graylognet8.com:9000/"
       GRAYLOG_MONGODB_URI: "mongodb://mongodb:27017/graylog"
-      # To make reporting (headless_shell) work inside a Docker container
-      GRAYLOG_REPORT_DISABLE_SANDBOX: "true"
-      # CHANGE ME (must be at least 16 characters)!
-      GRAYLOG_PASSWORD_SECRET: "Hieupromen@201198"
-      # Password: "admin"
-      GRAYLOG_ROOT_PASSWORD_SHA2: "4C91A148B34B647FE25A247126B0DB5B716C032A28787236F567057FF8BFF29D"
-      GRAYLOG_HTTP_EXTERNAL_URI: "http://127.0.0.1:9000/"
-      TZ: Asia/Ho_Chi_Minh # Múi giờ Việt Nam
-    ports:
-      # Graylog web interface and REST API
-      - "9000:9000/tcp"
-      # Beats
-      - "5044:5044/tcp"
-      # Syslog TCP
-      - "5140:5140/tcp"
-      # Syslog UDP
-      - "5140:5140/udp"
-      # GELF TCP
-      - "12201:12201/tcp"
-      # GELF UDP
-      - "12201:12201/udp"
-      # Forwarder data
-      - "13301:13301/tcp"
-      # Forwarder config
-      - "13302:13302/tcp"
-    restart: "on-failure"
-    networks:
-      - graylog
+      GRAYLOG_PASSWORD_SECRET: "${GRAYLOG_PASSWORD_SECRET}"
+      GRAYLOG_ROOT_PASSWORD_SHA2: "${GRAYLOG_ROOT_PASSWORD_SHA2}"
+      GRAYLOG_TIMEZONE: "Asia/Ho_Chi_Minh"
     volumes:
-      - "graylog_data:/usr/share/graylog/data"
-networks:
-  graylog:
-    driver: "bridge"
+      - graylog_data:/usr/share/graylog/data
+    ports:
+      - "9000:9000"
+      - "5044:5044"
+      - "5140:5140/udp"
+      - "12201:12201/udp"
+    restart: always
+    networks:
+      - aspnet8-network
+
+  redis:
+    image: redis:7.0
+    container_name: redis_server
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    environment:
+      REDIS_PASSWORD: "${REDIS_PASSWORD}"
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"]
+    networks:
+      - aspnet8-network
+
+  webapi:
+    image: webapi:${APP_VERSION}
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        BUILD_CONFIGURATION: Release
+    container_name: webapi_server
+    restart: always
+    ports:
+      - "5000:80"
+      - "5443:443"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:80
+      - DOTNET_RUNNING_IN_CONTAINER=true
+      - DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
+    networks:
+      - aspnet8-network
+
 volumes:
   mongodb_data:
+    name: mongodb_data
   mongodb_config:
-  graylog-datanode:
+    name: mongodb_config
+  graylog_datanode:
+    name: graylog_datanode
   graylog_data:
+    name: graylog_data
+  redis_data:
+    name: redis_data
+
+networks:
+  aspnet8-network:
+    name: aspnet8-network
+    driver: bridge
+
