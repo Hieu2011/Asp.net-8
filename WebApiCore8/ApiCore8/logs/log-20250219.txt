@@ -1,7 +1,0 @@
-2025-02-19 15:04:47.089 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
-2025-02-19 15:05:54.577 +07:00 [INF] Môi trường chạy HPM Service. Environment : Development.
-2025-02-19 15:06:04.506 +07:00 [INF] HTTP GET //api/WeatherForecast/GetWeatherForecast responded 404 in 12.7639 ms
-2025-02-19 15:06:19.033 +07:00 [INF] HTTP GET //api/WeatherForecast/GetWeatherForecastf responded 404 in 0.1943 ms
-2025-02-19 15:06:40.190 +07:00 [INF] ha. . . 0.  10.152.244.201. 2025-02-19 15:06:40.183. 2025-02-19 15:06:40.183. 0.0014
-2025-02-19 15:06:40.199 +07:00 [INF] GET /api/WeatherForecast/GetWeatherForecastf. . None. 200.  10.152.244.201. 2025-02-19 15:06:40.180. 2025-02-19 15:06:40.196. 15.8621
-2025-02-19 15:06:40.216 +07:00 [INF] HTTP GET /api/WeatherForecast/GetWeatherForecastf responded 200 in 60.1677 ms

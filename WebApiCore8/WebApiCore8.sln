@@ -19,10 +19,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "Core\Core.csproj", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{EC54B5E3-E21B-451E-9AB4-938536D7F9B0}"
 	ProjectSection(SolutionItems) = preProject
-		Docker\.env = Docker\.env
+		.env = .env
+		docker-compose-V2.yml = docker-compose-V2.yml
 		docker-compose.yml = docker-compose.yml
-		Dockerfile = Dockerfile
 		Docker\webapi-compose.yml = Docker\webapi-compose.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "nginx", "nginx", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		nginx\certs\nginx-selfsigned.crt = nginx\certs\nginx-selfsigned.crt
+		nginx\certs\nginx-selfsigned.key = nginx\certs\nginx-selfsigned.key
+		nginx\nginx.conf = nginx\nginx.conf
 	EndProjectSection
 EndProject
 Global
