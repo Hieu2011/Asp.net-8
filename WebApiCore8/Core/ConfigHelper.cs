@@ -1,9 +1,4 @@
 ﻿using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Core
 {
@@ -13,9 +8,14 @@ namespace Core
 
         static ConfigHelper()
         {
+            // ✅ Lấy environment từ biến môi trường
+            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production";
+            
             _config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{environment}.json", optional: true, reloadOnChange: true) // ✅ Đọc theo env
+                .AddEnvironmentVariables() // ✅ Đọc env variables
                 .Build();
         }
 
@@ -23,7 +23,7 @@ namespace Core
         /// Lấy connection string từ appsettings.json
         /// </summary>
         public static string GetConnectionString(string name = "Postgres")
-            => _config.GetConnectionString(name);
+            => _config.GetConnectionString(name) ?? string.Empty;
 
         /// <summary>
         /// Lấy giá trị theo key từ appsettings.json
@@ -46,7 +46,7 @@ namespace Core
         /// <summary>
         /// Lấy giá trị theo kiểu dữ liệu generic T
         /// </summary>
-        public static T GetValue<T>(string key, T defaultValue = default)
+        public static T? GetValue<T>(string key, T? defaultValue = default)
         {
             try
             {
@@ -57,5 +57,10 @@ namespace Core
                 return defaultValue;
             }
         }
+        
+        /// <summary>
+        /// Lấy toàn bộ IConfiguration (cho trường hợp cần bind object)
+        /// </summary>
+        public static IConfiguration Configuration => _config;
     }
 }

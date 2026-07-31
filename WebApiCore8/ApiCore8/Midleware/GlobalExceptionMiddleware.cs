@@ -29,10 +29,10 @@ namespace ApiCore8.Midleware
         private Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
             context.Response.ContentType = "application/json";
-            context.Response.StatusCode = (int)HttpStatusCode.OK;
+            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             string requestID = StringUtilities.GenarateRandomString(10);
             _logger.AddLog($"Lỗi gọi API HPM-Internal ({requestID})", exception.CreateExceptionMessage(requestID));
-            var responseMessage = new { isError = true, status = 200, message = $"Lỗi gọi API HPM-Internal ({requestID})", messageDetail = $"Lỗi {exception.Message}, vui lòng liên hệ IT , team HPM-Internal" };
+            var responseMessage = new { isError = true, status = 200, message = $"Lỗi gọi API HPM-Internal ({requestID})", messageDetail = $"Lỗi {exception.CreateExceptionMessage(requestID)}, vui lòng liên hệ IT , team HPM-Internal" };
             return context.Response.WriteAsJsonAsync(responseMessage);
         }
     }

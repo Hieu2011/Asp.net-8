@@ -192,42 +192,39 @@ public class PostgresDbHelper : IDisposable, IDataCore
         await EnsureOpenConnectionAsync();
         DataTable dt = new DataTable();
         string cursorName = storeName;
-
         try
         {
-            // Sử dụng StringBuilder thay vì nối chuỗi
+            // Tự động thêm tham số v_out (REFCURSOR) vào đầu danh sách nếu chưa có
+            if (!_currentParameters.Any(p => p.NpgsqlDbType == NpgsqlDbType.Refcursor))
+            {
+                _currentParameters.Insert(0, new NpgsqlParameter
+                {
+                    ParameterName = "v_out",
+                    NpgsqlDbType = NpgsqlDbType.Refcursor,
+                    Value = DBNull.Value
+                });
+            }
+
             var sqlBuilder = new StringBuilder();
             sqlBuilder.Append("SELECT ");
             sqlBuilder.Append(storeName);
             sqlBuilder.Append("(");
-
-            if (_currentParameters.Any())
-            {
-                sqlBuilder.Append(string.Join(", ", _currentParameters.Select(p => p.ParameterName)));
-            }
-
+            sqlBuilder.Append(string.Join(", ", _currentParameters.Select(p => "@" + p.ParameterName)));
             sqlBuilder.Append(");");
             string sql = sqlBuilder.ToString();
 
             using (_command = new NpgsqlCommand(sql, (NpgsqlConnection)_connection, (NpgsqlTransaction)_transaction))
             {
-                if (_currentParameters.Any())
-                {
-                    ((NpgsqlCommand)_command).Parameters.AddRange(_currentParameters.ToArray());
-                }
+                ((NpgsqlCommand)_command).Parameters.AddRange(_currentParameters.ToArray());
 
-                // Thực thi và lấy cursor
                 using (var reader = await ((NpgsqlCommand)_command).ExecuteReaderAsync())
                 {
                     if (!await reader.ReadAsync() || reader.IsDBNull(0))
-                    {
-                        return dt; // Trả về bảng rỗng thay vì ném ngoại lệ
-                    }
+                        return dt;
                     cursorName = reader.GetString(0);
                 }
             }
 
-            // Fetch dữ liệu
             using (var fetchCmd = new NpgsqlCommand($"FETCH ALL IN \"{cursorName}\";", (NpgsqlConnection)_connection, (NpgsqlTransaction)_transaction))
             using (var fetchReader = await fetchCmd.ExecuteReaderAsync())
             {
@@ -236,13 +233,11 @@ public class PostgresDbHelper : IDisposable, IDataCore
         }
         catch (Exception ex)
         {
-            // Log error và ném ngoại lệ
             Console.WriteLine($"Error executing store {storeName}: {ex.Message}");
             throw;
         }
         finally
         {
-            // Đóng cursor
             if (!string.IsNullOrEmpty(cursorName))
             {
                 try
@@ -250,12 +245,10 @@ public class PostgresDbHelper : IDisposable, IDataCore
                     using var closeCmd = new NpgsqlCommand($"CLOSE \"{cursorName}\";", (NpgsqlConnection)_connection, (NpgsqlTransaction)_transaction);
                     await closeCmd.ExecuteNonQueryAsync();
                 }
-                catch { /* Không làm gì nếu không đóng được cursor */ }
+                catch { }
             }
-
             ClearParameters();
         }
-
         return dt;
     }
 

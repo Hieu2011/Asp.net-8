@@ -33,7 +33,9 @@ namespace ML
             FileNotExists,
             NoNewAppVersion,
             PermissionDenied,
-            InvalidDeviceID
+            InvalidDeviceID,
+            RateLimit,
+            Validation
         }
 
         private bool bolIsError = false;
