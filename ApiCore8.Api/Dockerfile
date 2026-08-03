@@ -1,0 +1,25 @@
+﻿# Bước 1: Sử dụng hình ảnh SDK để xây dựng ứng dụng
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+
+# Bước 2: Sao chép tất cả các file .csproj và khôi phục các phụ thuộc
+COPY ["ApiCore8.Api/ApiCore8.Api.csproj", "ApiCore8.Api/"]
+COPY ["ApiCore8.Application/ApiCore8.Application.csproj", "ApiCore8.Application/"]
+COPY ["ApiCore8.Infrastructure/ApiCore8.Infrastructure.csproj", "ApiCore8.Infrastructure/"]
+COPY ["ApiCore8.Domain/ApiCore8.Domain.csproj", "ApiCore8.Domain/"]
+
+RUN dotnet restore "ApiCore8.Api/ApiCore8.Api.csproj"
+
+# Bước 3: Sao chép toàn bộ mã nguồn và xây dựng ứng dụng
+COPY . .
+RUN dotnet build "ApiCore8.Api/ApiCore8.Api.csproj" -c Release -o /app/build
+
+# Bước 4: Xuất bản ứng dụng
+FROM build AS publish
+RUN dotnet publish "ApiCore8.Api/ApiCore8.Api.csproj" -c Release -o /app/publish
+
+# Bước 5: Tạo hình ảnh cuối cùng chỉ với ứng dụng đã xuất bản
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+WORKDIR /app
+COPY --from=publish /app/publish ./
+ENTRYPOINT ["dotnet", "ApiCore8.Api.dll"]
