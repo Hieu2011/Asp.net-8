@@ -6,5 +6,13 @@ ApiCore8.Infrastructure/bin
 ApiCore8.Infrastructure/obj
 ApiCore8.Domain/bin
 ApiCore8.Domain/obj
+AuthService/AuthService.Api/bin
+AuthService/AuthService.Api/obj
+AuthService/AuthService.Application/bin
+AuthService/AuthService.Application/obj
+AuthService/AuthService.Infrastructure/bin
+AuthService/AuthService.Infrastructure/obj
+AuthService/AuthService.Domain/bin
+AuthService/AuthService.Domain/obj
 .vs
 .vscode
