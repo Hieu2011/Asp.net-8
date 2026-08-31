@@ -1,42 +1,42 @@
+using ApiCore8.Domain.Serialization;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using System.Text.Json.Serialization;
 
 namespace ApiCore8.Domain.Entities
 {
+    /// <summary>
+    /// Mirrors the document shape written by Serilog.Sinks.MongoDB (WriteTo.MongoDBBson) —
+    /// field names must match the sink's actual output, not an arbitrary custom schema.
+    /// </summary>
+    [BsonIgnoreExtraElements]
     public class SystemLog
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
 
-        [BsonElement("timestamp")]
-        public DateTime Timestamp { get; set; } = DateTime.Now;
+        [BsonElement("UtcTimeStamp")]
+        public DateTime Timestamp { get; set; }
 
-        [BsonElement("level")]
-        public string Level { get; set; } = string.Empty; // Information, Warning, Error, Critical
+        [BsonElement("Level")]
+        public string Level { get; set; } = string.Empty; // Verbose, Debug, Information, Warning, Error, Fatal
 
-        [BsonElement("category")]
-        public string Category { get; set; } = string.Empty; // Class name (e.g., "Core.Database.RedisConnectionService")
-
-        [BsonElement("message")]
+        [BsonElement("RenderedMessage")]
         public string Message { get; set; } = string.Empty;
 
-        [BsonElement("exception")]
-        public string? Exception { get; set; }
+        // Serilog.Sinks.MongoDB lưu Exception dưới dạng document con có cấu trúc
+        // (Type, Message, StackTraceString...), không phải string thường.
+        [BsonElement("Exception")]
+        [JsonConverter(typeof(BsonDocumentJsonConverter))]
+        public BsonDocument? Exception { get; set; }
 
-        [BsonElement("stack_trace")]
-        public string? StackTrace { get; set; }
-
-        [BsonElement("event_id")]
-        public int EventId { get; set; }
-
-        [BsonElement("scope_data")]
-        public Dictionary<string, object>? ScopeData { get; set; }
-
-        [BsonElement("machine_name")]
-        public string MachineName { get; set; } = Environment.MachineName;
-
-        [BsonElement("application")]
-        public string Application { get; set; } = "WebApiNet8";
+        // Structured log properties (SourceContext, and anything from Enrich.WithProperty,
+        // e.g. Application from appsettings.json's Serilog:Properties section). Category/Application
+        // live in here as nested fields (Properties.SourceContext / Properties.Application) rather
+        // than as top-level columns, since the sink doesn't write those as first-class fields.
+        [BsonElement("Properties")]
+        [JsonConverter(typeof(BsonDocumentJsonConverter))]
+        public BsonDocument? Properties { get; set; }
     }
 }

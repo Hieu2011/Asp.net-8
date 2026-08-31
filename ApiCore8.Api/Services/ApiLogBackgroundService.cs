@@ -23,7 +23,7 @@ namespace ApiCore8.Api.Services
             await foreach (var log in _channel.Reader.ReadAllAsync(stoppingToken))
             {
                 using var scope = _scopeFactory.CreateScope();
-                var repo = scope.ServiceProvider.GetRequiredService<IBLL_ApiLogRepository>();
+                var repo = scope.ServiceProvider.GetRequiredService<IApiLogRepository>();
 
                 try
                 {

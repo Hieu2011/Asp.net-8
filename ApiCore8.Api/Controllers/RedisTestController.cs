@@ -1,17 +1,19 @@
+using ApiCore8.Api.Middleware;
 using ApiCore8.Application.Contracts;
 using ApiCore8.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApiCore8.Api.Controllers
 {
+    [LogApi]
     [ApiController]
     [Route("api/[controller]")]
     public class RedisTestController : ControllerBase
     {
-        private readonly IBLL_RedisRepository _redisRepo;
+        private readonly IRedisCacheRepository _redisRepo;
         private readonly ILogger<RedisTestController> _logger;
 
-        public RedisTestController(IBLL_RedisRepository redisRepo, ILogger<RedisTestController> logger)
+        public RedisTestController(IRedisCacheRepository redisRepo, ILogger<RedisTestController> logger)
         {
             _redisRepo = redisRepo;
             _logger = logger;
@@ -25,9 +27,11 @@ namespace ApiCore8.Api.Controllers
         {
             try
             {
-                var expiry = request.ExpiryMinutes.HasValue 
+                // ExpiryMinutes <= 0 hoặc không truyền → để null, SetCacheAsync/SetObjectAsync tự áp mặc định.
+                // Không dùng TimeSpan.Zero vì Redis SETEX không cho phép expire = 0 (ném lỗi "invalid expire time").
+                TimeSpan? expiry = request.ExpiryMinutes is > 0
                     ? TimeSpan.FromMinutes(request.ExpiryMinutes.Value)
-                    : TimeSpan.FromMinutes(0);
+                    : null;
 
                 var result = await _redisRepo.SetCacheAsync(
                     request.Key, 
@@ -46,7 +50,7 @@ namespace ApiCore8.Api.Controllers
                     Success = true,
                     Message = "Cache set successfully",
                     Key = request.Key,
-                    Expiry = expiry.TotalMinutes
+                    Expiry = expiry?.TotalMinutes // null nghĩa là không hết hạn (persist)
                 });
             }
             catch (Exception ex)

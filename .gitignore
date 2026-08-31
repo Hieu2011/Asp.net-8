@@ -14,5 +14,12 @@ AuthService/AuthService.Infrastructure/bin
 AuthService/AuthService.Infrastructure/obj
 AuthService/AuthService.Domain/bin
 AuthService/AuthService.Domain/obj
+ApiCore8.UnitTests/bin
+ApiCore8.UnitTests/obj
 .vs
 .vscode
+.codegraph/
+
+# Rolling log file (giữ 7 file, không cần commit vào git)
+ApiCore8.Api/logs/
+*.user

@@ -14,26 +14,19 @@ namespace ApiCore8.Infrastructure.Redis
     {
         private readonly Lazy<ConnectionMultiplexer> _lazyConnection;
         private readonly ILogger<RedisConnectionService> _logger;
-        private readonly IMongoLoggerService? _mongoLogger; // ✅ Add MongoDB logger
         private readonly string _connectionString;
         private readonly byte[] _aesKey;
-        private const string LOG_CATEGORY = "RedisConnectionService"; // ✅ Category constant
 
-        /// <summary>
-        /// Constructor - Inject ILogger và IMongoLoggerService
-        /// </summary>
         public RedisConnectionService(
-            IConfiguration configuration, 
-            ILogger<RedisConnectionService> logger,
-            IMongoLoggerService? mongoLogger = null) // ✅ Optional injection
+            IConfiguration configuration,
+            ILogger<RedisConnectionService> logger)
         {
             _logger = logger;
-            _mongoLogger = mongoLogger; // ✅ Save reference
-            
-            _connectionString = configuration.GetConnectionString("Redis") 
+
+            _connectionString = configuration.GetConnectionString("Redis")
                 ?? "localhost:6380,password=redis123,abortConnect=false";
 
-            var encryptionKey = configuration["Redis:EncryptionKey"] 
+            var encryptionKey = configuration["Redis:EncryptionKey"]
                 ?? throw new InvalidOperationException("Redis encryption key not configured!");
 
             using (var sha256 = SHA256.Create())
@@ -41,9 +34,7 @@ namespace ApiCore8.Infrastructure.Redis
                 _aesKey = sha256.ComputeHash(Encoding.UTF8.GetBytes(encryptionKey));
             }
 
-            // ✅ DUAL LOGGING: ILogger (Serilog) + MongoDB
-            _logger.LogInformation("✅ Redis encryption key loaded and hashed (SHA256)");
-            _mongoLogger?.LogInformation(LOG_CATEGORY, "Redis encryption key loaded and hashed (SHA256)");
+            _logger.LogInformation("Redis encryption key loaded and hashed (SHA256)");
 
             _lazyConnection = new Lazy<ConnectionMultiplexer>(() =>
             {
@@ -55,18 +46,14 @@ namespace ApiCore8.Infrastructure.Redis
                     connection.ErrorMessage += OnErrorMessage;
 
                     var endpoints = string.Join(", ", connection.GetEndPoints().Select(ep => ep.ToString()));
-                    
-                    // ✅ DUAL LOGGING
-                    _logger.LogInformation("✅ Redis connected: {Endpoints}", endpoints);
-                    _mongoLogger?.LogInformation(LOG_CATEGORY, $"Redis connected: {endpoints}");
-                    
+
+                    _logger.LogInformation("Redis connected: {Endpoints}", endpoints);
+
                     return connection;
                 }
                 catch (Exception ex)
                 {
-                    // ✅ DUAL LOGGING for errors
-                    _logger.LogError(ex, "❌ Failed to connect to Redis: {ConnectionString}", _connectionString);
-                    _mongoLogger?.LogError(LOG_CATEGORY, $"Failed to connect to Redis: {_connectionString}", ex);
+                    _logger.LogError(ex, "Failed to connect to Redis: {ConnectionString}", _connectionString);
                     throw;
                 }
             });
@@ -1006,15 +993,7 @@ namespace ApiCore8.Infrastructure.Redis
         /// </summary>
         private void OnConnectionFailed(object? sender, ConnectionFailedEventArgs e)
         {
-            var message = $"Redis connection failed: {e.EndPoint} - {e.FailureType}";
-            
-            // ✅ DUAL LOGGING
-            _logger.LogError(message);
-            _mongoLogger?.LogError(LOG_CATEGORY, message, null, 
-                new { 
-                    EndPoint = e.EndPoint.ToString(), 
-                    FailureType = e.FailureType.ToString() 
-                });
+            _logger.LogError("Redis connection failed: {EndPoint} - {FailureType}", e.EndPoint, e.FailureType);
         }
 
         /// <summary>
@@ -1022,12 +1001,7 @@ namespace ApiCore8.Infrastructure.Redis
         /// </summary>
         private void OnConnectionRestored(object? sender, ConnectionFailedEventArgs e)
         {
-            var message = $"Redis connection restored: {e.EndPoint}";
-            
-            // ✅ DUAL LOGGING
-            _logger.LogInformation(message);
-            _mongoLogger?.LogInformation(LOG_CATEGORY, message, 
-                new { EndPoint = e.EndPoint.ToString() });
+            _logger.LogInformation("Redis connection restored: {EndPoint}", e.EndPoint);
         }
 
         /// <summary>
@@ -1035,9 +1009,7 @@ namespace ApiCore8.Infrastructure.Redis
         /// </summary>
         private void OnErrorMessage(object? sender, RedisErrorEventArgs e)
         {
-            // ✅ DUAL LOGGING
             _logger.LogError("Redis error: {Message}", e.Message);
-            _mongoLogger?.LogError(LOG_CATEGORY, $"Redis error: {e.Message}");
         }
         
         #endregion

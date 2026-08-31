@@ -21,8 +21,8 @@ namespace ApiCore8.Api.Middleware
        
         public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            // Thời gian bắt đầu (dùng UTC khuyến nghị)
-            _startTime = DateTime.Now;
+            // Thời gian bắt đầu — lưu UTC, đồng bộ với SystemLog (chỉ convert +7 khi hiển thị)
+            _startTime = DateTime.UtcNow;
             _stopwatch = Stopwatch.StartNew();  
 
             // Đọc ActionArguments (nếu có)
@@ -41,8 +41,13 @@ namespace ApiCore8.Api.Middleware
                 
             // Sau khi Action thực thi xong
             _stopwatch.Stop();
-            var endTime = DateTime.Now;
+            var endTime = DateTime.UtcNow;
             var elapsedMilliseconds = _stopwatch.ElapsedMilliseconds;
+
+            // Swagger UI (Swashbuckle) không tự hiển thị thời gian gọi trong panel kết quả — nhưng
+            // có hiển thị response headers, nên gắn thời gian xử lý vào đây để thấy được trực tiếp
+            // trong Swagger, không cần mở log/DevTools.
+            context.HttpContext.Response.Headers["X-Response-Time-Ms"] = elapsedMilliseconds.ToString();
 
             var request = context.HttpContext.Request;
             var clientIp = context.HttpContext.Connection.RemoteIpAddress?.ToString();
@@ -52,7 +57,7 @@ namespace ApiCore8.Api.Middleware
             // Lấy response body từ executedContext.Result (nếu có)
             string responseBody = await ReadResponseBodyAsync(executedContext);
             // Tạo log object
-            var repo = context.HttpContext.RequestServices.GetService<IBLL_ApiLogRepository>();
+            var repo = context.HttpContext.RequestServices.GetService<IApiLogRepository>();
             if (repo != null)
             {
                 var log = new ApiExecutionLog
@@ -61,17 +66,17 @@ namespace ApiCore8.Api.Middleware
                     Method = request.Method,
                     RequestBody = _requestBody,
                     ResponseBody = responseBody,
-                    StartTime = _startTime ?? DateTime.Now,
+                    StartTime = _startTime ?? DateTime.UtcNow,
                     EndTime = endTime,
-                    CreatedAt = DateTime.Now,
+                    CreatedAt = DateTime.UtcNow,
                     ClientIP = LogHelper.GetClientIp(),
-                    StartTimeStr = new System.DateTimeOffset(_startTime ?? DateTime.Now).ToString("yyyy-MM-dd HH:mm:ss.fff zzz"),
+                    StartTimeStr = new System.DateTimeOffset(_startTime ?? DateTime.UtcNow).ToString("yyyy-MM-dd HH:mm:ss.fff zzz"),
                     EndTimeStr = new System.DateTimeOffset(endTime).ToString("yyyy-MM-dd HH:mm:ss.fff zzz")
                 };
                 try
                 {
-                    var start = log.StartTime ?? log.EndTime ?? DateTime.Now;
-                    var end = log.EndTime ?? log.StartTime ?? DateTime.Now;
+                    var start = log.StartTime ?? log.EndTime ?? DateTime.UtcNow;
+                    var end = log.EndTime ?? log.StartTime ?? DateTime.UtcNow;
                     log.ExecutionMs = (long)(end - start).TotalMilliseconds;
                 }
                 catch

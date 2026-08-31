@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using System.Collections.Concurrent;
 using Npgsql;
 using NpgsqlTypes;
 using ApiCore8.Application.Abstractions;
-using ApiCore8.Infrastructure;
+using ApiCore8.Infrastructure.Database;
 
 namespace ApiCore8.Infrastructure.Postgres;
 
@@ -19,8 +17,7 @@ public class PostgresDbHelper : IDisposable, IDataCore
     private IDbConnection _connection;
     private IDbTransaction _transaction;
     private IDbCommand _command;
-    private List<NpgsqlParameter> _currentParameters = new();
-    private static readonly ConcurrentDictionary<string, PropertyInfo[]> _propertyCache = new ConcurrentDictionary<string, PropertyInfo[]>();
+    internal List<NpgsqlParameter> _currentParameters = new();
 
     // Implement IDataCore interface
     IDbCommand IDataCore.ICommand
@@ -41,16 +38,19 @@ public class PostgresDbHelper : IDisposable, IDataCore
         set { _connection = value; }
     }
 
-    public PostgresDbHelper(string connectionString = "")
+    public PostgresDbHelper(string connectionString)
     {
-        _connectionString = string.IsNullOrEmpty(connectionString)
-            ? ConfigHelper.GetConnectionString()
-            : connectionString;
+        if (string.IsNullOrEmpty(connectionString))
+        {
+            throw new ArgumentException("Connection string is required.", nameof(connectionString));
+        }
+
+        _connectionString = connectionString;
         _connection = new NpgsqlConnection(_connectionString);
     }
 
     // Mở kết nối nếu chưa mở
-    private async Task EnsureOpenConnectionAsync()
+    private async Task EnsureOpenConnectionAsync(CancellationToken cancellationToken)
     {
         if (_connection == null)
         {
@@ -61,42 +61,42 @@ public class PostgresDbHelper : IDisposable, IDataCore
         {
             try
             {
-                await ((NpgsqlConnection)_connection).OpenAsync();
+                await ((NpgsqlConnection)_connection).OpenAsync(cancellationToken);
             }
             catch (NpgsqlException)
             {
                 // Thử tạo kết nối mới nếu không mở được kết nối cũ
                 _connection.Dispose();
                 _connection = new NpgsqlConnection(_connectionString);
-                await ((NpgsqlConnection)_connection).OpenAsync();
+                await ((NpgsqlConnection)_connection).OpenAsync(cancellationToken);
             }
         }
     }
 
     // Bắt đầu transaction
-    public async Task StartTransactionScopeAsync()
+    public async Task StartTransactionScopeAsync(CancellationToken cancellationToken = default)
     {
-        await EnsureOpenConnectionAsync();
-        _transaction = await ((NpgsqlConnection)_connection).BeginTransactionAsync();
+        await EnsureOpenConnectionAsync(cancellationToken);
+        _transaction = await ((NpgsqlConnection)_connection).BeginTransactionAsync(cancellationToken);
     }
 
     // Commit transaction
-    public async Task CommitTransactionAsync()
+    public async Task CommitTransactionAsync(CancellationToken cancellationToken = default)
     {
         if (_transaction != null)
         {
-            await ((NpgsqlTransaction)_transaction).CommitAsync();
+            await ((NpgsqlTransaction)_transaction).CommitAsync(cancellationToken);
             _transaction.Dispose();
             _transaction = null;
         }
     }
 
     // Rollback transaction
-    public async Task RollbackTransactionAsync()
+    public async Task RollbackTransactionAsync(CancellationToken cancellationToken = default)
     {
         if (_transaction != null)
         {
-            await ((NpgsqlTransaction)_transaction).RollbackAsync();
+            await ((NpgsqlTransaction)_transaction).RollbackAsync(cancellationToken);
             _transaction.Dispose();
             _transaction = null;
         }
@@ -114,7 +114,9 @@ public class PostgresDbHelper : IDisposable, IDataCore
         }
         else if (value is DateTime)
         {
-            param.NpgsqlDbType = NpgsqlDbType.Timestamp;
+            // TimestampTz (timestamptz), không phải Timestamp (timestamp without time zone) —
+            // khớp convention lưu UTC/timestamptz đã thống nhất cho toàn dự án.
+            param.NpgsqlDbType = NpgsqlDbType.TimestampTz;
         }
         else if (value is bool)
         {
@@ -125,13 +127,23 @@ public class PostgresDbHelper : IDisposable, IDataCore
             param.NpgsqlDbType = NpgsqlDbType.Array | NpgsqlDbType.Integer;
         }
 
-        // Xác định hướng tham số
-        if (paramName.EndsWith("_out") || paramName == "ref_cursor")
-        {
-            param.Direction = ParameterDirection.InputOutput;
-        }
-
         _currentParameters.Add(param);
+    }
+
+    // Build câu gọi function bằng named notation ("tên_tham_số => giá_trị") — tách riêng để test
+    // được độc lập, và dùng chung cho cả 3 nơi (ExecuteStoreDataTableAsync/ExecuteNonQueryAsync/
+    // ExecuteNonQueryAsStringAsync) thay vì lặp lại 3 lần. Named notation không phụ thuộc thứ tự
+    // tham số khai báo trong function Postgres — v_out (hay bất kỳ tham số nào) nằm ở vị trí nào
+    // trong _currentParameters cũng ra cùng 1 kết quả, vì PostgreSQL tự khớp theo tên.
+    internal static string BuildCallSql(string storeName, IReadOnlyList<NpgsqlParameter> parameters)
+    {
+        var sqlBuilder = new StringBuilder();
+        sqlBuilder.Append("SELECT ");
+        sqlBuilder.Append(storeName);
+        sqlBuilder.Append('(');
+        sqlBuilder.Append(string.Join(", ", parameters.Select(p => $"{p.ParameterName} => @{p.ParameterName}")));
+        sqlBuilder.Append(");");
+        return sqlBuilder.ToString();
     }
 
     // Xóa tham số
@@ -140,60 +152,29 @@ public class PostgresDbHelper : IDisposable, IDataCore
         _currentParameters.Clear();
     }
 
-    // Lấy thuộc tính của kiểu dữ liệu và cache lại
-    private static PropertyInfo[] GetTypeProperties<T>()
-    {
-        string typeName = typeof(T).FullName;
-        return _propertyCache.GetOrAdd(typeName, _ => typeof(T).GetProperties());
-    }
-
-    // Ánh xạ từ DataRow sang object
-    private static T GetItem<T>(DataRow dr)
-    {
-        T obj = Activator.CreateInstance<T>();
-        PropertyInfo[] properties = GetTypeProperties<T>();
-
-        // Tạo dictionary để map tên cột và property một lần
-        var propertyMap = properties.ToDictionary(
-            p => p.Name.ToLower(),
-            p => p
-        );
-
-        foreach (DataColumn column in dr.Table.Columns)
-        {
-            string columnNameLower = column.ColumnName.ToLower();
-            if (propertyMap.TryGetValue(columnNameLower, out PropertyInfo property))
-            {
-                try
-                {
-                    var data = dr[column.ColumnName];
-                    if (data == DBNull.Value || data?.ToString() == "")
-                    {
-                        continue; // Bỏ qua giá trị null
-                    }
-
-                    // Xử lý kiểu nullable
-                    Type propertyType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
-
-                    // Convert dữ liệu và gán vào property
-                    object convertedValue = Convert.ChangeType(data, propertyType);
-                    property.SetValue(obj, convertedValue, null);
-                }
-                catch (Exception exception)
-                {
-                    throw new Exception($"Error Column: {column.ColumnName} || " + exception.Message);
-                }
-            }
-        }
-        return obj;
-    }
-
     // Thực thi stored procedure trả về DataTable (refcursor)
-    public async Task<DataTable> ExecuteStoreDataTableAsync(string storeName)
+    public async Task<DataTable> ExecuteStoreDataTableAsync(string storeName, CancellationToken cancellationToken = default)
     {
-        await EnsureOpenConnectionAsync();
+        // Đảm bảo có giới hạn thời gian tối thiểu (DefaultTimeout) dù caller không truyền
+        // CancellationToken nào — CancellationToken.None mặc định không bao giờ tự hủy.
+        using var timeoutCts = CancellationTokenTimeoutHelper.CreateLinkedTimeoutSource(cancellationToken);
+        var token = timeoutCts.Token;
+
+        await EnsureOpenConnectionAsync(token);
         DataTable dt = new DataTable();
         string cursorName = storeName;
+
+        // Refcursor (OPEN/FETCH/CLOSE) chỉ tồn tại trong phạm vi 1 transaction — ở chế độ
+        // autocommit mặc định, statement mở cursor tự commit xong là cursor bị đóng ngay,
+        // FETCH ở lệnh sau sẽ báo "cursor does not exist". Nếu caller chưa chủ động mở
+        // transaction (StartTransactionScopeAsync cho nghiệp vụ nhiều bước), tự mở 1
+        // transaction cục bộ bao trọn cả 3 lệnh rồi tự commit/rollback.
+        bool ownTransaction = _transaction == null;
+        if (ownTransaction)
+        {
+            await StartTransactionScopeAsync(token);
+        }
+
         try
         {
             // Tự động thêm tham số v_out (REFCURSOR) vào đầu danh sách nếu chưa có
@@ -207,101 +188,84 @@ public class PostgresDbHelper : IDisposable, IDataCore
                 });
             }
 
-            var sqlBuilder = new StringBuilder();
-            sqlBuilder.Append("SELECT ");
-            sqlBuilder.Append(storeName);
-            sqlBuilder.Append("(");
-            sqlBuilder.Append(string.Join(", ", _currentParameters.Select(p => "@" + p.ParameterName)));
-            sqlBuilder.Append(");");
-            string sql = sqlBuilder.ToString();
+            string sql = BuildCallSql(storeName, _currentParameters);
 
             using (_command = new NpgsqlCommand(sql, (NpgsqlConnection)_connection, (NpgsqlTransaction)_transaction))
             {
                 ((NpgsqlCommand)_command).Parameters.AddRange(_currentParameters.ToArray());
 
-                using (var reader = await ((NpgsqlCommand)_command).ExecuteReaderAsync())
+                using (var reader = await ((NpgsqlCommand)_command).ExecuteReaderAsync(token))
                 {
-                    if (!await reader.ReadAsync() || reader.IsDBNull(0))
+                    if (!await reader.ReadAsync(token) || reader.IsDBNull(0))
+                    {
+                        if (ownTransaction) await CommitTransactionAsync(token);
                         return dt;
+                    }
                     cursorName = reader.GetString(0);
                 }
             }
 
             using (var fetchCmd = new NpgsqlCommand($"FETCH ALL IN \"{cursorName}\";", (NpgsqlConnection)_connection, (NpgsqlTransaction)_transaction))
-            using (var fetchReader = await fetchCmd.ExecuteReaderAsync())
+            using (var fetchReader = await fetchCmd.ExecuteReaderAsync(token))
             {
                 dt.Load(fetchReader);
+            }
+
+            try
+            {
+                using var closeCmd = new NpgsqlCommand($"CLOSE \"{cursorName}\";", (NpgsqlConnection)_connection, (NpgsqlTransaction)_transaction);
+                await closeCmd.ExecuteNonQueryAsync(token);
+            }
+            catch { }
+
+            if (ownTransaction)
+            {
+                await CommitTransactionAsync(token);
             }
         }
         catch (Exception ex)
         {
+            if (ownTransaction)
+            {
+                await RollbackTransactionAsync(token);
+            }
             Console.WriteLine($"Error executing store {storeName}: {ex.Message}");
             throw;
         }
         finally
         {
-            if (!string.IsNullOrEmpty(cursorName))
-            {
-                try
-                {
-                    using var closeCmd = new NpgsqlCommand($"CLOSE \"{cursorName}\";", (NpgsqlConnection)_connection, (NpgsqlTransaction)_transaction);
-                    await closeCmd.ExecuteNonQueryAsync();
-                }
-                catch { }
-            }
             ClearParameters();
         }
         return dt;
     }
 
     // Thực thi stored procedure trả về object
-    public async Task<T> ExecStoreToObjectAsync<T>(string storeName)
+    public async Task<T> ExecStoreToObjectAsync<T>(string storeName, CancellationToken cancellationToken = default)
     {
-        var dataTable = await ExecuteStoreDataTableAsync(storeName);
+        var dataTable = await ExecuteStoreDataTableAsync(storeName, cancellationToken);
         return dataTable?.Rows.Count > 0
-            ? GetItem<T>(dataTable.Rows[0])
+            ? DataRowMapper.GetItem<T>(dataTable.Rows[0])
             : Activator.CreateInstance<T>();
     }
 
     // Thực thi stored procedure trả về list object
-    public async Task<List<T>> ExecStoreToListObjectAsync<T>(string storeName)
+    public async Task<List<T>> ExecStoreToListObjectAsync<T>(string storeName, CancellationToken cancellationToken = default)
     {
-        var dataTable = await ExecuteStoreDataTableAsync(storeName);
+        var dataTable = await ExecuteStoreDataTableAsync(storeName, cancellationToken);
         return dataTable?.Rows.Count > 0
-            ? ConvertDataTableToList<T>(dataTable)
+            ? DataRowMapper.ConvertDataTableToList<T>(dataTable)
             : new List<T>();
     }
 
-    // Chuyển đổi DataTable thành List<T>
-    public static List<T> ConvertDataTableToList<T>(DataTable dt)
-    {
-        List<T> data = new List<T>();
-        foreach (DataRow row in dt.Rows)
-        {
-            var result = GetItem<T>(row);
-            data.Add(result);
-        }
-        return data;
-    }
-
     // Thực thi stored procedure không trả về dữ liệu
-    public async Task<int> ExecuteNonQueryAsync(string storeName)
+    public async Task<int> ExecuteNonQueryAsync(string storeName, CancellationToken cancellationToken = default)
     {
-        await EnsureOpenConnectionAsync();
+        using var timeoutCts = CancellationTokenTimeoutHelper.CreateLinkedTimeoutSource(cancellationToken);
+        var token = timeoutCts.Token;
 
-        // Sử dụng StringBuilder thay vì nối chuỗi
-        var sqlBuilder = new StringBuilder();
-        sqlBuilder.Append("SELECT ");
-        sqlBuilder.Append(storeName);
-        sqlBuilder.Append("(");
+        await EnsureOpenConnectionAsync(token);
 
-        if (_currentParameters.Any())
-        {
-            sqlBuilder.Append(string.Join(", ", _currentParameters.Select(p => p.ParameterName)));
-        }
-
-        sqlBuilder.Append(");");
-        string sql = sqlBuilder.ToString();
+        string sql = BuildCallSql(storeName, _currentParameters);
 
         using (_command = new NpgsqlCommand(sql, (NpgsqlConnection)_connection, (NpgsqlTransaction)_transaction))
         {
@@ -310,29 +274,20 @@ public class PostgresDbHelper : IDisposable, IDataCore
                 ((NpgsqlCommand)_command).Parameters.AddRange(_currentParameters.ToArray());
             }
 
-            int result = await ((NpgsqlCommand)_command).ExecuteNonQueryAsync();
+            int result = await ((NpgsqlCommand)_command).ExecuteNonQueryAsync(token);
             ClearParameters();
             return result;
         }
     }
     // Thực thi stored procedure trả về chuỗi kết quả
-    public async Task<string> ExecuteNonQueryAsStringAsync(string storeName)
+    public async Task<string> ExecuteNonQueryAsStringAsync(string storeName, CancellationToken cancellationToken = default)
     {
-        await EnsureOpenConnectionAsync();
+        using var timeoutCts = CancellationTokenTimeoutHelper.CreateLinkedTimeoutSource(cancellationToken);
+        var token = timeoutCts.Token;
 
-        // Tạo câu truy vấn
-        var sqlBuilder = new StringBuilder();
-        sqlBuilder.Append("SELECT ");
-        sqlBuilder.Append(storeName);
-        sqlBuilder.Append("(");
+        await EnsureOpenConnectionAsync(token);
 
-        if (_currentParameters.Any())
-        {
-            sqlBuilder.Append(string.Join(", ", _currentParameters.Select(p => p.ParameterName)));
-        }
-
-        sqlBuilder.Append(");");
-        string sql = sqlBuilder.ToString();
+        string sql = BuildCallSql(storeName, _currentParameters);
 
         try
         {
@@ -344,7 +299,7 @@ public class PostgresDbHelper : IDisposable, IDataCore
                 }
 
                 // Thực thi và đọc kết quả
-                object result = await ((NpgsqlCommand)_command).ExecuteScalarAsync();
+                object result = await ((NpgsqlCommand)_command).ExecuteScalarAsync(token);
                 return result?.ToString() ?? string.Empty;
             }
         }

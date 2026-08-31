@@ -31,7 +31,7 @@ namespace ApiCore8.Api.Middleware
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             string requestID = StringUtilities.GenarateRandomString(10);
-            _logger.AddLog($"Lỗi gọi API HPM-Internal ({requestID})", exception.CreateExceptionMessage(requestID));
+            _logger.LogError(exception, "Lỗi gọi API HPM-Internal ({RequestId})", requestID);
             var responseMessage = new { isError = true, status = 200, message = $"Lỗi gọi API HPM-Internal ({requestID})", messageDetail = $"Lỗi {exception.CreateExceptionMessage(requestID)}, vui lòng liên hệ IT , team HPM-Internal" };
             return context.Response.WriteAsJsonAsync(responseMessage);
         }

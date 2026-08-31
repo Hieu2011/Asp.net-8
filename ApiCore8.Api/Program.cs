@@ -1,8 +1,12 @@
 using ApiCore8.Api;
 using ApiCore8.Api.Middleware;
 using ApiCore8.Api.Services;
+using ApiCore8.Application.Services;
 using ApiCore8.Domain.Entities;
 using ApiCore8.Infrastructure;
+using ApiCore8.Infrastructure.Mongo;
+using Microsoft.Extensions.Configuration;
+using MongoDB.Driver;
 using Serilog;
 using System.Threading.Channels;
 
@@ -23,7 +27,7 @@ internal class Program
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            // ✅ Infrastructure (Mongo/Redis/Postgres) + Application (BLL repositories)
+            // ✅ Infrastructure (Mongo/Redis/Postgres) + Application (repositories)
             builder.Services.AddAppServices(builder.Configuration);
 
             //// ✅ Background services
@@ -32,6 +36,15 @@ internal class Program
 
             app = builder.Build();
             app.UseMiddleware<GlobalExceptionMiddleware>();
+
+            // ✅ Đảm bảo index/TTL cho SystemLogs tồn tại (idempotent, không chặn khởi động nếu lỗi)
+            using (var scope = app.Services.CreateScope())
+            {
+                var mongoDb = scope.ServiceProvider.GetRequiredService<IMongoDatabase>();
+                var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+                var systemLogsCollection = config["Database:SystemLogsCollection"] ?? SystemLogRepository.DefaultCollectionName;
+                await MongoIndexInitializer.EnsureSystemLogIndexesAsync(mongoDb, systemLogsCollection);
+            }
 
             // ✅ Log environment
             object[] arrayLog = new object[] { "Môi trường chạy HPM Service", $"Environment: {app.Environment.EnvironmentName}" };

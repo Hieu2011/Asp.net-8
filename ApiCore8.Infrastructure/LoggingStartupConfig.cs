@@ -1,19 +1,11 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using ApiCore8.Application.Services;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+using MongoDB.Driver;
 using Serilog;
 using Serilog.Sinks.Graylog;
 using Serilog.Sinks.Graylog.Core.Transport;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Sockets;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using static ApiCore8.Infrastructure.LogHelper;
-using Serilog.Core;
-using Serilog.Events;
+using Serilog.Sinks.MongoDB;
 
 namespace ApiCore8.Infrastructure
 {
@@ -21,15 +13,10 @@ namespace ApiCore8.Infrastructure
     {
         public static void AddSerilog(this WebApplicationBuilder builder)
         {
-            //// Đọc cấu hình từ appsettings.json
-            //var loggerConfig = new LoggerConfiguration()
-            //    .ReadFrom.Configuration(builder.Configuration)
-            //    .Enrich.FromLogContext();
-            //// Khởi tạo Logger
-            //Log.Logger = loggerConfig.CreateLogger();
+            // CHẨN ĐOÁN TẠM: Serilog mặc định nuốt hết exception nội bộ của sink (vd Mongo auth/connect fail)
+            // để không làm crash app — SelfLog là cách chính thức để xem log lỗi đó ra Console.
+            Serilog.Debugging.SelfLog.Enable(msg => Console.Error.WriteLine($"[Serilog SelfLog] {msg}"));
 
-            //// Tích hợp Serilog vào hệ thống log của ứng dụng
-            //builder.Host.UseSerilog();
             var configuration = builder.Configuration;
 
             var loggerConfig = new LoggerConfiguration()
@@ -44,7 +31,7 @@ namespace ApiCore8.Infrastructure
 
             if (configuration.GetValue<bool>("Serilog:EnableLogging:File"))
             {
-                loggerConfig.WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 7,
+                loggerConfig.WriteTo.File("logs/log-.txt", rollingInterval: Serilog.RollingInterval.Day, retainedFileCountLimit: 7,
                     outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}");
             }
 
@@ -59,53 +46,41 @@ namespace ApiCore8.Infrastructure
                 });
             }
 
+            if (configuration.GetValue<bool>("Serilog:EnableLogging:Mongo"))
+            {
+                var mongoConnectionString = configuration.GetConnectionString("MongoDB")
+                    ?? throw new InvalidOperationException("ConnectionStrings:MongoDB not configured");
+                var mongoDatabase = configuration["Database:MongoDatabase"]
+                    ?? throw new InvalidOperationException("Database:MongoDatabase not configured");
+                var systemLogsCollection = configuration["Database:SystemLogsCollection"] ?? SystemLogRepository.DefaultCollectionName;
+
+                // Dùng MongoUrlBuilder để gắn database name đúng cách, thay vì nối chuỗi thủ công —
+                // nối chuỗi trực tiếp sẽ vỡ nếu connection string đã có query string (?directConnection=true...).
+                var mongoUrlBuilder = new MongoUrlBuilder(mongoConnectionString);
+
+                // QUAN TRỌNG: chốt AuthenticationSource TRƯỚC khi đổi DatabaseName.
+                // Theo chuẩn Mongo URI, nếu không set authSource rõ ràng, driver tự suy ra authSource
+                // = database hiện có trong URI (hoặc "admin" nếu URI chưa có database nào).
+                // Đổi DatabaseName mà không chốt AuthenticationSource trước sẽ vô tình đổi luôn authSource
+                // ngầm định theo → user xác thực sai database → MongoAuthenticationException.
+                if (string.IsNullOrEmpty(mongoUrlBuilder.AuthenticationSource))
+                {
+                    mongoUrlBuilder.AuthenticationSource = string.IsNullOrEmpty(mongoUrlBuilder.DatabaseName)
+                        ? "admin"
+                        : mongoUrlBuilder.DatabaseName;
+                }
+
+                mongoUrlBuilder.DatabaseName = mongoDatabase;
+                var mongoUrl = mongoUrlBuilder.ToMongoUrl();
+
+                loggerConfig.WriteTo.MongoDBBson(
+                    mongoUrl.ToString(),
+                    collectionName: systemLogsCollection);
+            }
+
             Log.Logger = loggerConfig.CreateLogger();
 
             builder.Host.UseSerilog();
         }
-        public static void SerilogConfig(this ConfigureHostBuilder hostBuilder)
-        {
-            // Load configuration từ appsettings.json
-            var configuration = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .Build();
-
-            // Kiểm tra bật/tắt logging
-            var enableFileLogging = configuration.GetValue<bool>("Logging:EnableFileLogging");
-            var enableGraylog = configuration.GetValue<bool>("Logging:EnableGraylog");
-
-            // Cấu hình Serilog
-            var loggerConfig = new LoggerConfiguration()
-                .MinimumLevel.Information()
-                .ReadFrom.Configuration(configuration)
-                .Enrich.FromLogContext()
-                ;
-
-            if (enableFileLogging)
-            {
-                loggerConfig.WriteTo.File(
-                    path: configuration["Logging:FileLogging:Path"],
-                    rollingInterval: RollingInterval.Day,
-                    retainedFileCountLimit: configuration.GetValue<int>("Logging:FileLogging:RetainedFileCountLimit")
-                );
-            }
-
-            if (enableGraylog)
-            {
-                loggerConfig.WriteTo.Graylog(new GraylogSinkOptions
-                {
-                    HostnameOrAddress = configuration["Logging:Graylog:HostnameOrAddress"],
-                    Port = configuration.GetValue<int>("Logging:Graylog:Port"),
-                    Facility = configuration["Logging:Graylog:Facility"],
-                    TransportType = TransportType.Udp
-                });
-            }
-
-            Log.Logger = loggerConfig.CreateLogger();
-            hostBuilder.UseSerilog();
-
-          
-        }
-       
     }
 }
