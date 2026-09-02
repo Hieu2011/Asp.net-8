@@ -1,6 +1,8 @@
+using System.Diagnostics;
 using ApiCore8.Application.Abstractions;
 using ApiCore8.Application.Interfaces;
 using ApiCore8.Domain.Entities;
+using Serilog;
 
 namespace ApiCore8.Application.Services
 {
@@ -39,7 +41,22 @@ namespace ApiCore8.Application.Services
 
         public async Task<List<Users>> GetAllAsync(CancellationToken cancellationToken = default)
         {
-            return await _db.ExecStoreToListObjectAsync<Users>("sp_user_get_all", cancellationToken);
+            // Đo riêng thời gian đọc/map DB, tách khỏi JSON serialize + network HTTP — so trực tiếp
+            // với GetAllFastAsync bên dưới. Tạm để test, gỡ khi so xong.
+            var sw = Stopwatch.StartNew();
+            var result = await _db.ExecStoreToListObjectAsync<Users>("sp_user_get_all", cancellationToken);
+            sw.Stop();
+            Log.Information("[Bench] GetAllAsync (DataTable): {Count} rows in {ElapsedMs} ms", result.Count, sw.ElapsedMilliseconds);
+            return result;
+        }
+
+        public async Task<List<Users>> GetAllFastAsync(CancellationToken cancellationToken = default)
+        {
+            var sw = Stopwatch.StartNew();
+            var result = await _db.ExecStoreToListObjectFastAsync<Users>("sp_user_get_all", cancellationToken);
+            sw.Stop();
+            Log.Information("[Bench] GetAllFastAsync (CompiledReaderMapper): {Count} rows in {ElapsedMs} ms", result.Count, sw.ElapsedMilliseconds);
+            return result;
         }
 
         public async Task<List<Users>> SearchByCreatedDateAsync(DateTime fromDateUtc, DateTime toDateUtc, CancellationToken cancellationToken = default)

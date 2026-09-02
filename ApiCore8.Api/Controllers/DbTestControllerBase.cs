@@ -71,6 +71,25 @@ namespace ApiCore8.Api.Controllers
             }
         }
 
+        [HttpGet("Users/Fast")]
+        public async Task<APIResult> GetAllUsersFast(CancellationToken cancellationToken)
+        {
+            // Y hệt GetAllUsers về kết quả trả về — khác cách đọc dữ liệu bên dưới (không qua
+            // DataTable). So sánh tốc độ 2 cái qua header X-Response-Time-Ms (do [LogApi] gắn thêm).
+            using var db = CreateDataCore();
+            var repo = new UserRepository(db);
+            try
+            {
+                var users = await repo.GetAllFastAsync(cancellationToken);
+                return new APIResult(users);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting users (fast)");
+                return new APIResult(true, ResultMessage.ErrorTypes.GetData, "Error getting users", ex.Message);
+            }
+        }
+
         [HttpGet("Users/Search")]
         public async Task<APIResult> SearchByCreatedDate([FromQuery] string fromDate, [FromQuery] string toDate, CancellationToken cancellationToken)
         {

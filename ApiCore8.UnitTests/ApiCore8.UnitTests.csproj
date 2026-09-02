@@ -21,7 +21,6 @@
   <ItemGroup>
     <ProjectReference Include="..\ApiCore8.Infrastructure\ApiCore8.Infrastructure.csproj" />
     <ProjectReference Include="..\ApiCore8.Application\ApiCore8.Application.csproj" />
-    <ProjectReference Include="..\ApiCore8.Api\ApiCore8.Api.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using ApiCore8.Application.Contracts;
 using ApiCore8.Application.Extensions;
 using ApiCore8.Application.Interfaces;
@@ -110,15 +111,66 @@ namespace ApiCore8.Application.Services
             }
             catch (Exception ex)
             {
+                // Rethrow (không trả PagedResult rỗng) — PagedResult không có field chứa lỗi, nuốt ở
+                // đây sẽ khiến controller không bao giờ thấy exception để đưa ex.Message vào MessageDetail.
                 _log.Error(ex, "Error searching ApiExecutionLog");
+                throw;
+            }
+        }
 
-                return new PagedResult<ApiExecutionLog>
+        /// <summary>
+        /// Search 1 từ khóa duy nhất — khớp LIKE (regex, không phân biệt hoa thường) trên bất kỳ
+        /// field nào trong ApiName/RequestBody/ResponseBody (OR giữa 3 field), kết hợp AND với
+        /// FromDate/ToDate nếu có truyền. Regex.Escape trước để tìm theo từ khóa, không phải regex
+        /// tùy ý (tránh input người dùng chứa ký tự regex đặc biệt làm Mongo từ chối pattern).
+        /// FromDate lọc theo StartTime, ToDate lọc theo EndTime — đúng khoảng thời gian request đó
+        /// THỰC SỰ chạy, không dùng CreatedAt (chỉ là thời điểm ghi log, luôn xấp xỉ EndTime).
+        /// </summary>
+        public async Task<PagedResult<ApiExecutionLog>> SearchByKeywordAsync(ApiLogKeywordSearchRequest request, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var filterBuilder = Builders<ApiExecutionLog>.Filter;
+                var filters = new List<FilterDefinition<ApiExecutionLog>>();
+
+                if (!string.IsNullOrEmpty(request.Keyword))
                 {
-                    Items = new List<ApiExecutionLog>(),
-                    Total = 0,
-                    Page = request.Page,
-                    PageSize = request.PageSize
-                };
+                    var pattern = new BsonRegularExpression(Regex.Escape(request.Keyword), "i");
+                    filters.Add(filterBuilder.Or(
+                        filterBuilder.Regex(x => x.ApiName, pattern),
+                        filterBuilder.Regex(x => x.RequestBody, pattern),
+                        filterBuilder.Regex(x => x.ResponseBody, pattern)
+                    ));
+                }
+
+                if (request.FromDate.HasValue)
+                {
+                    filters.Add(filterBuilder.Gte(x => x.StartTime, request.FromDate.Value));
+                }
+
+                if (request.ToDate.HasValue)
+                {
+                    filters.Add(filterBuilder.Lte(x => x.EndTime, request.ToDate.Value));
+                }
+
+                var finalFilter = filters.Count > 0
+                    ? filterBuilder.And(filters)
+                    : filterBuilder.Empty;
+
+                var sort = Builders<ApiExecutionLog>.Sort.Descending(x => x.CreatedAt);
+
+                return await _collection.GetPagedAsync(
+                    filter: finalFilter,
+                    page: request.Page,
+                    pageSize: request.PageSize,
+                    sort: sort,
+                    cancellationToken: cancellationToken
+                );
+            }
+            catch (Exception ex)
+            {
+                _log.Error(ex, "Error searching ApiExecutionLog by keyword");
+                throw;
             }
         }
 
@@ -180,14 +232,7 @@ namespace ApiCore8.Application.Services
             catch (Exception ex)
             {
                 _log.Error(ex, "Error getting slow logs");
-
-                return new PagedResult<ApiExecutionLog>
-                {
-                    Items = new List<ApiExecutionLog>(),
-                    Total = 0,
-                    Page = pageIndex,
-                    PageSize = pageSize
-                };
+                throw;
             }
         }
 

@@ -15,6 +15,10 @@ namespace ApiCore8.Api.Middleware
 {
     public class LogApiAttribute : ActionFilterAttribute
     {
+        // Giới hạn an toàn để không vượt MaxDocumentSize 16MB của MongoDB khi response/request quá
+        // lớn (VD: list vài chục-trăm ngàn dòng) — cắt bớt, không log nguyên văn.
+        private const int MaxLoggedBodyLength = 50_000;
+
         private DateTime? _startTime = null;
         private Stopwatch _stopwatch;
         private string _requestBody = string.Empty;
@@ -64,14 +68,12 @@ namespace ApiCore8.Api.Middleware
                 {
                     ApiName = $"{request.Method} {request.Path}",
                     Method = request.Method,
-                    RequestBody = _requestBody,
-                    ResponseBody = responseBody,
+                    RequestBody = Truncate(_requestBody),
+                    ResponseBody = Truncate(responseBody),
                     StartTime = _startTime ?? DateTime.UtcNow,
                     EndTime = endTime,
                     CreatedAt = DateTime.UtcNow,
-                    ClientIP = LogHelper.GetClientIp(),
-                    StartTimeStr = new System.DateTimeOffset(_startTime ?? DateTime.UtcNow).ToString("yyyy-MM-dd HH:mm:ss.fff zzz"),
-                    EndTimeStr = new System.DateTimeOffset(endTime).ToString("yyyy-MM-dd HH:mm:ss.fff zzz")
+                    ClientIP = LogHelper.GetClientIp()
                 };
                 try
                 {
@@ -83,6 +85,7 @@ namespace ApiCore8.Api.Middleware
                 {
                     log.ExecutionMs = 0;
                 }
+                log.ExecutionTimeDisplay = FormatExecutionTime(log.ExecutionMs);
 
                 // Non-blocking: đẩy task ghi log ra background, không thay đổi response nếu ghi log thất bại
                 var channel = context.HttpContext.RequestServices
@@ -97,6 +100,30 @@ namespace ApiCore8.Api.Middleware
                 }
             }
         }
+        // Tự quy đổi đơn vị theo độ lớn — tránh nhìn số mili giây trần trụi (VD 707) mà không rõ
+        // là 707ms hay tưởng nhầm 707 giây/phút.
+        private static string FormatExecutionTime(long ms)
+        {
+            if (ms < 1000) return $"{ms} ms";
+
+            var seconds = ms / 1000.0;
+            if (seconds < 60) return $"{seconds:F2} s";
+
+            var minutes = seconds / 60;
+            if (minutes < 60) return $"{minutes:F2} min";
+
+            var hours = minutes / 60;
+            return $"{hours:F2} h";
+        }
+
+        private static string Truncate(string body)
+        {
+            if (string.IsNullOrEmpty(body) || body.Length <= MaxLoggedBodyLength)
+                return body;
+
+            return body.Substring(0, MaxLoggedBodyLength) + $"...[truncated, original length {body.Length} chars]";
+        }
+
         private static async Task<string> ReadResponseBodyAsync(ActionExecutedContext executedContext)
         {
             string responseBody = string.Empty;

@@ -20,7 +20,7 @@ public class OracleDbHelper : IDisposable, IDataCore
     private IDbConnection _connection;
     private IDbTransaction _transaction;
     private IDbCommand _command;
-    internal List<OracleParameter> _currentParameters = new();
+    private List<OracleParameter> _currentParameters = new();
 
     IDbCommand IDataCore.ICommand
     {
@@ -176,6 +176,45 @@ public class OracleDbHelper : IDisposable, IDataCore
         }
 
         return dt;
+    }
+
+    // Bản "fast" của ExecStoreToListObjectAsync — đọc thẳng OracleDataReader bằng
+    // CompiledReaderMapper, KHÔNG dựng DataTable trung gian. Oracle đọc refcursor xong trong đúng
+    // 1 round-trip (không cần transaction cục bộ như Postgres) nên đơn giản hơn hẳn.
+    public async Task<List<T>> ExecStoreToListObjectFastAsync<T>(string storeName, CancellationToken cancellationToken = default)
+    {
+        using var timeoutCts = CancellationTokenTimeoutHelper.CreateLinkedTimeoutSource(cancellationToken);
+        var token = timeoutCts.Token;
+
+        await EnsureOpenConnectionAsync(token);
+        var list = new List<T>();
+
+        try
+        {
+            using (_command = CreateStoredProcedureCommand(storeName))
+            {
+                var oracleCommand = (OracleCommand)_command;
+                oracleCommand.Parameters.Add(DefaultOutParameterName, OracleDbType.RefCursor).Direction = ParameterDirection.Output;
+
+                using var reader = await oracleCommand.ExecuteReaderAsync(token);
+                var mapper = CompiledReaderMapper.Build<T>(reader);
+                while (await reader.ReadAsync(token))
+                {
+                    list.Add(mapper(reader));
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error executing store {storeName}: {ex.Message}");
+            throw;
+        }
+        finally
+        {
+            ClearParameters();
+        }
+
+        return list;
     }
 
     public async Task<T> ExecStoreToObjectAsync<T>(string storeName, CancellationToken cancellationToken = default)

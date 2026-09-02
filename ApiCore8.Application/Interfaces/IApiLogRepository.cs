@@ -23,7 +23,17 @@ namespace ApiCore8.Application.Interfaces
         /// <param name="request">LogFilterRequest</param>
         /// <returns>PagedResult với danh sách ApiExecutionLog</returns>
         Task<PagedResult<ApiExecutionLog>> Search(LogFilterRequest request);
-        
+
+        /// <summary>
+        /// Search 1 từ khóa duy nhất — khớp kiểu LIKE (regex, không phân biệt hoa thường) trên
+        /// BẤT KỲ field nào trong ApiName/RequestBody/ResponseBody (OR), kết hợp AND với
+        /// FromDate (lọc theo StartTime) / ToDate (lọc theo EndTime).
+        /// </summary>
+        /// <param name="request">ApiLogKeywordSearchRequest</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns>PagedResult với danh sách ApiExecutionLog khớp bất kỳ field nào</returns>
+        Task<PagedResult<ApiExecutionLog>> SearchByKeywordAsync(ApiLogKeywordSearchRequest request, CancellationToken cancellationToken = default);
+
         /// <summary>
         /// Lấy log theo ID
         /// </summary>

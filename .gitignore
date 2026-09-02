@@ -18,7 +18,9 @@ ApiCore8.UnitTests/bin
 ApiCore8.UnitTests/obj
 .vs
 .vscode
-.codegraph/
+
+# .codegraph/ tự có .gitignore riêng bên trong (ignore hết trừ chính .gitignore đó) — không ignore
+# cả thư mục ở đây, vì làm vậy Git sẽ không mở vào trong để đọc .gitignore con nữa.
 
 # Rolling log file (giữ 7 file, không cần commit vào git)
 ApiCore8.Api/logs/

@@ -29,10 +29,4 @@
     <ProjectReference Include="..\ApiCore8.Application\ApiCore8.Application.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <!-- Cho phép ApiCore8.UnitTests đọc field internal (_currentParameters) để verify
-         AddParameter gán đúng NpgsqlDbType/OracleDbType/SqlDbType — không đổi API public. -->
-    <InternalsVisibleTo Include="ApiCore8.UnitTests" />
-  </ItemGroup>
-
 </Project>

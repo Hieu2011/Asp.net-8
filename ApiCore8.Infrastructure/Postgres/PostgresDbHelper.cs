@@ -17,7 +17,7 @@ public class PostgresDbHelper : IDisposable, IDataCore
     private IDbConnection _connection;
     private IDbTransaction _transaction;
     private IDbCommand _command;
-    internal List<NpgsqlParameter> _currentParameters = new();
+    private List<NpgsqlParameter> _currentParameters = new();
 
     // Implement IDataCore interface
     IDbCommand IDataCore.ICommand
@@ -135,7 +135,7 @@ public class PostgresDbHelper : IDisposable, IDataCore
     // ExecuteNonQueryAsStringAsync) thay vì lặp lại 3 lần. Named notation không phụ thuộc thứ tự
     // tham số khai báo trong function Postgres — v_out (hay bất kỳ tham số nào) nằm ở vị trí nào
     // trong _currentParameters cũng ra cùng 1 kết quả, vì PostgreSQL tự khớp theo tên.
-    internal static string BuildCallSql(string storeName, IReadOnlyList<NpgsqlParameter> parameters)
+    private static string BuildCallSql(string storeName, IReadOnlyList<NpgsqlParameter> parameters)
     {
         var sqlBuilder = new StringBuilder();
         sqlBuilder.Append("SELECT ");
@@ -255,6 +255,93 @@ public class PostgresDbHelper : IDisposable, IDataCore
         return dataTable?.Rows.Count > 0
             ? DataRowMapper.ConvertDataTableToList<T>(dataTable)
             : new List<T>();
+    }
+
+    // Bản "fast" của ExecStoreToListObjectAsync — đọc thẳng qua FETCH refcursor bằng
+    // CompiledReaderMapper, KHÔNG dựng DataTable trung gian. Vẫn tự động map (không cần viết tay),
+    // vẫn giữ nguyên cơ chế transaction cục bộ cho refcursor — chỉ khác bước đọc kết quả cuối cùng.
+    public async Task<List<T>> ExecStoreToListObjectFastAsync<T>(string storeName, CancellationToken cancellationToken = default)
+    {
+        using var timeoutCts = CancellationTokenTimeoutHelper.CreateLinkedTimeoutSource(cancellationToken);
+        var token = timeoutCts.Token;
+
+        await EnsureOpenConnectionAsync(token);
+        var list = new List<T>();
+        string cursorName = storeName;
+
+        bool ownTransaction = _transaction == null;
+        if (ownTransaction)
+        {
+            await StartTransactionScopeAsync(token);
+        }
+
+        try
+        {
+            if (!_currentParameters.Any(p => p.NpgsqlDbType == NpgsqlDbType.Refcursor))
+            {
+                _currentParameters.Insert(0, new NpgsqlParameter
+                {
+                    ParameterName = "v_out",
+                    NpgsqlDbType = NpgsqlDbType.Refcursor,
+                    Value = DBNull.Value
+                });
+            }
+
+            string sql = BuildCallSql(storeName, _currentParameters);
+
+            using (_command = new NpgsqlCommand(sql, (NpgsqlConnection)_connection, (NpgsqlTransaction)_transaction))
+            {
+                ((NpgsqlCommand)_command).Parameters.AddRange(_currentParameters.ToArray());
+
+                using (var reader = await ((NpgsqlCommand)_command).ExecuteReaderAsync(token))
+                {
+                    if (!await reader.ReadAsync(token) || reader.IsDBNull(0))
+                    {
+                        if (ownTransaction) await CommitTransactionAsync(token);
+                        return list;
+                    }
+                    cursorName = reader.GetString(0);
+                }
+            }
+
+            using (var fetchCmd = new NpgsqlCommand($"FETCH ALL IN \"{cursorName}\";", (NpgsqlConnection)_connection, (NpgsqlTransaction)_transaction))
+            using (var fetchReader = await fetchCmd.ExecuteReaderAsync(token))
+            {
+                // Build + compile mapper 1 lần cho lần gọi này (dựa theo cột thật của reader) —
+                // không phải reflection mỗi dòng như DataRowMapper.
+                var mapper = CompiledReaderMapper.Build<T>(fetchReader);
+                while (await fetchReader.ReadAsync(token))
+                {
+                    list.Add(mapper(fetchReader));
+                }
+            }
+
+            try
+            {
+                using var closeCmd = new NpgsqlCommand($"CLOSE \"{cursorName}\";", (NpgsqlConnection)_connection, (NpgsqlTransaction)_transaction);
+                await closeCmd.ExecuteNonQueryAsync(token);
+            }
+            catch { }
+
+            if (ownTransaction)
+            {
+                await CommitTransactionAsync(token);
+            }
+        }
+        catch (Exception ex)
+        {
+            if (ownTransaction)
+            {
+                await RollbackTransactionAsync(token);
+            }
+            Console.WriteLine($"Error executing store {storeName}: {ex.Message}");
+            throw;
+        }
+        finally
+        {
+            ClearParameters();
+        }
+        return list;
     }
 
     // Thực thi stored procedure không trả về dữ liệu

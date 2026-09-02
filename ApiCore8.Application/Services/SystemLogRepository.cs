@@ -132,15 +132,10 @@ namespace ApiCore8.Application.Services
             }
             catch (Exception ex)
             {
+                // Rethrow (không trả PagedResult rỗng) — PagedResult không có field chứa lỗi, nuốt ở
+                // đây sẽ khiến controller không bao giờ thấy exception để đưa ex.Message vào MessageDetail.
                 _log.Error(ex, "Error searching SystemLog");
-
-                return new PagedResult<SystemLog>
-                {
-                    Items = new List<SystemLog>(),
-                    Total = 0,
-                    Page = request.PageIndex,
-                    PageSize = request.PageSize
-                };
+                throw;
             }
         }
 
