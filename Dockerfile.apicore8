@@ -1,4 +1,4 @@
-﻿# Bước 1: Sử dụng hình ảnh SDK để xây dựng ứng dụng
+# Bước 1: Sử dụng hình ảnh SDK để xây dựng ứng dụng
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 

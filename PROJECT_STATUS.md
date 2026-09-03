@@ -2,51 +2,54 @@
 
 Quy ước: mỗi khi 1 việc xong → xóa khỏi "Đang làm", chuyển ghi chú quan trọng (nếu có) vào `CLAUDE.md`. Việc đã commit → xóa khỏi file này hoàn toàn, không giữ làm lịch sử (git log lo phần đó). File này chỉ phản ánh **hiện tại đang ở đâu**, không phải nhật ký.
 
-## Bản đồ giai đoạn lớn (macro roadmap)
+## Bản đồ giai đoạn lớn (macro roadmap — 5 bước)
 
-- [x] **Giai đoạn 1 — Hạ tầng & CI/CD**: Coolify + Cloudflare Tunnel + Tailscale, xong phần lớn.
-- [x] **Giai đoạn 2 — Database**: Postgres (`auth_db` riêng), Redis riêng, MongoDB tái dùng cho log.
-- [~] **Giai đoạn 3 — Dọn dẹp WebApiCore8 (Business API)**: Clean Architecture xong, logging/Mongo pipeline xong (vừa fix xong đợt bug lớn — xem "Đang làm" bên dưới). Còn sót: AntiSpamMiddleware tắt, mask log nhạy cảm, RequestTimeouts/CancellationToken.
-- [ ] **Giai đoạn 4 — Auth Service**: mới ở mức skeleton project, CHƯA code business logic (Users/OTP/JWT/Session). Chưa bắt đầu.
+- [~] **Bước 1 — Hạ tầng & CI/CD**: Coolify + Cloudflare Tunnel + Tailscale — đã cài đặt, chạy thật. Riêng **mô hình CI/CD (Coolify webhook tự động ở nhà, redeploy tay qua Tailscale ở công ty) mới CHỐT quyết định, CHƯA triển khai/test thật** — không tính là xong hẳn.
+- [x] **Bước 2 — Database**: Postgres (`auth_db` riêng), Redis riêng, MongoDB tái dùng cho log.
+- [~] **Bước 3 — Dọn dẹp & tối ưu WebApiCore8**: Clean Architecture xong, multi-provider data access (Postgres/Oracle/SqlServer) xong, pipeline đọc dữ liệu tối ưu (CompiledReaderMapper) xong, logging Mongo + API search xong. Còn sót: AntiSpamMiddleware tắt, mask log nhạy cảm, RequestTimeouts/CancellationToken, Oracle/SqlServer chưa verify chạy thật. **Đây là dọn dẹp/chuẩn bị nền — KHÁC bước 5 (gắn JWT thật).**
+- [ ] **Bước 4 — Auth Service**: mới ở mức skeleton project, CHƯA code business logic (Users/OTP/JWT/Session). Chưa bắt đầu.
+- [ ] **Bước 5 — Business API: tích hợp JWT**: sau khi bước 4 xong — thêm JWT Bearer validation (RSA public key của Auth Service), gắn `[Authorize]`, bật rate limit built-in .NET 8 (thay `AntiSpamMiddleware`). Phụ thuộc thẳng bước 4, chưa bắt đầu.
 
-→ **Đang ở cuối Giai đoạn 3, chuẩn bị bắt đầu Giai đoạn 4.**
+→ **Đang ở bước 3 (dọn dẹp/tối ưu WebApiCore8), bước 1 còn 1 hạng mục CI/CD chưa triển khai thật.**
 
-## Đang làm (chi tiết, session gần nhất — 2026-08-23)
+## Trạng thái git
 
-Chủ đề: siết timeout connection string, truy gốc bug "log không ghi vào Mongo", làm lại thư viện Postgres.
+Toàn bộ việc bên dưới **đã nằm trong commit `87ba61e` ("upcode init project")** — working tree hiện đang sạch (`git status` clean). Chưa push lên remote nếu chưa được confirm.
 
-**Đã xong, ở working tree, CHƯA commit:**
-- Timeout: Postgres (`Timeout=5;Command Timeout=10`), Mongo (`serverSelectionTimeoutMS=5000&connectTimeoutMS=5000`) — qua User Secrets.
-- `RedisTestController.SetCache`: fix `expiryMinutes: 0` → lỗi Redis `invalid expire time`; fix `expiry.Value` crash theo sau.
-- Gắn `[LogApi]` vào `RedisTestController`.
-- Root cause chuỗi bug Mongo logging (4 lớp, xem chi tiết trong git diff khi cần):
-  1. `LoggingStartupConfig.AddSerilog` — `MongoUrlBuilder` đổi `DatabaseName` làm lệch `authSource` ngầm định → `MongoAuthenticationException`. Fix: chốt `AuthenticationSource` trước.
-  2. `SystemLog` thiếu `[BsonIgnoreExtraElements]` → `FormatException` khi đọc field lạ (`MessageTemplate`).
-  3. `SystemLog.Exception` sai kiểu `string?` → đổi `BsonDocument?`.
-  4. `System.Text.Json` không serialize được `BsonDocument` → thêm `BsonDocumentJsonConverter` (`ApiCore8.Domain/Serialization/`).
-- Verify bằng `dotnet run` thật + `curl` — `SystemLogsController.Recent` trả đúng log thật.
-- Thêm `Serilog.Debugging.SelfLog.Enable(...)` (giữ lại vĩnh viễn, không phải tạm).
-- `ApiExecutionLog.CreatedAt` + `ApiLoggingAttribute` (`_startTime`/`endTime`/`CreatedAt`): đổi `DateTime.Now` → `DateTime.UtcNow` — đồng bộ UTC với `SystemLog` (trước lệch múi giờ giữa 2 collection log).
-- **Viết lại thư viện Postgres theo hướng gọi Postgres function/SP (không raw SQL)** — anh muốn giới hạn quyền DB user (chỉ `GRANT EXECUTE` trên function, `REVOKE` quyền trực tiếp trên bảng):
-  - `PostgresDbHelper.cs`: fix 3 bug (thiếu `@` ở `ExecuteNonQueryAsync`/`ExecuteNonQueryAsStringAsync`, `Convert.ChangeType` crash với `Guid`, gọi theo *named notation* `tên => @tên` thay vì positional để thứ tự tham số trong function không cần khớp thứ tự khai báo); bỏ `ConfigHelper` (tự đọc `appsettings.json` riêng, không thấy User Secrets); thêm transaction cục bộ tự mở/đóng quanh refcursor (OPEN/FETCH/CLOSE) vì cursor chỉ sống trong 1 transaction.
-  - `ConfigHelper.cs` vẫn giữ nguyên file (không xóa) nhưng không dùng nữa — có bug riêng (không đọc User Secrets) nếu sau này định dùng lại.
-  - `IDataCore` đăng ký DI kiểu Scoped (`AddInfrastructureServices`), lấy connection string qua `IConfiguration`.
-  - `IUserRepository`/`UserRepository` (Application) + `PostgresTestController` (`/api/PostgresTest/Users`) — CRUD test gọi qua 5 function: `sp_user_create`, `sp_user_get_by_id`, `sp_user_get_all`, `sp_user_update`, `sp_user_delete`.
-  - Build `WebApiCore8.sln`: 0 lỗi.
-  - **Anh cần tự chạy SQL tạo 5 function + GRANT/REVOKE trong DB** (đã đưa trong chat, bảng `users` anh đã tạo sẵn) — chưa verify chạy thật qua Swagger/curl.
+## Đã làm xong (session gần nhất, đã commit)
 
-**Ghi chú tham khảo — pattern code cũ `tmsinternalapi` (`D:\Project_TGDD\InternalAPI_Version2\tmsinternalapi`), dùng để cải thiện `PostgresDbHelper`/`IDataCore` sau này:**
-- BLL tạo `IData objData = Data.CreateData();` 1 lần đầu method, **tự tay truyền `objData` làm tham số** qua mọi hàm DAL cần dùng trong cùng 1 nghiệp vụ (không qua DI).
-- Mở/đóng tách bước rõ ràng: `objData.Connect()` / `objData.BeginTransaction()` / `objData.CommitTransaction()` / `objData.Disconnect()` — gọi `Disconnect()` lại lần nữa trong `finally` (idempotent) để đảm bảo đóng dù exception xảy ra ở đâu. Không dùng `using(){}`.
-- DAL gọi function Postgres qua `objData.CreateNewStoredProcedure("schema.function_name")` + `AddParameter("v_xxx", value)` + `ExecStoreToDataTable()`/`ExecNonQuery()` — tên tham số Postgres theo quy ước `v_xxx`, không prefix `@`.
-- So với `PostgresDbHelper` mới: cùng ý tưởng (1 connection dùng chung cho 1 đơn vị công việc, không mở/đóng mỗi câu SQL), khác cơ chế (DI tự inject + tự Dispose khi hết Scope, thay vì tự tay truyền tham số + tự viết `finally { Disconnect() }`). Việc cần làm sau: cân nhắc học theo pattern `CreateNewStoredProcedure(name)` tách riêng khỏi `AddParameter` (rõ ràng hơn cách hiện tại truyền `storeName` trực tiếp vào `ExecStoreToObjectAsync<T>(storeName)`), và cân nhắc có cần API `Connect()`/`Disconnect()` tường minh cho trường hợp 1 nghiệp vụ cần nhiều bước transaction lồng nhau.
+**1. Multi-provider data access — tối ưu tốc độ đọc dữ liệu:**
+- Phân tích + benchmark thật: xác định `DataTable.Load(IDataReader)` + `PropertyInfo.SetValue` (reflection) là 2 điểm nghẽn chính khi đọc hàng trăm ngàn dòng.
+- Thêm `CompiledReaderMapper` (`ApiCore8.Infrastructure/Database/`) — dùng Expression Tree biên dịch 1 lần/lần gọi, đọc thẳng `IDataReader` không qua `DataTable`. Nhanh hơn ~2x thật (đo bằng Stopwatch, tách khỏi JSON serialize) trên data 100k dòng.
+- Thêm song song `ExecStoreToListObjectFastAsync<T>` (Postgres/Oracle/SqlServer) — **không thay thế** `ExecStoreToListObjectAsync<T>` cũ, để so sánh A/B qua `GetAllFastAsync`/`/Users/Fast` vs `/Users` (cũ).
+- Bug thật bắt được qua unit test: `CompiledReaderMapper` bản đầu dùng `MemberInit` khiến cột `DBNull` ghi đè mất field initializer (VD `Username = string.Empty` → `null`) — fix bằng `Block` + `IfThen` (chỉ gán khi không null), khớp hành vi `DataRowMapper`.
+- Thêm `Stopwatch` + `Log.Information("[Bench] ...")` trong `UserRepository.GetAllAsync`/`GetAllFastAsync` để đo tách riêng — **code tạm, gỡ sau khi so sánh xong**.
 
-**Việc kế tiếp, chưa làm — pending quyết định của anh:**
-1. Chạy SQL tạo 5 function `sp_user_*` + GRANT/REVOKE vào DB, verify `/api/PostgresTest/Users` chạy thật.
-2. `git commit` đợt fix trên (đang chờ anh confirm).
-3. Thêm `ApiCore8.Api/logs/` vào `.gitignore`.
-4. `RequestTimeouts` middleware (.NET 8) + truyền `CancellationToken` xuống `ApiLogRepository`/`SystemLogRepository`/`RedisCacheRepository`.
-5. Sau đó: bắt đầu Giai đoạn 4 (Auth Service — Users/OTP/JWT/Session) nếu Giai đoạn 3 coi như đóng.
+**2. Dọn `ApiCore8.UnitTests`** (theo "hướng B" — chỉ giữ test cho pure-logic dễ lỗi âm thầm, bỏ test API vì đã test tay qua Postman/Swagger): xóa `SystemLogsControllerTests`, `AddParameterTypeTests`, `DataCoreFactoryTests`, `DateTimeJsonSerializationTests`, `PostgresDbHelperSqlBuildingTests`, `UserRepositoryTests`; giữ `ConnectionStringDetectorTests`, `ExplicitOffsetDateTimeParserTests`, `DataRowMapperTests`, `CancellationTokenTimeoutHelperTests`, thêm mới `CompiledReaderMapperTests` (8 test).
+
+**3. API search cho MongoDB logs (`APILogs` collection):**
+- `ApiLogsController` (mới) + `GET /api/ApiLogs/Search?keyword=&fromDate=&toDate=&page=&pageSize=` — search 1 keyword LIKE trên cả 3 field `ApiName`/`RequestBody`/`ResponseBody` (OR), kết hợp AND với khoảng ngày (`fromDate` lọc `StartTime`, `toDate` lọc `EndTime`) — cả keyword và ngày đều optional, độc lập nhau.
+- `fromDate`/`toDate` nhận string + bắt buộc offset tường minh qua `ExplicitOffsetDateTimeParser` (tránh lỗi model binder tự quy đổi giờ theo server — đã từng gây "search có data mà ra rỗng").
+- Fix lỗi Mongo `MaxDocumentSize` (16MB) khi `[LogApi]` log response quá lớn (VD 100k dòng ≈ 29MB) — thêm `Truncate` (giới hạn 50k ký tự) trong `ApiLoggingAttribute` trước khi ghi `RequestBody`/`ResponseBody` vào Mongo.
+- Xóa cột thừa `StartTimeStr`/`EndTimeStr` trong `ApiExecutionLog` (trùng lặp `StartTime`/`EndTime`); thêm `ExecutionTimeDisplay` (string, tự quy đổi đơn vị ms/s/min/h) đi kèm `ExecutionMs` (giữ nguyên kiểu số để `GetSlowLogs` filter/sort được).
+
+**4. Fix "nuốt lỗi" (silent catch) ở tầng repository Mongo:**
+- `ApiLogRepository.Search`, `ApiLogRepository.SearchByKeywordAsync`, `ApiLogRepository.GetSlowLogs`, `SystemLogRepository.SearchAsync` — trước đây catch exception rồi trả `PagedResult` rỗng (không có field chứa lỗi) khiến controller không bao giờ đưa được `ex.Message` vào `MessageDetail`. Fix: giữ `Log.Error(...)` (log 1 lần) rồi `throw;` để controller's catch (đã viết đúng sẵn) bắt được và trả lỗi thật cho client.
+
+**5. Rule mới ghi vào `CLAUDE.md`:** mọi action method controller phải trả `Task<APIResult>`, không bao giờ trả thẳng `PagedResult<T>`/DTO ra HTTP response (xác nhận code hiện tại đã tuân thủ đúng).
+
+**6. Data test:** `scripts/postgres_users_seed_1000.sql` — seed 100,000 dòng vào bảng `users` (Postgres) qua `generate_series`, dùng để benchmark thật ở mục 1.
+
+**7. Artifact bản đồ tiến độ (visual):** https://claude.ai/code/artifact/3081c521-23a0-4270-ac0b-518ae5dd0e5c — timeline 5 bước, cùng nội dung với mục "Bản đồ giai đoạn lớn" ở trên; cập nhật lại artifact này (redeploy cùng URL) mỗi khi macro roadmap đổi.
+
+## Việc kế tiếp — pending quyết định của anh
+
+1. **Gỡ code Stopwatch/[Bench] log tạm** trong `UserRepository` sau khi anh so sánh xong tốc độ 2 hàm `GetAllAsync`/`GetAllFastAsync`.
+2. Quyết định: giữ cả `ExecStoreToListObjectAsync` (cũ) + `ExecStoreToListObjectFastAsync` (mới) song song, hay thay hẳn toàn bộ repository khác sang bản fast?
+3. Oracle/SQL Server: chưa có connection string thật trong User Secrets, chưa verify chạy thật qua Swagger/Postman (mới verify Postgres).
+4. `git push` — đang chờ anh confirm (commit `87ba61e` đã có sẵn, chưa rõ đã push hay chưa — kiểm tra lại `git log origin/main` trước khi hỏi).
+5. Từ trước, chưa làm: `AntiSpamMiddleware` đang tắt, mask log nhạy cảm (password...) trong `ApiLoggingAttribute`/`ResponseBody`, `RequestTimeouts` middleware + `CancellationToken` cho `ApiLogRepository`/`SystemLogRepository`/`RedisCacheRepository`.
+6. Sau đó: bắt đầu bước 4 (Auth Service — Users/OTP/JWT/Session) nếu bước 3 coi như đóng; bước 5 (tích hợp JWT vào Business API) chỉ bắt đầu được sau khi bước 4 xong.
 
 ## Cách dùng file này ở session mới
 
