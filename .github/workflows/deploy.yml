@@ -1,0 +1,18 @@
+name: Deploy to Production
+
+# Tự trigger khi push vào production (thường là lúc merge PR đã review xong) — KHÔNG cần
+# vào tay bấm "Run workflow". Chỉ thực sự deploy khi commit message chứa đúng cụm "up pro"
+# (case-sensitive, kiểm tra bằng contains — gõ thiếu/sai, VD chỉ "up", sẽ không khớp).
+on:
+  push:
+    branches: [production]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: contains(github.event.head_commit.message, 'up pro')
+    steps:
+      - name: Trigger Coolify deploy
+        run: |
+          curl -f -X GET "https://coolify.hieupm.dev/api/v1/deploy?uuid=${{ secrets.COOLIFY_PROD_UUID }}&force=false" \
+            -H "Authorization: Bearer ${{ secrets.COOLIFY_API_TOKEN }}"

@@ -1,0 +1,17 @@
+name: Deploy to Staging
+
+# Y hệt deploy.yml (production) nhưng nghe nhánh staging + cụm từ "up staging" — dùng chung
+# COOLIFY_API_TOKEN (token scope Root Team, gọi được mọi app), chỉ khác UUID app đích.
+on:
+  push:
+    branches: [staging]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: contains(github.event.head_commit.message, 'up staging')
+    steps:
+      - name: Trigger Coolify deploy
+        run: |
+          curl -f -X GET "https://coolify.hieupm.dev/api/v1/deploy?uuid=${{ secrets.COOLIFY_STAGING_UUID }}&force=false" \
+            -H "Authorization: Bearer ${{ secrets.COOLIFY_API_TOKEN }}"
