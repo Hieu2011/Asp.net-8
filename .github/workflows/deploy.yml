@@ -5,7 +5,7 @@ name: Deploy to Production
 # (case-sensitive, kiểm tra bằng contains — gõ thiếu/sai, VD chỉ "up", sẽ không khớp).
 on:
   push:
-    branches: [production]
+    branches: ['GIT/production']
 
 jobs:
   deploy:
