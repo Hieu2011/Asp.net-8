@@ -11,19 +11,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check deploy syntax
-        id: check
         run: |
           if [[ "${{ github.event.head_commit.message }}" != *"up staging"* ]]; then
             echo "❌ KHÔNG deploy — commit message thiếu cú pháp bắt buộc 'up staging'."
             echo "   Commit message: ${{ github.event.head_commit.message }}"
-            echo "should_deploy=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "✅ Đúng cú pháp 'up staging' — tiến hành gọi Coolify deploy."
-            echo "should_deploy=true" >> "$GITHUB_OUTPUT"
+            exit 1
           fi
+          echo "✅ Đúng cú pháp 'up staging' — tiến hành gọi Coolify deploy."
 
       - name: Trigger Coolify deploy
-        if: steps.check.outputs.should_deploy == 'true'
         run: |
           curl -f -X GET "https://coolify.hieupm.dev/api/v1/deploy?uuid=${{ secrets.COOLIFY_STAGING_UUID }}&force=false" \
             -H "Authorization: Bearer ${{ secrets.COOLIFY_API_TOKEN }}"

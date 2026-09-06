@@ -2,8 +2,8 @@ name: Deploy to Production
 
 # Tự trigger khi push vào GIT/production (thường là lúc merge PR đã review xong) — không
 # cần vào tay bấm "Run workflow". Chỉ thực sự deploy khi commit message chứa đúng cụm
-# "up pro" (case-sensitive) — job LUÔN chạy (không đặt if ở cấp job) để log luôn hiện rõ
-# lý do skip, không để lại 1 job "Skipped" trống không giải thích gì.
+# "up pro" (case-sensitive) — thiếu cú pháp thì job tự FAIL (exit 1), hiện dấu ✗ đỏ ngay
+# trong danh sách Actions, không cần bấm vào mới biết là không deploy.
 on:
   push:
     branches: ['GIT/production']
@@ -13,19 +13,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check deploy syntax
-        id: check
         run: |
           if [[ "${{ github.event.head_commit.message }}" != *"up pro"* ]]; then
             echo "❌ KHÔNG deploy — commit message thiếu cú pháp bắt buộc 'up pro'."
             echo "   Commit message: ${{ github.event.head_commit.message }}"
-            echo "should_deploy=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "✅ Đúng cú pháp 'up pro' — tiến hành gọi Coolify deploy."
-            echo "should_deploy=true" >> "$GITHUB_OUTPUT"
+            exit 1
           fi
+          echo "✅ Đúng cú pháp 'up pro' — tiến hành gọi Coolify deploy."
 
       - name: Trigger Coolify deploy
-        if: steps.check.outputs.should_deploy == 'true'
         run: |
           curl -f -X GET "https://coolify.hieupm.dev/api/v1/deploy?uuid=${{ secrets.COOLIFY_PROD_UUID }}&force=false" \
             -H "Authorization: Bearer ${{ secrets.COOLIFY_API_TOKEN }}"
