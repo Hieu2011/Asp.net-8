@@ -4,7 +4,7 @@ name: Deploy to Staging
 # COOLIFY_API_TOKEN (token scope Root Team, gọi được mọi app), chỉ khác UUID app đích.
 on:
   push:
-    branches: [staging]
+    branches: ['GIT/staging']
 
 jobs:
   deploy:
