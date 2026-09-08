@@ -1,58 +1,39 @@
 # Bản đồ tiến độ — đọc file này đầu tiên khi bắt đầu session mới
 
-Quy ước: mỗi khi 1 việc xong → xóa khỏi "Đang làm", chuyển ghi chú quan trọng (nếu có) vào `CLAUDE.md`. Việc đã commit → xóa khỏi file này hoàn toàn, không giữ làm lịch sử (git log lo phần đó). File này chỉ phản ánh **hiện tại đang ở đâu**, không phải nhật ký.
+File này có 2 phần, khác nhau về cách cập nhật:
 
-## Bản đồ giai đoạn lớn (macro roadmap — 5 bước)
+- **"Đang ở đâu"** — phản ánh hiện tại, sửa/xóa liên tục. Việc gì xong và đã commit thì xóa khỏi đây (git log lo phần lịch sử "đổi gì").
+- **"Nhật ký quyết định & sự cố quan trọng"** — **không xóa theo commit**, chỉ thêm dòng mới. Đây là chỗ git log không thay được: lưu *tại sao*/*đã sai ở đâu rồi sửa sao*/*đã hỏi gì*, để session sau không hỏi lại hoặc lặp lại lỗi cũ.
+  - Chỉ ghi bài học **không tự suy ra được** từ code/git diff — không chép lại nội dung đã có trong `CLAUDE.md`/`.claude/rules/`.
+  - Mỗi dòng tối đa 1-3 câu, không kể lại toàn bộ quá trình debug.
+  - Khi 1 bài học "chín" thành quy ước ổn định (được ghi vào `.claude/rules/*.md`) → **xóa khỏi log này**, tránh giữ 2 nơi.
+  - Nếu log này dài quá dù đã áp 2 quy tắc trên → tách phần cũ/đã xong hẳn sang `PROJECT_STATUS_ARCHIVE.md` (không đọc mỗi session, chỉ tra khi cần).
 
-- [~] **Bước 1 — Hạ tầng & CI/CD**: Coolify + Cloudflare Tunnel + Tailscale — đã cài đặt, chạy thật. Riêng **mô hình CI/CD (Coolify webhook tự động ở nhà, redeploy tay qua Tailscale ở công ty) mới CHỐT quyết định, CHƯA triển khai/test thật** — không tính là xong hẳn.
+## Đang ở đâu
+
+- [x] **Bước 1 — Hạ tầng & CI/CD**: Coolify + Cloudflare Tunnel + Tailscale chạy thật. CI/CD đã triển khai và **verify thành công thật**: push vào `GIT/production`/`GIT/staging` kèm đúng cú pháp commit message (`up pro`/`up staging`) → GitHub Actions tự gọi Coolify Deploy Webhook API — đã confirm deploy thành công qua log Coolify.
 - [x] **Bước 2 — Database**: Postgres (`auth_db` riêng), Redis riêng, MongoDB tái dùng cho log.
-- [~] **Bước 3 — Dọn dẹp & tối ưu WebApiCore8**: Clean Architecture xong, multi-provider data access (Postgres/Oracle/SqlServer) xong, pipeline đọc dữ liệu tối ưu (CompiledReaderMapper) xong, logging Mongo + API search xong. Còn sót: AntiSpamMiddleware tắt, mask log nhạy cảm, RequestTimeouts/CancellationToken, Oracle/SqlServer chưa verify chạy thật. **Đây là dọn dẹp/chuẩn bị nền — KHÁC bước 5 (gắn JWT thật).**
-- [ ] **Bước 4 — Auth Service**: mới ở mức skeleton project, CHƯA code business logic (Users/OTP/JWT/Session). Chưa bắt đầu.
-- [ ] **Bước 5 — Business API: tích hợp JWT**: sau khi bước 4 xong — thêm JWT Bearer validation (RSA public key của Auth Service), gắn `[Authorize]`, bật rate limit built-in .NET 8 (thay `AntiSpamMiddleware`). Phụ thuộc thẳng bước 4, chưa bắt đầu.
+- [~] **Bước 3 — Dọn dẹp & tối ưu WebApiCore8**: Clean Architecture, multi-provider data access, logging Mongo + API search đã xong. Còn sót — xem `.claude/rules/known-issues.md`.
+- [ ] **Bước 4 — Auth Service**: mới ở mức skeleton project, chưa code business logic (Users/OTP/JWT/Session). Chưa bắt đầu.
+- [ ] **Bước 5 — Business API: tích hợp JWT**: phụ thuộc bước 4, chưa bắt đầu.
 
-→ **Đang ở bước 3 (dọn dẹp/tối ưu WebApiCore8), bước 1 còn 1 hạng mục CI/CD chưa triển khai thật.**
+→ **Đang ở bước 3, bước 1 đã xong hẳn.**
 
-## Trạng thái git
-
-Toàn bộ việc bên dưới **đã nằm trong commit `87ba61e` ("upcode init project")** — working tree hiện đang sạch (`git status` clean). Chưa push lên remote nếu chưa được confirm.
-
-## Đã làm xong (session gần nhất, đã commit)
-
-**1. Multi-provider data access — tối ưu tốc độ đọc dữ liệu:**
-- Phân tích + benchmark thật: xác định `DataTable.Load(IDataReader)` + `PropertyInfo.SetValue` (reflection) là 2 điểm nghẽn chính khi đọc hàng trăm ngàn dòng.
-- Thêm `CompiledReaderMapper` (`ApiCore8.Infrastructure/Database/`) — dùng Expression Tree biên dịch 1 lần/lần gọi, đọc thẳng `IDataReader` không qua `DataTable`. Nhanh hơn ~2x thật (đo bằng Stopwatch, tách khỏi JSON serialize) trên data 100k dòng.
-- Thêm song song `ExecStoreToListObjectFastAsync<T>` (Postgres/Oracle/SqlServer) — **không thay thế** `ExecStoreToListObjectAsync<T>` cũ, để so sánh A/B qua `GetAllFastAsync`/`/Users/Fast` vs `/Users` (cũ).
-- Bug thật bắt được qua unit test: `CompiledReaderMapper` bản đầu dùng `MemberInit` khiến cột `DBNull` ghi đè mất field initializer (VD `Username = string.Empty` → `null`) — fix bằng `Block` + `IfThen` (chỉ gán khi không null), khớp hành vi `DataRowMapper`.
-- Thêm `Stopwatch` + `Log.Information("[Bench] ...")` trong `UserRepository.GetAllAsync`/`GetAllFastAsync` để đo tách riêng — **code tạm, gỡ sau khi so sánh xong**.
-
-**2. Dọn `ApiCore8.UnitTests`** (theo "hướng B" — chỉ giữ test cho pure-logic dễ lỗi âm thầm, bỏ test API vì đã test tay qua Postman/Swagger): xóa `SystemLogsControllerTests`, `AddParameterTypeTests`, `DataCoreFactoryTests`, `DateTimeJsonSerializationTests`, `PostgresDbHelperSqlBuildingTests`, `UserRepositoryTests`; giữ `ConnectionStringDetectorTests`, `ExplicitOffsetDateTimeParserTests`, `DataRowMapperTests`, `CancellationTokenTimeoutHelperTests`, thêm mới `CompiledReaderMapperTests` (8 test).
-
-**3. API search cho MongoDB logs (`APILogs` collection):**
-- `ApiLogsController` (mới) + `GET /api/ApiLogs/Search?keyword=&fromDate=&toDate=&page=&pageSize=` — search 1 keyword LIKE trên cả 3 field `ApiName`/`RequestBody`/`ResponseBody` (OR), kết hợp AND với khoảng ngày (`fromDate` lọc `StartTime`, `toDate` lọc `EndTime`) — cả keyword và ngày đều optional, độc lập nhau.
-- `fromDate`/`toDate` nhận string + bắt buộc offset tường minh qua `ExplicitOffsetDateTimeParser` (tránh lỗi model binder tự quy đổi giờ theo server — đã từng gây "search có data mà ra rỗng").
-- Fix lỗi Mongo `MaxDocumentSize` (16MB) khi `[LogApi]` log response quá lớn (VD 100k dòng ≈ 29MB) — thêm `Truncate` (giới hạn 50k ký tự) trong `ApiLoggingAttribute` trước khi ghi `RequestBody`/`ResponseBody` vào Mongo.
-- Xóa cột thừa `StartTimeStr`/`EndTimeStr` trong `ApiExecutionLog` (trùng lặp `StartTime`/`EndTime`); thêm `ExecutionTimeDisplay` (string, tự quy đổi đơn vị ms/s/min/h) đi kèm `ExecutionMs` (giữ nguyên kiểu số để `GetSlowLogs` filter/sort được).
-
-**4. Fix "nuốt lỗi" (silent catch) ở tầng repository Mongo:**
-- `ApiLogRepository.Search`, `ApiLogRepository.SearchByKeywordAsync`, `ApiLogRepository.GetSlowLogs`, `SystemLogRepository.SearchAsync` — trước đây catch exception rồi trả `PagedResult` rỗng (không có field chứa lỗi) khiến controller không bao giờ đưa được `ex.Message` vào `MessageDetail`. Fix: giữ `Log.Error(...)` (log 1 lần) rồi `throw;` để controller's catch (đã viết đúng sẵn) bắt được và trả lỗi thật cho client.
-
-**5. Rule mới ghi vào `CLAUDE.md`:** mọi action method controller phải trả `Task<APIResult>`, không bao giờ trả thẳng `PagedResult<T>`/DTO ra HTTP response (xác nhận code hiện tại đã tuân thủ đúng).
-
-**6. Data test:** `scripts/postgres_users_seed_1000.sql` — seed 100,000 dòng vào bảng `users` (Postgres) qua `generate_series`, dùng để benchmark thật ở mục 1.
-
-**7. Artifact bản đồ tiến độ (visual):** https://claude.ai/code/artifact/3081c521-23a0-4270-ac0b-518ae5dd0e5c — timeline 5 bước, cùng nội dung với mục "Bản đồ giai đoạn lớn" ở trên; cập nhật lại artifact này (redeploy cùng URL) mỗi khi macro roadmap đổi.
+**Git:** branch làm việc `GIT/staging` (merge từ `main` qua Fork, chọn "Don't Commit" để gõ tay commit message `up staging`/`up pro`). Working tree clean.
 
 ## Việc kế tiếp — pending quyết định của anh
 
-1. **Gỡ code Stopwatch/[Bench] log tạm** trong `UserRepository` sau khi anh so sánh xong tốc độ 2 hàm `GetAllAsync`/`GetAllFastAsync`.
-2. Quyết định: giữ cả `ExecStoreToListObjectAsync` (cũ) + `ExecStoreToListObjectFastAsync` (mới) song song, hay thay hẳn toàn bộ repository khác sang bản fast?
-3. Oracle/SQL Server: chưa có connection string thật trong User Secrets, chưa verify chạy thật qua Swagger/Postman (mới verify Postgres).
-4. `git push` — đang chờ anh confirm (commit `87ba61e` đã có sẵn, chưa rõ đã push hay chưa — kiểm tra lại `git log origin/main` trước khi hỏi).
-5. Từ trước, chưa làm: `AntiSpamMiddleware` đang tắt, mask log nhạy cảm (password...) trong `ApiLoggingAttribute`/`ResponseBody`, `RequestTimeouts` middleware + `CancellationToken` cho `ApiLogRepository`/`SystemLogRepository`/`RedisCacheRepository`.
-6. Sau đó: bắt đầu bước 4 (Auth Service — Users/OTP/JWT/Session) nếu bước 3 coi như đóng; bước 5 (tích hợp JWT vào Business API) chỉ bắt đầu được sau khi bước 4 xong.
+1. Quyết định: giữ cả `ExecStoreToListObjectAsync` (cũ) + `ExecStoreToListObjectFastAsync` (mới) song song, hay thay hẳn toàn bộ repository sang bản fast? (đang có code `Stopwatch`/`[Bench]` tạm trong `UserRepository` để so sánh — gỡ sau khi anh chốt.)
+2. Oracle/SQL Server: chưa có connection string thật trong User Secrets, chưa verify chạy thật (mới verify Postgres).
+3. Xác nhận **Auto Deploy đã tắt trên Coolify cho app staging** (production đã confirm tắt).
+4. Test lại Coolify **Rollback** sau khi tắt "Shallow Clone" (Advanced settings) — xem mục sự cố bên dưới, chưa xác nhận đã tắt/test.
+5. `COOLIFY_STAGING_UUID` — xác nhận đã tạo GitHub Secret hay chưa.
+6. Sau khi bước 3 coi như đóng: bắt đầu bước 4 (Auth Service).
 
-## Cách dùng file này ở session mới
+## Nhật ký quyết định & sự cố quan trọng
 
-1. Đọc file này trước, không hỏi lại bối cảnh từ đầu.
-2. Báo ngắn gọn: "đang ở [mục X trong Đang làm / Việc kế tiếp]" rồi hỏi đúng 1 câu để biết làm tiếp mục nào.
-3. Việc nào xong trong session → cập nhật lại đúng file này ngay (không đợi nhắc).
+- **CI/CD gating theo commit message**: chỉ deploy khi commit message chứa đúng `"up pro"`/`"up staging"`; sai cú pháp → job GitHub Actions phải **FAIL đỏ** (dùng `exit 1`), không dùng `if: contains(...)` ở job-level vì nó chỉ hiện "Skipped" xám, không rõ nguyên nhân.
+- **Coolify "Auto Deploy" (Advanced tab) phải tắt thủ công** cho từng Application — mặc định nó ON và tự deploy trên MỌI push bất kể commit message, chạy song song gây deploy trùng với pipeline gate ở trên.
+- **Dockerfile phải đặt ở root repo**, tên `Dockerfile.<service>` (VD `Dockerfile.apicore8`), Coolify Base Directory = `/`, Dockerfile Location = tên file không kèm `/` — đặt Dockerfile trong subfolder (`ApiCore8.Api/Dockerfile`) làm Coolify tự `mkdir -p` trùng path với file git đã clone → lỗi "File exists". Áp dụng convention này cho mọi service tương lai (AuthService...).
+- **Coolify Rollback tab có bug đã biết** (xác nhận qua log thật + GitHub issue #1976/#8445 của coollabsio/coolify): deploy/rollback luôn `git clone --depth=1` (chỉ lấy tip nhánh hiện tại), nên rollback về bất kỳ commit nào khác tip đều lỗi `fatal: bad object`. Workaround cộng đồng đề xuất: tắt "Shallow Clone" trong Advanced settings — **nhưng issue #8445 cảnh báo tắt xong có thể chỉ hết crash mà rollback lại âm thầm không đổi code thật** → phải test lại bằng cách verify code chạy thực tế sau rollback, không chỉ tin "deploy thành công" là đủ.
+- **Fork (Git GUI) merge option đúng cho workflow "gõ up pro/up staging"**: phải chọn **"Don't Commit"** (`--no-commit`) chứ không phải "No Fast-Forward" — No Fast-Forward tự commit ngay với message mặc định, không cho sửa tay.
