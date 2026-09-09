@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using Serilog;
 using System.Diagnostics;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Channels;
 
 namespace ApiCore8.Api.Middleware
@@ -18,6 +19,12 @@ namespace ApiCore8.Api.Middleware
         // Giới hạn an toàn để không vượt MaxDocumentSize 16MB của MongoDB khi response/request quá
         // lớn (VD: list vài chục-trăm ngàn dòng) — cắt bớt, không log nguyên văn.
         private const int MaxLoggedBodyLength = 50_000;
+
+        // Mask field nhạy cảm (password/token/secret...) trước khi ghi vào Mongo — tránh lộ plaintext
+        // trong RequestBody/ResponseBody. Pattern cố định, không dựng từ input người dùng.
+        private static readonly Regex SensitiveFieldRegex = new(
+            "\"(password|pwd|token|secret|accesstoken|refreshtoken|apikey|connectionstring)\"\\s*:\\s*\"[^\"]*\"",
+            RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private DateTime? _startTime = null;
         private Stopwatch _stopwatch;
@@ -68,8 +75,8 @@ namespace ApiCore8.Api.Middleware
                 {
                     ApiName = $"{request.Method} {request.Path}",
                     Method = request.Method,
-                    RequestBody = Truncate(_requestBody),
-                    ResponseBody = Truncate(responseBody),
+                    RequestBody = Truncate(MaskSensitiveFields(_requestBody)),
+                    ResponseBody = Truncate(MaskSensitiveFields(responseBody)),
                     StartTime = _startTime ?? DateTime.UtcNow,
                     EndTime = endTime,
                     CreatedAt = DateTime.UtcNow,
@@ -114,6 +121,18 @@ namespace ApiCore8.Api.Middleware
 
             var hours = minutes / 60;
             return $"{hours:F2} h";
+        }
+
+        private static string MaskSensitiveFields(string body)
+        {
+            if (string.IsNullOrEmpty(body))
+                return body;
+
+            return SensitiveFieldRegex.Replace(body, m =>
+            {
+                var fieldName = Regex.Match(m.Value, "\"([^\"]+)\"\\s*:").Groups[1].Value;
+                return $"\"{fieldName}\":\"***MASKED***\"";
+            });
         }
 
         private static string Truncate(string body)
