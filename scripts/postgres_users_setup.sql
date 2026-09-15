@@ -17,24 +17,24 @@ CREATE TABLE users (
 
 CREATE OR REPLACE FUNCTION sp_user_create(
     INOUT v_out refcursor,
-    p_username varchar,
-    p_password_hash varchar,
-    p_full_name varchar,
-    p_email varchar
+    v_username varchar,
+    v_password_hash varchar,
+    v_full_name varchar,
+    v_email varchar
 ) AS $$
 BEGIN
     OPEN v_out FOR
     INSERT INTO users (username, password_hash, full_name, email, is_active, created_at, updated_at)
-    VALUES (p_username, p_password_hash, p_full_name, p_email, true, now(), now())
+    VALUES (v_username, v_password_hash, v_full_name, v_email, true, now(), now())
     RETURNING id, username, password_hash, full_name, email, is_active, created_at, updated_at;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION sp_user_get_by_id(INOUT v_out refcursor, p_id uuid) AS $$
+CREATE OR REPLACE FUNCTION sp_user_get_by_id(INOUT v_out refcursor, v_id uuid) AS $$
 BEGIN
     OPEN v_out FOR
     SELECT id, username, password_hash, full_name, email, is_active, created_at, updated_at
-    FROM users WHERE id = p_id;
+    FROM users WHERE id = v_id;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -47,37 +47,37 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION sp_user_update(
-    p_id uuid, p_full_name varchar, p_email varchar, p_is_active boolean
+    v_id uuid, v_full_name varchar, v_email varchar, v_is_active boolean
 ) RETURNS boolean AS $$
 DECLARE affected int;
 BEGIN
-    UPDATE users SET full_name = p_full_name, email = p_email, is_active = p_is_active, updated_at = now()
-    WHERE id = p_id;
+    UPDATE users SET full_name = v_full_name, email = v_email, is_active = v_is_active, updated_at = now()
+    WHERE id = v_id;
     GET DIAGNOSTICS affected = ROW_COUNT;
     RETURN affected > 0;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION sp_user_delete(p_id uuid) RETURNS boolean AS $$
+CREATE OR REPLACE FUNCTION sp_user_delete(v_id uuid) RETURNS boolean AS $$
 DECLARE affected int;
 BEGIN
-    DELETE FROM users WHERE id = p_id;
+    DELETE FROM users WHERE id = v_id;
     GET DIAGNOSTICS affected = ROW_COUNT;
     RETURN affected > 0;
 END;
 $$ LANGUAGE plpgsql;
 
--- p_from_date/p_to_date: timestamptz — C# luôn truyền UTC (đã convert từ DateTimeOffset ở Controller).
+-- v_from_date/v_to_date: timestamptz — C# luôn truyền UTC (đã convert từ DateTimeOffset ở Controller).
 CREATE OR REPLACE FUNCTION sp_user_search_by_date(
     INOUT v_out refcursor,
-    p_from_date timestamptz,
-    p_to_date timestamptz
+    v_from_date timestamptz,
+    v_to_date timestamptz
 ) AS $$
 BEGIN
     OPEN v_out FOR
     SELECT id, username, password_hash, full_name, email, is_active, created_at, updated_at
     FROM users
-    WHERE created_at BETWEEN p_from_date AND p_to_date
+    WHERE created_at BETWEEN v_from_date AND v_to_date
     ORDER BY created_at DESC;
 END;
 $$ LANGUAGE plpgsql;

@@ -102,10 +102,14 @@ public class PostgresDbHelper : IDisposable, IDataCore
         }
     }
 
-    // Thêm tham số
+    // Thêm tham số — paramName truyền vào dạng "@ten_gon" (VD "@from_date") sẽ tự bỏ dấu "@"
+    // và thêm tiền tố "v_" thành tên tham số IN thật khớp convention SQL ("v_from_date").
+    // Không có dấu "@" thì giữ nguyên chuỗi truyền vào (tương thích ngược, không bắt buộc sửa
+    // toàn bộ call site cùng lúc).
     public void AddParameter(string paramName, object value)
     {
-        var param = new NpgsqlParameter(paramName, value ?? DBNull.Value);
+        string pgParamName = paramName.StartsWith('@') ? "v_" + paramName[1..] : paramName;
+        var param = new NpgsqlParameter(pgParamName, value ?? DBNull.Value);
 
         // Xử lý kiểu dữ liệu cụ thể
         if (value is Guid)

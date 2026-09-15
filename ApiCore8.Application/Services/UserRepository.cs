@@ -23,17 +23,17 @@ namespace ApiCore8.Application.Services
 
         public async Task<Users> CreateAsync(Users user, CancellationToken cancellationToken = default)
         {
-            _db.AddParameter("p_username", user.Username);
-            _db.AddParameter("p_password_hash", user.PasswordHash);
-            _db.AddParameter("p_full_name", user.FullName);
-            _db.AddParameter("p_email", user.Email);
+            _db.AddParameter("@username", user.Username);
+            _db.AddParameter("@password_hash", user.PasswordHash);
+            _db.AddParameter("@full_name", user.FullName);
+            _db.AddParameter("@email", user.Email);
 
             return await _db.ExecStoreToObjectAsync<Users>("sp_user_create", cancellationToken);
         }
 
         public async Task<Users?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
         {
-            _db.AddParameter("p_id", id);
+            _db.AddParameter("@id", id);
 
             var user = await _db.ExecStoreToObjectAsync<Users>("sp_user_get_by_id", cancellationToken);
             return user?.Id == Guid.Empty ? null : user;
@@ -61,18 +61,18 @@ namespace ApiCore8.Application.Services
 
         public async Task<List<Users>> SearchByCreatedDateAsync(DateTime fromDateUtc, DateTime toDateUtc, CancellationToken cancellationToken = default)
         {
-            _db.AddParameter("p_from_date", fromDateUtc);
-            _db.AddParameter("p_to_date", toDateUtc);
+            _db.AddParameter("@from_date", fromDateUtc);
+            _db.AddParameter("@to_date", toDateUtc);
 
             return await _db.ExecStoreToListObjectAsync<Users>("sp_user_search_by_date", cancellationToken);
         }
 
         public async Task<bool> UpdateAsync(Users user, CancellationToken cancellationToken = default)
         {
-            _db.AddParameter("p_id", user.Id);
-            _db.AddParameter("p_full_name", user.FullName);
-            _db.AddParameter("p_email", user.Email);
-            _db.AddParameter("p_is_active", user.IsActive);
+            _db.AddParameter("@id", user.Id);
+            _db.AddParameter("@full_name", user.FullName);
+            _db.AddParameter("@email", user.Email);
+            _db.AddParameter("@is_active", user.IsActive);
 
             var result = await _db.ExecuteNonQueryAsStringAsync("sp_user_update", cancellationToken);
             return ParseBoolResult(result);
@@ -80,7 +80,7 @@ namespace ApiCore8.Application.Services
 
         public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default)
         {
-            _db.AddParameter("p_id", id);
+            _db.AddParameter("@id", id);
 
             var result = await _db.ExecuteNonQueryAsStringAsync("sp_user_delete", cancellationToken);
             return ParseBoolResult(result);
