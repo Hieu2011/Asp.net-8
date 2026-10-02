@@ -1,13 +1,14 @@
 # WebApiCore8 / AuthService — Project Notes
 
-Ghi lại các quyết định kiến trúc, roadmap và quy ước đã thống nhất qua nhiều phiên làm việc — đọc trước khi đề xuất thay đổi lớn, tránh lặp lại các câu hỏi/quyết định đã chốt.
+Monorepo gồm 3 src trong `src/`: `ApiCore8` (Business API), `AuthService` (Auth/SSO), `Shared` (thư viện dùng chung). **Rule code dùng chung cho cả 3, TaskList tách riêng theo từng src.**
 
-Nội dung đã được tách theo từng chủ đề trong `.claude/rules/` (tự động load cùng file này, không cần đọc thêm gì):
+**Đầu mỗi session: đọc `TaskList/plan.md` trước** (không commit, chỉ có trên máy anh) rồi mở `task.md` của task liên quan.
 
-- `solution-structure.md` — cấu trúc solution, Clean Architecture
-- `naming-conventions.md` — quy ước đặt tên, logging, response API
-- `roadmap-auth-sso.md` — roadmap Auth/SSO
+Rule chi tiết trong `.claude/rules/` (tự động load):
+
+- `working-agreements.md` — cách làm việc, tiết kiệm token, unit test, git
+- `coding-standards.md` — tiền tố biến, thứ tự member, vị trí code, async/đa luồng (tối đa 5), comment, response API
+- `tasklist-workflow.md` — cấu trúc + quy trình TaskList
+- `solution-structure.md` — cấu trúc solution, Clean Architecture, Shared
+- `roadmap-auth-sso.md` — quyết định kiến trúc Auth/SSO
 - `cleanup-log.md` — đã dọn dẹp, không đề xuất lại
-- `known-issues.md` — chưa làm / vấn đề đã biết
-- `current-status.md` — con trỏ tới PROJECT_STATUS.md
-- `working-agreements.md` — cách làm việc đã thống nhất

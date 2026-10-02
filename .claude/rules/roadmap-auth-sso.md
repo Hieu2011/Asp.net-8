@@ -1,4 +1,4 @@
-# Roadmap Auth/SSO (đang ở đầu Giai đoạn 4)
+# Roadmap Auth/SSO (tiến độ: xem TaskList)
 
 1. **Hạ tầng & CI/CD** — xong phần lớn: Coolify quản container trên VM (laptop cá nhân), Cloudflare Tunnel public app khi ở ngoài mạng công ty, Tailscale cho anh tự vào Coolify Dashboard khi ở công ty (Cloudflare bị chặn). CI/CD: **Coolify webhook tự động khi ở nhà, tự bấm Redeploy qua Tailscale khi ở công ty** — không dùng self-hosted GitHub Actions runner (rủi ro supply-chain trên VM dùng chung nhiều service) và không dùng ngrok (URL đổi liên tục, rủi ro chính sách công ty).
 2. **Database** — Postgres mới tạo trên VM, **dùng chung 1 instance nhưng tách riêng database** (`auth_db` cho Auth, database khác cho Business) để giữ ranh giới. Redis riêng cho cache/rate-limit/đếm OTP sai. MongoDB tái dùng cho log (đã có sẵn).

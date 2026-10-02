@@ -18,7 +18,7 @@ process.stdin.on('end', () => {
   }
 
   try {
-    execSync(`dotnet format WebApiCore8.sln --include "${filePath}"`, {
+    execSync(`dotnet format All.sln --include "${filePath}"`, {
       encoding: 'utf8',
       stdio: 'pipe',
       timeout: 30000,

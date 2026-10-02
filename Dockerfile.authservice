@@ -1,0 +1,23 @@
+# Build context = root repo (Coolify: Base Directory = /)
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /repo
+
+# Restore trước để tận dụng cache layer
+COPY ["Directory.Build.props", "Directory.Packages.props", "./"]
+COPY ["src/AuthService/AuthService.Api/AuthService.Api.csproj", "src/AuthService/AuthService.Api/"]
+COPY ["src/AuthService/AuthService.Application/AuthService.Application.csproj", "src/AuthService/AuthService.Application/"]
+COPY ["src/AuthService/AuthService.Infrastructure/AuthService.Infrastructure.csproj", "src/AuthService/AuthService.Infrastructure/"]
+COPY ["src/AuthService/AuthService.Domain/AuthService.Domain.csproj", "src/AuthService/AuthService.Domain/"]
+COPY ["src/Shared/Shared.Common/Shared.Common.csproj", "src/Shared/Shared.Common/"]
+COPY ["src/Shared/Shared.DataAccess/Shared.DataAccess.csproj", "src/Shared/Shared.DataAccess/"]
+COPY ["src/Shared/Shared.Caching/Shared.Caching.csproj", "src/Shared/Shared.Caching/"]
+RUN dotnet restore "src/AuthService/AuthService.Api/AuthService.Api.csproj"
+
+COPY src/AuthService/ src/AuthService/
+COPY src/Shared/ src/Shared/
+RUN dotnet publish "src/AuthService/AuthService.Api/AuthService.Api.csproj" -c Release -o /app/publish --no-restore
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+WORKDIR /app
+COPY --from=build /app/publish ./
+ENTRYPOINT ["dotnet", "AuthService.Api.dll"]
