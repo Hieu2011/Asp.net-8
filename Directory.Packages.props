@@ -1,0 +1,55 @@
+<Project>
+  <!-- Central Package Management: khai version 1 chỗ cho cả repo, csproj chỉ ghi <PackageReference Include="X" /> -->
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+
+  <!-- Microsoft.Extensions.* ghim 9.0.0; JwtBearer phải theo runtime ASP.NET Core 8 -->
+  <ItemGroup Label="Microsoft">
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.11" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Http" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Options" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Options.DataAnnotations" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
+    <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.22.0" />
+  </ItemGroup>
+
+  <!-- Npgsql/StackExchange.Redis ghim để khớp Microsoft.Extensions.* 9.0.0 -->
+  <ItemGroup Label="Data">
+    <PackageVersion Include="Microsoft.Data.SqlClient" Version="7.0.2" />
+    <PackageVersion Include="MongoDB.Bson" Version="3.5.2" />
+    <PackageVersion Include="MongoDB.Driver" Version="3.5.2" />
+    <PackageVersion Include="Npgsql" Version="9.0.3" />
+    <PackageVersion Include="Oracle.ManagedDataAccess.Core" Version="23.26.300" />
+    <PackageVersion Include="StackExchange.Redis" Version="2.8.16" />
+  </ItemGroup>
+
+  <ItemGroup Label="Logging">
+    <PackageVersion Include="Serilog" Version="4.2.0" />
+    <PackageVersion Include="Serilog.AspNetCore" Version="9.0.0" />
+    <PackageVersion Include="Serilog.Enrichers.AspNetCore" Version="1.0.0" />
+    <PackageVersion Include="Serilog.Sinks.Graylog" Version="3.1.1" />
+    <PackageVersion Include="Serilog.Sinks.MongoDB" Version="7.2.0" />
+  </ItemGroup>
+
+  <ItemGroup Label="Other">
+    <PackageVersion Include="BCrypt.Net-Next" Version="4.2.0" />
+    <PackageVersion Include="EPPlus" Version="7.5.2" />
+    <PackageVersion Include="Google.Apis.Auth" Version="1.76.0" />
+    <PackageVersion Include="MailKit" Version="4.18.0" />
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageVersion Include="Otp.NET" Version="1.4.1" />
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+
+  <ItemGroup Label="Test">
+    <PackageVersion Include="coverlet.collector" Version="6.0.2" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageVersion Include="xunit" Version="2.9.2" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" />
+  </ItemGroup>
+</Project>
