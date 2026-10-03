@@ -1,8 +1,13 @@
 name: Build
 
+# Chỉ kiểm tra build ở main/PR — nhánh GIT/* đã có workflow deploy tự compile
 on:
   push:
+    branches: ['main']
   pull_request:
+
+permissions:
+  contents: read
 
 jobs:
   build:
