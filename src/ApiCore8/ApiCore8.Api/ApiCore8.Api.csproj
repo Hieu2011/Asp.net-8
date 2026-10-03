@@ -5,6 +5,14 @@
     <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
   </PropertyGroup>
 
+  <!-- Image cho CI: dotnet publish -t:PublishContainer (không cần Dockerfile) -->
+  <PropertyGroup>
+    <ContainerRepository>hieu2011/apicore8</ContainerRepository>
+    <ContainerBaseImage>mcr.microsoft.com/dotnet/aspnet:8.0</ContainerBaseImage>
+    <!-- Giữ root như Dockerfile cũ vì Serilog đang ghi file vào /app/logs -->
+    <ContainerUser>root</ContainerUser>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Remove="Properties\launchSettings.json" />
   </ItemGroup>
