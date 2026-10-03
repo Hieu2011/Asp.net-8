@@ -30,7 +30,7 @@ namespace ApiCore8.Api.Controllers
         /// <param name="toDate">Lọc CreatedAt &lt;= toDate (tùy chọn) — cùng định dạng với fromDate</param>
         /// <param name="page">Trang số (mặc định 1)</param>
         /// <param name="pageSize">Số dòng/trang (mặc định 20, tối đa 100)</param>
-        [HttpGet("SearchStagingImage2")]
+        [HttpGet("SearchStagingImage5")]
         [ProducesResponseType(typeof(APIResult), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(APIResult), StatusCodes.Status400BadRequest)]
         public Task<APIResult> Search(
