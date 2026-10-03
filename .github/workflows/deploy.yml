@@ -1,27 +1,78 @@
-name: Deploy to Production
+name: CD - Deploy
+run-name: "🚀 Deploy ${{ github.ref_name == 'GIT/production' && 'PRODUCTION' || 'staging' }} · ${{ github.event.head_commit.message }}"
 
-# Tự trigger khi push vào GIT/production (thường là lúc merge PR đã review xong) — không
-# cần vào tay bấm "Run workflow". Chỉ thực sự deploy khi commit message chứa đúng cụm
-# "up pro" (case-sensitive) — thiếu cú pháp thì job tự FAIL (exit 1), hiện dấu ✗ đỏ ngay
-# trong danh sách Actions, không cần bấm vào mới biết là không deploy.
+# Build image trên runner GitHub → push GHCR → gọi Coolify (app kiểu Docker Image) pull + rolling update.
+# Dùng chung cho staging và production — chỉ khác nhánh, cú pháp commit và UUID app Coolify.
 on:
   push:
-    branches: ['GIT/production']
+    branches: ['GIT/staging', 'GIT/production']
+
+permissions:
+  contents: read
+
+# Staging: push liên tiếp thì hủy run cũ. Production: không hủy giữa chừng.
+concurrency:
+  group: deploy-${{ github.ref_name }}
+  cancel-in-progress: ${{ github.ref_name != 'GIT/production' }}
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      packages: write
+    env:
+      DEPLOY_ENV: ${{ github.ref_name == 'GIT/production' && 'production' || 'staging' }}
+      DEPLOY_KEYWORD: ${{ github.ref_name == 'GIT/production' && 'up pro' || 'up staging' }}
     steps:
       - name: Check deploy syntax
+        env:
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
         run: |
-          if [[ "${{ github.event.head_commit.message }}" != *"up pro"* ]]; then
-            echo "❌ KHÔNG deploy — commit message thiếu cú pháp bắt buộc 'up pro'."
-            echo "   Commit message: ${{ github.event.head_commit.message }}"
+          if [[ "$COMMIT_MSG" != *"$DEPLOY_KEYWORD"* ]]; then
+            echo "❌ KHÔNG deploy $DEPLOY_ENV — commit message thiếu cú pháp bắt buộc '$DEPLOY_KEYWORD'."
+            echo "   Commit message: $COMMIT_MSG"
             exit 1
           fi
-          echo "✅ Đúng cú pháp 'up pro' — tiến hành gọi Coolify deploy."
+          echo "✅ Đúng cú pháp '$DEPLOY_KEYWORD' — deploy $DEPLOY_ENV."
 
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Cache NuGet
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('Directory.Packages.props', '**/*.csproj') }}
+          restore-keys: nuget-${{ runner.os }}-
+
+      - name: Login GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build & push image
+        run: >
+          dotnet publish src/ApiCore8/ApiCore8.Api/ApiCore8.Api.csproj -c Release
+          --os linux --arch x64 -t:PublishContainer
+          -p:ContainerRegistry=ghcr.io
+          -p:ContainerImageTags='"${{ github.sha }};${{ env.DEPLOY_ENV }}"'
+
+      # Ở mạng công ty Cloudflare Tunnel bị chặn → không gọi được Coolify: chỉ cảnh báo, image đã lên GHCR
       - name: Trigger Coolify deploy
+        env:
+          COOLIFY_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
+          COOLIFY_UUID: ${{ github.ref_name == 'GIT/production' && secrets.COOLIFY_PROD_UUID || secrets.COOLIFY_STAGING_UUID }}
         run: |
-          curl -f -X GET "https://coolify.hieupm.dev/api/v1/deploy?uuid=${{ secrets.COOLIFY_PROD_UUID }}&force=false" \
-            -H "Authorization: Bearer ${{ secrets.COOLIFY_API_TOKEN }}"
+          if curl -fsS -X GET "https://coolify.hieupm.dev/api/v1/deploy?uuid=${COOLIFY_UUID}&force=false" \
+               -H "Authorization: Bearer ${COOLIFY_TOKEN}"; then
+            echo "✅ Đã gọi Coolify deploy $DEPLOY_ENV."
+          else
+            echo "::warning::Không gọi được Coolify — image đã lên GHCR, vào Coolify qua Tailscale bấm Redeploy."
+          fi
