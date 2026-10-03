@@ -64,15 +64,24 @@ jobs:
           -p:ContainerRegistry=ghcr.io
           -p:ContainerImageTags='"${{ github.sha }};${{ env.DEPLOY_ENV }}"'
 
-      # Ở mạng công ty Cloudflare Tunnel bị chặn → không gọi được Coolify: chỉ cảnh báo, image đã lên GHCR
+      # Gán tag = sha cho app trước khi deploy → mỗi bản 1 tag riêng, tab Rollback của Coolify quay về được
+      # (dùng chung tag "staging" thì image cũ mất tag thành <none>, không rollback được).
+      # Ở mạng công ty Cloudflare Tunnel bị chặn → không gọi được Coolify: chỉ cảnh báo, image đã lên GHCR.
       - name: Trigger Coolify deploy
         env:
+          COOLIFY_URL: https://coolify.hieupm.dev/api/v1
           COOLIFY_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
           COOLIFY_UUID: ${{ github.ref_name == 'GIT/production' && secrets.COOLIFY_PROD_UUID || secrets.COOLIFY_STAGING_UUID }}
         run: |
-          if curl -fsS -X GET "https://coolify.hieupm.dev/api/v1/deploy?uuid=${COOLIFY_UUID}&force=false" \
-               -H "Authorization: Bearer ${COOLIFY_TOKEN}"; then
-            echo "✅ Đã gọi Coolify deploy $DEPLOY_ENV."
+          intStatus=$(curl -sS -o patch.json -w "%{http_code}" -X PATCH "$COOLIFY_URL/applications/$COOLIFY_UUID" \
+               -H "Authorization: Bearer $COOLIFY_TOKEN" -H "Content-Type: application/json" -H "Accept: application/json" \
+               -d "{\"docker_registry_image_tag\":\"$GITHUB_SHA\"}" || echo 000)
+          if [[ "$intStatus" != 2* ]]; then
+            echo "::warning::Không gán được tag $GITHUB_SHA (HTTP $intStatus): $(cat patch.json 2>/dev/null) — vẫn deploy tiếp."
+          fi
+          if curl -fsS -X GET "$COOLIFY_URL/deploy?uuid=$COOLIFY_UUID&force=false" \
+               -H "Authorization: Bearer $COOLIFY_TOKEN"; then
+            echo "✅ Đã gọi Coolify deploy $DEPLOY_ENV (tag $GITHUB_SHA)."
           else
             echo "::warning::Không gọi được Coolify — image đã lên GHCR, vào Coolify qua Tailscale bấm Redeploy."
           fi
