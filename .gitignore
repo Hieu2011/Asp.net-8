@@ -1,21 +1,6 @@
-ApiCore8.Api/bin
-ApiCore8.Api/obj
-ApiCore8.Application/bin
-ApiCore8.Application/obj
-ApiCore8.Infrastructure/bin
-ApiCore8.Infrastructure/obj
-ApiCore8.Domain/bin
-ApiCore8.Domain/obj
-AuthService/AuthService.Api/bin
-AuthService/AuthService.Api/obj
-AuthService/AuthService.Application/bin
-AuthService/AuthService.Application/obj
-AuthService/AuthService.Infrastructure/bin
-AuthService/AuthService.Infrastructure/obj
-AuthService/AuthService.Domain/bin
-AuthService/AuthService.Domain/obj
-ApiCore8.UnitTests/bin
-ApiCore8.UnitTests/obj
+# Build output + IDE
+**/bin/
+**/obj/
 .vs
 .vscode
 
@@ -23,5 +8,5 @@ ApiCore8.UnitTests/obj
 # cả thư mục ở đây, vì làm vậy Git sẽ không mở vào trong để đọc .gitignore con nữa.
 
 # Rolling log file (giữ 7 file, không cần commit vào git)
-ApiCore8.Api/logs/
+src/ApiCore8/ApiCore8.Api/logs/
 *.user

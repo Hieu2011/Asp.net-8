@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="MailKit" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
+    <PackageReference Include="MongoDB.Driver" />
+    <PackageReference Include="Serilog" />
+    <PackageReference Include="Serilog.AspNetCore" />
+    <PackageReference Include="Serilog.Enrichers.AspNetCore" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ApiCore8.Application\ApiCore8.Application.csproj" />
+    <ProjectReference Include="..\..\Shared\Shared.Caching\Shared.Caching.csproj" />
+    <ProjectReference Include="..\..\Shared\Shared.Logging\Shared.Logging.csproj" />
+  </ItemGroup>
+
+</Project>

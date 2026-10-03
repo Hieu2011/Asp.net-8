@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <!-- Chỉ để dùng kiểu MVC filter (IAuthorizationFilter, ObjectResult...) cho RequireMinRoleLevelAttribute
+         — không tải gói NuGet nào, tham chiếu thẳng shared framework đã cài sẵn với .NET SDK. -->
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" />
+    <PackageReference Include="Google.Apis.Auth" />
+    <PackageReference Include="MailKit" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Http" />
+    <PackageReference Include="Microsoft.Extensions.Options.DataAnnotations" />
+    <PackageReference Include="Npgsql" />
+    <PackageReference Include="Otp.NET" />
+    <PackageReference Include="StackExchange.Redis" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AuthService.Application\AuthService.Application.csproj" />
+    <ProjectReference Include="..\..\Shared\Shared.Caching\Shared.Caching.csproj" />
+  </ItemGroup>
+
+</Project>
