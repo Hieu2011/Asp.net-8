@@ -73,8 +73,11 @@ jobs:
           COOLIFY_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
           COOLIFY_UUID: ${{ github.ref_name == 'GIT/production' && secrets.COOLIFY_PROD_UUID || secrets.COOLIFY_STAGING_UUID }}
         run: |
+          # Secret copy-paste hay dính newline cuối → làm vỡ header (Content-Type bị đẩy xuống body → Coolify trả 400)
+          COOLIFY_TOKEN=$(printf '%s' "$COOLIFY_TOKEN" | tr -d '[:space:]')
+          COOLIFY_UUID=$(printf '%s' "$COOLIFY_UUID" | tr -d '[:space:]')
           intStatus=$(curl -sS -o patch.json -w "%{http_code}" -X PATCH "$COOLIFY_URL/applications/$COOLIFY_UUID" \
-               -H "Authorization: Bearer $COOLIFY_TOKEN" -H "Content-Type: application/json" -H "Accept: application/json" \
+               -H "Content-Type: application/json" -H "Accept: application/json" -H "Authorization: Bearer $COOLIFY_TOKEN" \
                -d "{\"docker_registry_image_tag\":\"$GITHUB_SHA\"}" || echo 000)
           if [[ "$intStatus" != 2* ]]; then
             echo "::warning::Không gán được tag $GITHUB_SHA (HTTP $intStatus): $(cat patch.json 2>/dev/null) — vẫn deploy tiếp."
