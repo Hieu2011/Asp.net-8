@@ -19,6 +19,7 @@ namespace ApiCore8.Api.Controllers
         {
             _apiLogUseCase = apiLogUseCase;
         }
+        //3|wVQB0JFSwNBzo7ukHBujSaIJgMj3AEuBZUbAu3Xad9259925
 
         /// <summary>
         /// Search API logs bằng 1 từ khóa duy nhất — chỉ cần khớp (LIKE, không phân biệt hoa
@@ -30,7 +31,7 @@ namespace ApiCore8.Api.Controllers
         /// <param name="toDate">Lọc CreatedAt &lt;= toDate (tùy chọn) — cùng định dạng với fromDate</param>
         /// <param name="page">Trang số (mặc định 1)</param>
         /// <param name="pageSize">Số dòng/trang (mặc định 20, tối đa 100)</param>
-        [HttpGet("SearchStagingImage5")]
+        [HttpGet("SearchStagingImage6")]
         [ProducesResponseType(typeof(APIResult), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(APIResult), StatusCodes.Status400BadRequest)]
         public Task<APIResult> Search(
