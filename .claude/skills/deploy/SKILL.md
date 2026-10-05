@@ -17,4 +17,4 @@ Tham số: `production` hoặc `staging` (đọc từ lệnh gọi, VD `/deploy 
    - Conflict logic/business (cùng đoạn code, ý đồ khác nhau) → **không tự quyết** — trình bày rõ 2 phiên bản khác nhau ở đâu, đề xuất hướng, hỏi user chọn.
 7. Soạn sẵn commit message — **bắt buộc chứa đúng cụm** `"up pro"` (production) hoặc `"up staging"` (staging), không sai chính tả/thiếu khoảng trắng. Show cho user xem trước khi commit.
 8. Hỏi xác nhận rõ ràng trước khi `git commit` + `git push` — không tự ý push (theo `.claude/rules/working-agreements.md`).
-9. Sau khi push, nhắc user: GitHub Actions sẽ tự trigger theo commit message, xem trạng thái bằng `gh run list --workflow=deploy.yml` (production) hoặc `--workflow=deploy-staging.yml` (staging) nếu có `gh` CLI, hoặc mở tab Actions trên GitHub.
+9. Sau khi push, nhắc user: GitHub Actions sẽ tự trigger theo commit message, xem trạng thái bằng `gh run list --workflow=deploy.yml` (dùng chung staging + production) nếu có `gh` CLI, hoặc mở tab Actions trên GitHub.

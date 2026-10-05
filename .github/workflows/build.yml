@@ -1,8 +1,14 @@
-name: Build
+name: CI - Build check
+run-name: "🔨 CI build · ${{ github.event.pull_request.title || github.event.head_commit.message }}"
 
+# Chỉ kiểm tra build ở main/PR — nhánh GIT/* đã có workflow deploy tự compile
 on:
   push:
+    branches: ['main']
   pull_request:
+
+permissions:
+  contents: read
 
 jobs:
   build:
