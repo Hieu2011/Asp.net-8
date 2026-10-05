@@ -17,6 +17,11 @@ internal class Program
 {
     private static async Task Main(string[] args)
     {
+        if (args.Contains("--healthcheck"))
+        {
+            Environment.ExitCode = await CheckHealthAsync();
+            return;
+        }
         WebApplication app = null;
         string templateLog = "{Title}. {Content}.";
         try
@@ -83,6 +88,23 @@ internal class Program
         finally
         {
             await Log.CloseAndFlushAsync();
+        }
+    }
+
+    /// <summary>Healthcheck cho Coolify (Container command chặn toán tử shell, image không có curl) — gọi /health của chính app.</summary>
+    private static async Task<int> CheckHealthAsync()
+    {
+        string strPort = (Environment.GetEnvironmentVariable("ASPNETCORE_HTTP_PORTS") ?? "8080").Split(';', ',')[0];
+        try
+        {
+            using HttpClient objHttpClient = new() { Timeout = TimeSpan.FromSeconds(3) };
+            using HttpResponseMessage objResponse = await objHttpClient.GetAsync($"http://127.0.0.1:{strPort}/health");
+            return objResponse.IsSuccessStatusCode ? 0 : 1;
+        }
+        catch (Exception exception)
+        {
+            Console.Error.WriteLine(exception.Message);
+            return 1;
         }
     }
 }
