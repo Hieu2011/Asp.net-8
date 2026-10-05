@@ -25,6 +25,8 @@ jobs:
     env:
       DEPLOY_ENV: ${{ github.ref_name == 'GIT/production' && 'production' || 'staging' }}
       DEPLOY_KEYWORD: ${{ github.ref_name == 'GIT/production' && 'up pro' || 'up staging' }}
+      # if: không đọc được secrets trực tiếp → quy ra cờ ở env
+      HAS_TAILSCALE: ${{ secrets.TS_OAUTH_CLIENT_ID != '' }}
     steps:
       - name: Check deploy syntax
         env:
@@ -64,12 +66,22 @@ jobs:
           -p:ContainerRegistry=ghcr.io
           -p:ContainerImageTags='"${{ github.sha }};${{ env.DEPLOY_ENV }}"'
 
+      # Runner tạm join Tailscale (ephemeral, tag:ci) → gọi Coolify không phụ thuộc Cloudflare Tunnel (mạng công ty chặn)
+      - name: Connect Tailscale
+        id: tailscale
+        if: env.HAS_TAILSCALE == 'true'
+        continue-on-error: true
+        uses: tailscale/github-action@v3
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
+
       # Gán tag = sha cho app trước khi deploy → mỗi bản 1 tag riêng, tab Rollback của Coolify quay về được
       # (dùng chung tag "staging" thì image cũ mất tag thành <none>, không rollback được).
-      # Ở mạng công ty Cloudflare Tunnel bị chặn → không gọi được Coolify: chỉ cảnh báo, image đã lên GHCR.
       - name: Trigger Coolify deploy
         env:
-          COOLIFY_URL: https://coolify.hieupm.dev/api/v1
+          COOLIFY_URL: ${{ steps.tailscale.outcome == 'success' && secrets.COOLIFY_TAILSCALE_API_URL || 'https://coolify.hieupm.dev/api/v1' }}
           COOLIFY_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
           COOLIFY_UUID: ${{ github.ref_name == 'GIT/production' && secrets.COOLIFY_PROD_UUID || secrets.COOLIFY_STAGING_UUID }}
         run: |
