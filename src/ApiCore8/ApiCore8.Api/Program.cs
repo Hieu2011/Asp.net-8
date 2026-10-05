@@ -10,6 +10,7 @@ using ApiCore8.Infrastructure.Mongo;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
 using Serilog;
+using Serilog.Events;
 using System.Threading.Channels;
 
 internal class Program
@@ -28,6 +29,7 @@ internal class Program
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddHealthChecks();
 
             // ✅ Infrastructure (Mongo/Redis/Postgres) + Application (repositories)
             builder.Services.AddAppServices(builder.Configuration);
@@ -63,9 +65,13 @@ internal class Program
 
             app.UseAuthentication();
             app.UseAuthorization();
-            app.UseSerilogRequestLogging();
+            // Healthcheck Coolify gọi liên tục → hạ xuống Verbose để không ghi log rác
+            app.UseSerilogRequestLogging(options => options.GetLevel = (httpContext, _, exception) =>
+                exception != null || httpContext.Response.StatusCode >= 500 ? LogEventLevel.Error
+                : httpContext.Request.Path.StartsWithSegments("/health") ? LogEventLevel.Verbose : LogEventLevel.Information);
 
             app.MapControllers();
+            app.MapHealthChecks("/health");
 
             await app.RunAsync();
         }
