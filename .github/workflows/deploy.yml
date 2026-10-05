@@ -94,7 +94,8 @@ jobs:
           if [[ "$intStatus" != 2* ]]; then
             echo "::warning::Không gán được tag $GITHUB_SHA (HTTP $intStatus): $(cat patch.json 2>/dev/null) — vẫn deploy tiếp."
           fi
-          if curl -fsS -X GET "$COOLIFY_URL/deploy?uuid=$COOLIFY_UUID&force=false" \
+          # Coolify v4.3+: deploy bắt buộc POST (GET trả 405)
+          if curl -fsS -X POST "$COOLIFY_URL/deploy?uuid=$COOLIFY_UUID&force=false" \
                -H "Authorization: Bearer $COOLIFY_TOKEN"; then
             echo "✅ Đã gọi Coolify deploy $DEPLOY_ENV (tag $GITHUB_SHA)."
           else
