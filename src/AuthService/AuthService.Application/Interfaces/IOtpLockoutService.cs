@@ -7,14 +7,20 @@ namespace AuthService.Application.Interfaces
     public interface IOtpLockoutService
     {
         // --- OTP (mục 17) ---
-        /// <summary>Tăng otp_fail_count. Đạt 3 → tự set otp_locked_until + reset counter. Trả về count mới.</summary>
-        Task<int> IncrementOtpFailAsync(Guid userId, CancellationToken cancellationToken = default);
+        /// <summary>Giữ chỗ 1 lượt thử OTP TRƯỚC khi verify (nguyên tử — chặn dò song song). Trả số thứ tự lượt (1..3);
+        /// null nếu OTP đang khóa hoặc đã đủ 3 lượt đang xử lý.</summary>
+        Task<int?> TryReserveOtpAttemptAsync(Guid userId, CancellationToken cancellationToken = default);
+
+        /// <summary>Trả lại lượt đã giữ khi request bị từ chối vì lý do khác sai mã (thiếu captcha, replay).</summary>
+        Task ReleaseOtpAttemptAsync(Guid userId, CancellationToken cancellationToken = default);
+
+        /// <summary>Lượt thử sai mã — lượt thứ 3 thì set otp_locked_until + reset counter (mục 17).</summary>
+        Task RecordOtpFailureAsync(Guid userId, int attemptNumber, CancellationToken cancellationToken = default);
         Task ResetOtpFailAsync(Guid userId, CancellationToken cancellationToken = default);
-        Task<int> GetOtpFailCountAsync(Guid userId, CancellationToken cancellationToken = default);
         Task<bool> IsOtpLockedAsync(Guid userId, CancellationToken cancellationToken = default);
         Task<TimeSpan?> GetOtpLockRemainingAsync(Guid userId, CancellationToken cancellationToken = default);
 
-        /// <summary>Chống replay cùng chu kỳ 30s (mục 30) — true nếu step MỚI (chưa dùng), false nếu trùng lần trước.</summary>
+        /// <summary>Chống replay (mục 30) — true nếu step MỚI HƠN step đã dùng, false nếu trùng hoặc cũ hơn.</summary>
         Task<bool> TryRecordOtpStepAsync(Guid userId, long timeStep, CancellationToken cancellationToken = default);
 
         // --- Password fallback (mục 18) ---

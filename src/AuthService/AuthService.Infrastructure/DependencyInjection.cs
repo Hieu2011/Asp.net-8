@@ -64,6 +64,8 @@ namespace AuthService.Infrastructure
             services.AddSingleton<IPasswordHasher, BCryptPasswordHasher>();
             services.AddSingleton<ITotpSecretEncryption, TotpSecretEncryption>();
             services.AddSingleton<IOtpService, TotpService>();
+            services.AddSingleton<RsaSigningKeyRing>();
+            services.AddSingleton<IJwksProvider>(sp => sp.GetRequiredService<RsaSigningKeyRing>());
             services.AddSingleton<IJwtService, JwtService>();
             services.AddSingleton<IRoleAuthorizationService, RoleAuthorizationService>();
             services.AddSingleton<IClientIpResolver, ClientIpResolver>();
@@ -72,12 +74,16 @@ namespace AuthService.Infrastructure
             services.AddSingleton<IOtpLockoutService, OtpFailCounterService>();
             services.AddSingleton<IPasswordResetService, PasswordResetService>();
             services.AddSingleton<IGoogleSetupTokenService, GoogleSetupTokenService>();
+            services.AddSingleton<IPendingRegistrationService, PendingRegistrationService>();
+            services.AddSingleton<IQrLoginStore, QrLoginStore>();
             services.AddSingleton<ISessionRevocationCache, SessionRevocationCache>();
             services.AddSingleton<IClientRateLimiter, ClientRateLimiter>();
+            services.AddSingleton<ILoginEmailRateLimiter, LoginEmailRateLimiter>();
             services.AddSingleton<IUserProfileCache, UserProfileCache>();
 
             // External adapters
             services.AddSingleton<IEmailSender, EmailSender>();
+            services.AddSingleton<ISecurityNotifier, SecurityNotifier>();
             services.AddSingleton<IGoogleTokenVerifier, GoogleTokenVerifier>();
             services.AddHttpClient<ICaptchaVerifier, CaptchaVerifier>();
 

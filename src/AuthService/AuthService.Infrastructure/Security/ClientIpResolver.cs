@@ -1,6 +1,8 @@
 using System.Net;
 using System.Net.Sockets;
 using AuthService.Application.Interfaces;
+using AuthService.Application.Options;
+using Microsoft.Extensions.Options;
 
 namespace AuthService.Infrastructure.Security
 {
@@ -23,9 +25,16 @@ namespace AuthService.Infrastructure.Security
             "2405:8100::/32", "2a06:98c0::/29", "2c0f:f248::/32"
         ];
 
+        private readonly string[] _arrTrustedProxy;
+
+        public ClientIpResolver(IOptions<AuthOptions> options)
+        {
+            _arrTrustedProxy = options.Value.TrustedProxies;
+        }
+
         public string Resolve(string remoteIpAddress, string? cfConnectingIp, string? xForwardedFor)
         {
-            if (!IsFromCloudflare(remoteIpAddress))
+            if (!IsFromCloudflare(remoteIpAddress) && !IsFromTrustedProxy(remoteIpAddress))
                 return remoteIpAddress;
 
             if (!string.IsNullOrWhiteSpace(cfConnectingIp))
@@ -49,6 +58,11 @@ namespace AuthService.Infrastructure.Security
 
             return CloudflareCidrRanges.Any(cidr => IsInCidrRange(address, cidr));
         }
+
+        // Proxy nội bộ (Next.js BFF) gọi thay người dùng → tin X-Forwarded-For nó gửi kèm
+        private bool IsFromTrustedProxy(string strRemoteIpAddress)
+            => _arrTrustedProxy.Length > 0 && IPAddress.TryParse(strRemoteIpAddress, out var objAddress)
+                && _arrTrustedProxy.Any(x => IsInCidrRange(objAddress.IsIPv4MappedToIPv6 ? objAddress.MapToIPv4() : objAddress, x));
 
         private static bool IsInCidrRange(IPAddress address, string cidr)
         {

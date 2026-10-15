@@ -1,6 +1,6 @@
 ﻿using Shared.Common.Contracts;
 using ApiCore8.Application.Contracts;
-using ApiCore8.Domain.Entities;
+using Shared.Logging.ApiLog;
 
 namespace ApiCore8.Application.Interfaces
 {
@@ -10,13 +10,6 @@ namespace ApiCore8.Application.Interfaces
     /// </summary>
     public interface IApiLogRepository
     {
-        /// <summary>
-        /// Insert log vào MongoDB
-        /// </summary>
-        /// <param name="log">ApiExecutionLog entity</param>
-        /// <returns>true nếu insert thành công</returns>
-        Task<bool> InsertLog(ApiExecutionLog log);
-        
         /// <summary>
         /// Search logs với filter + pagination
         /// Sử dụng LogFilterRequest với các fields: Id, ApiName, Method, From, To, Keyword, Page, PageSize

@@ -4,6 +4,7 @@ using Npgsql;
 using NpgsqlTypes;
 using Shared.DataAccess.Abstractions;
 using Shared.DataAccess.Database;
+using Shared.Common.Exceptions;
 
 namespace Shared.DataAccess.Postgres;
 
@@ -247,7 +248,8 @@ public class PostgresDbHelper : IDisposable, IDataCore
             {
                 await RollbackTransactionAsync(token);
             }
-            Console.WriteLine($"Error executing store {storeName}: {ex.Message}");
+            // Không log ở đây (middleware/[LogApi] log 1 lần) — chỉ gắn tên store để log biết lỗi ở store nào
+            ex.SetStoreName(storeName);
             throw;
         }
         finally
@@ -352,7 +354,8 @@ public class PostgresDbHelper : IDisposable, IDataCore
             {
                 await RollbackTransactionAsync(token);
             }
-            Console.WriteLine($"Error executing store {storeName}: {ex.Message}");
+            // Không log ở đây (middleware/[LogApi] log 1 lần) — chỉ gắn tên store để log biết lỗi ở store nào
+            ex.SetStoreName(storeName);
             throw;
         }
         finally
@@ -434,7 +437,8 @@ public class PostgresDbHelper : IDisposable, IDataCore
             {
                 await RollbackTransactionAsync(token);
             }
-            Console.WriteLine($"Error executing store {storeName}: {ex.Message}");
+            // Không log ở đây (middleware/[LogApi] log 1 lần) — chỉ gắn tên store để log biết lỗi ở store nào
+            ex.SetStoreName(storeName);
             throw;
         }
         finally
@@ -465,6 +469,11 @@ public class PostgresDbHelper : IDisposable, IDataCore
 
                 return await ((NpgsqlCommand)_command).ExecuteNonQueryAsync(token);
             }
+        }
+        catch (Exception ex)
+        {
+            ex.SetStoreName(storeName);
+            throw;
         }
         finally
         {
@@ -501,7 +510,8 @@ public class PostgresDbHelper : IDisposable, IDataCore
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error executing store {storeName}: {ex.Message}");
+            // Không log ở đây (middleware/[LogApi] log 1 lần) — chỉ gắn tên store để log biết lỗi ở store nào
+            ex.SetStoreName(storeName);
             throw;
         }
         finally

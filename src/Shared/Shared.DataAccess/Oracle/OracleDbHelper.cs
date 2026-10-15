@@ -2,6 +2,7 @@ using System.Data;
 using Shared.DataAccess.Abstractions;
 using Shared.DataAccess.Database;
 using Oracle.ManagedDataAccess.Client;
+using Shared.Common.Exceptions;
 
 namespace Shared.DataAccess.Oracle;
 
@@ -167,7 +168,8 @@ public class OracleDbHelper : IDisposable, IDataCore
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error executing store {storeName}: {ex.Message}");
+            // Không log ở đây (middleware/[LogApi] log 1 lần) — chỉ gắn tên store để log biết lỗi ở store nào
+            ex.SetStoreName(storeName);
             throw;
         }
         finally
@@ -206,7 +208,8 @@ public class OracleDbHelper : IDisposable, IDataCore
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error executing store {storeName}: {ex.Message}");
+            // Không log ở đây (middleware/[LogApi] log 1 lần) — chỉ gắn tên store để log biết lỗi ở store nào
+            ex.SetStoreName(storeName);
             throw;
         }
         finally
@@ -248,7 +251,8 @@ public class OracleDbHelper : IDisposable, IDataCore
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error executing store {storeName}: {ex.Message}");
+            // Không log ở đây (middleware/[LogApi] log 1 lần) — chỉ gắn tên store để log biết lỗi ở store nào
+            ex.SetStoreName(storeName);
             throw;
         }
         finally
@@ -272,11 +276,22 @@ public class OracleDbHelper : IDisposable, IDataCore
 
         await EnsureOpenConnectionAsync(token);
 
-        using (_command = CreateStoredProcedureCommand(storeName))
+        try
         {
-            int result = await ((OracleCommand)_command).ExecuteNonQueryAsync(token);
+            using (_command = CreateStoredProcedureCommand(storeName))
+            {
+                return await ((OracleCommand)_command).ExecuteNonQueryAsync(token);
+            }
+        }
+        catch (Exception ex)
+        {
+            ex.SetStoreName(storeName);
+            throw;
+        }
+        finally
+        {
+            // Store lỗi vẫn phải xóa tham số, không thì sót lại cho lần gọi kế tiếp trên cùng instance
             ClearParameters();
-            return result;
         }
     }
 
@@ -304,7 +319,8 @@ public class OracleDbHelper : IDisposable, IDataCore
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error executing store {storeName}: {ex.Message}");
+            // Không log ở đây (middleware/[LogApi] log 1 lần) — chỉ gắn tên store để log biết lỗi ở store nào
+            ex.SetStoreName(storeName);
             throw;
         }
         finally

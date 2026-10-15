@@ -7,17 +7,23 @@ namespace AuthService.Application.Interfaces
     /// <summary>Implement ở Infrastructure, gọi sp_user_* qua PostgresDbHelper (PLAN.md mục 6).</summary>
     public interface IUserRepository
     {
+        /// <summary>user.Username rỗng → DB tự sinh mã 001, 002... (AUTH-07).</summary>
         Task<User> CreateAsync(User user, CancellationToken cancellationToken = default);
         Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
-        Task<User?> GetByUsernameAsync(string username, CancellationToken cancellationToken = default);
         Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken = default);
         Task<User?> GetByGoogleIdAsync(string googleId, CancellationToken cancellationToken = default);
-        Task<PagedResult<User>> GetPagedAsync(RoleLevel? roleLevel, int page, int pageSize, CancellationToken cancellationToken = default);
+        /// <summary>keyword: tìm theo email / họ tên / mã người dùng (không phân biệt hoa thường); Total = tổng số dòng khớp.</summary>
+        Task<PagedResult<User>> GetPagedAsync(RoleLevel? roleLevel, string? keyword, int page, int pageSize, CancellationToken cancellationToken = default);
+
+        Task<UserStatsDto> GetStatsAsync(CancellationToken cancellationToken = default);
 
         Task<bool> UpdatePasswordAsync(Guid id, string passwordHash, string updatedUser, CancellationToken cancellationToken = default);
 
         /// <summary>totpSecret truyền vào đã là chuỗi MÃ HÓA AES (mục 13) — repository không tự mã hóa.</summary>
         Task<bool> UpdateTotpSecretAsync(Guid id, string? totpSecret, bool isTotpEnabled, string updatedUser, CancellationToken cancellationToken = default);
+
+        /// <summary>Chỉ ghi khi full_name đang NULL (user cũ đăng nhập Google lần đầu).</summary>
+        Task<bool> SetFullNameAsync(Guid id, string fullName, string updatedUser, CancellationToken cancellationToken = default);
 
         Task<bool> LinkGoogleAsync(Guid id, string googleId, string updatedUser, CancellationToken cancellationToken = default);
         Task<bool> UpdateRoleAsync(Guid id, RoleLevel roleLevel, string updatedUser, CancellationToken cancellationToken = default);

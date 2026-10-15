@@ -10,6 +10,8 @@ namespace AuthService.Application.Services
     /// <inheritdoc cref="IUserManagementService" />
     public class UserManagementService : IUserManagementService
     {
+        private const int MaxPageSize = 100;
+
         private readonly IUserRepository _userRepository;
         private readonly ISessionRepository _sessionRepository;
         private readonly ISessionRevocationCache _revocationCache;
@@ -36,9 +38,9 @@ namespace AuthService.Application.Services
             _options = options.Value;
         }
 
-        public async Task<PagedResult<UserDto>> GetUsersAsync(RoleLevel? roleLevel, int page, int pageSize, CancellationToken cancellationToken = default)
+        public async Task<PagedResult<UserDto>> GetUsersAsync(RoleLevel? roleLevel, string? keyword, int page, int pageSize, CancellationToken cancellationToken = default)
         {
-            var paged = await _userRepository.GetPagedAsync(roleLevel, page, pageSize, cancellationToken);
+            var paged = await _userRepository.GetPagedAsync(roleLevel, keyword, Math.Max(page, 1), Math.Clamp(pageSize, 1, MaxPageSize), cancellationToken);
             return new PagedResult<UserDto>
             {
                 Items = paged.Items.Select(MapToDto).ToList(),
@@ -47,6 +49,9 @@ namespace AuthService.Application.Services
                 PageSize = paged.PageSize
             };
         }
+
+        public Task<UserStatsDto> GetStatsAsync(CancellationToken cancellationToken = default)
+            => _userRepository.GetStatsAsync(cancellationToken);
 
         public async Task<UserDto> GetMyProfileAsync(Guid userId, CancellationToken cancellationToken = default)
         {
@@ -65,6 +70,8 @@ namespace AuthService.Application.Services
         public async Task ChangeRoleAsync(Guid actorId, RoleLevel actorRole, string actorUsername, Guid targetId, RoleLevel newRoleLevel, CancellationToken cancellationToken = default)
         {
             EnsureAdminAndNotSelf(actorId, actorRole, targetId);
+            if (!Enum.IsDefined(newRoleLevel))
+                throw new AuthDomainException(AuthErrorCode.RoleInvalid, "Vai trò không hợp lệ.");
 
             await _userRepository.UpdateRoleAsync(targetId, newRoleLevel, actorUsername, cancellationToken);
             await _profileCache.RemoveAsync(targetId, cancellationToken);
@@ -84,6 +91,14 @@ namespace AuthService.Application.Services
                 _sessionRepository, _revocationCache, targetId, actorUsername, _options.SessionAbsoluteTtl, cancellationToken);
         }
 
+        public async Task EnableAsync(Guid actorId, RoleLevel actorRole, string actorUsername, Guid targetId, CancellationToken cancellationToken = default)
+        {
+            EnsureAdminAndNotSelf(actorId, actorRole, targetId);
+
+            await _userRepository.SetActiveAsync(targetId, true, actorUsername, cancellationToken);
+            await _profileCache.RemoveAsync(targetId, cancellationToken);
+        }
+
         public async Task DeleteAsync(Guid actorId, RoleLevel actorRole, string actorUsername, Guid targetId, CancellationToken cancellationToken = default)
         {
             EnsureAdminAndNotSelf(actorId, actorRole, targetId);
@@ -94,8 +109,11 @@ namespace AuthService.Application.Services
                 _sessionRepository, _revocationCache, targetId, actorUsername, _options.SessionAbsoluteTtl, cancellationToken);
         }
 
-        public async Task UnlockAsync(string actorUsername, Guid targetId, CancellationToken cancellationToken = default)
+        public async Task UnlockAsync(RoleLevel actorRole, string actorUsername, Guid targetId, CancellationToken cancellationToken = default)
         {
+            if (!_roleAuthorization.IsAdmin(actorRole))
+                throw new AuthDomainException(AuthErrorCode.Forbidden, "Chỉ Admin mới được thực hiện thao tác này.");
+
             await _otpLockout.ClearAllLocksAsync(targetId, cancellationToken);
             await _userRepository.SetPermanentlyLockedAsync(targetId, false, actorUsername, cancellationToken);
             await _profileCache.RemoveAsync(targetId, cancellationToken);
@@ -117,6 +135,7 @@ namespace AuthService.Application.Services
             Id = user.Id,
             Username = user.Username,
             Email = user.Email,
+            FullName = user.FullName,
             RoleLevel = user.RoleLevel,
             IsActive = user.IsActive,
             IsPermanentlyLocked = user.IsPermanentlyLocked,

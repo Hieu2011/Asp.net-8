@@ -1,12 +1,14 @@
 namespace AuthService.Application.Interfaces
 {
-    /// <summary>Kết quả verify ID Token Google — chỉ giữ 3 field thật sự cần dùng (mục 45).</summary>
+    /// <summary>Kết quả verify ID Token Google — chỉ giữ các field thật sự cần dùng (mục 45).</summary>
     public class GoogleTokenPayload
     {
         /// <summary>Claim "sub" — định danh Google ổn định, lưu vào users.google_id.</summary>
         public string Subject { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public bool EmailVerified { get; set; }
+        /// <summary>Claim "name" — họ tên hiển thị, có thể rỗng.</summary>
+        public string? Name { get; set; }
     }
 
     /// <summary>Google.Apis.Auth (mục 45). Implement ở Infrastructure.</summary>

@@ -1,6 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using AuthService.Application.Interfaces;
 using AuthService.Application.Options;
 using AuthService.Domain;
@@ -13,17 +12,21 @@ namespace AuthService.Infrastructure.Security
     /// <remarks>
     /// Ký RSA, ép RS256 tường minh qua <see cref="SecurityAlgorithms.RsaSha256"/> (mục 15 — chặn
     /// algorithm confusion phải được validate ở PHÍA NHẬN, tức ApiCore8.Api, không phải ở đây).
-    /// Đăng ký Singleton (mục DI) vì import RSA key tốn chi phí, chỉ cần làm 1 lần lúc start-up.
+    /// Khóa lấy từ <see cref="RsaSigningKeyRing"/> (header <c>kid</c> để bên nhận chọn đúng khóa qua JWKS).
+    /// Token user và token đối tác khác <c>aud</c> + <c>token_use</c> → bên nhận không nhận nhầm loại.
     /// </remarks>
     public class JwtService : IJwtService
     {
-        private readonly SigningCredentials _signingCredentials;
+        public const string TokenUseUser = "user";
+        public const string TokenUseClient = "client";
 
-        public JwtService(IOptions<AuthOptions> options)
+        private readonly RsaSigningKeyRing _keyRing;
+        private readonly AuthOptions _options;
+
+        public JwtService(RsaSigningKeyRing keyRing, IOptions<AuthOptions> options)
         {
-            var rsa = RSA.Create();
-            rsa.ImportFromPem(options.Value.RsaPrivateKey);
-            _signingCredentials = new SigningCredentials(new RsaSecurityKey(rsa), SecurityAlgorithms.RsaSha256);
+            _keyRing = keyRing;
+            _options = options.Value;
         }
 
         public string IssueAccessToken(Guid userId, string username, RoleLevel roleLevel, Guid sessionId, TimeSpan ttl)
@@ -33,10 +36,11 @@ namespace AuthService.Infrastructure.Security
                 new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
                 new Claim("username", username),
                 new Claim("role_level", ((int)roleLevel).ToString()),
-                new Claim("session_id", sessionId.ToString())
+                new Claim("session_id", sessionId.ToString()),
+                new Claim("token_use", TokenUseUser)
             };
 
-            return WriteToken(claims, ttl);
+            return WriteToken(claims, _options.UserAudience, ttl);
         }
 
         public string IssueClientAccessToken(string clientId, IReadOnlyList<string> scopes, TimeSpan ttl)
@@ -45,20 +49,23 @@ namespace AuthService.Infrastructure.Security
             {
                 new Claim(JwtRegisteredClaimNames.Sub, clientId),
                 new Claim("client_id", clientId),
-                new Claim("scopes", string.Join(' ', scopes))
+                new Claim("scopes", string.Join(' ', scopes)),
+                new Claim("token_use", TokenUseClient)
             };
 
-            return WriteToken(claims, ttl);
+            return WriteToken(claims, _options.PartnerAudience, ttl);
         }
 
-        private string WriteToken(IEnumerable<Claim> claims, TimeSpan ttl)
+        private string WriteToken(IEnumerable<Claim> claims, string strAudience, TimeSpan ttl)
         {
             var now = DateTime.UtcNow;
             var token = new JwtSecurityToken(
-                claims: claims,
+                issuer: _options.Issuer,
+                audience: strAudience,
+                claims: claims.Append(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString("N"))),
                 notBefore: now,
                 expires: now.Add(ttl),
-                signingCredentials: _signingCredentials);
+                signingCredentials: _keyRing.SigningCredentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }

@@ -59,6 +59,12 @@ namespace Shared.DataAccess.Database
 
         private static Expression BuildTypedValueExpression(ParameterExpression recordParam, ConstantExpression ordinalExpr, Type propertyType)
         {
+            // DateTime?/int?/enum?... -> đọc theo kiểu gốc rồi convert sang Nullable; DBNull đã chặn ở ngoài.
+            // Convert.ChangeType không hỗ trợ Nullable ("Invalid cast from 'System.DateTime' to 'Nullable<DateTime>'").
+            var underlyingType = Nullable.GetUnderlyingType(propertyType);
+            if (underlyingType != null)
+                return Expression.Convert(BuildTypedValueExpression(recordParam, ordinalExpr, underlyingType), propertyType);
+
             if (propertyType == typeof(Guid))
             {
                 // Postgres (uuid)/SQL Server (uniqueidentifier) trả sẵn Guid; Oracle không có UUID

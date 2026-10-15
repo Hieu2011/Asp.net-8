@@ -18,13 +18,15 @@ namespace AuthService.Infrastructure.Postgres
 
         public async Task<User> CreateAsync(User user, CancellationToken cancellationToken = default)
         {
-            _db.AddParameter("@username", user.Username);
+            var strUsername = string.IsNullOrEmpty(user.Username) ? null : user.Username;
+            _db.AddParameter("@username", strUsername);
             _db.AddParameter("@email", user.Email);
+            _db.AddParameter("@full_name", user.FullName);
             _db.AddParameter("@password_hash", user.PasswordHash);
             _db.AddParameter("@totp_secret", user.TotpSecret);
             _db.AddParameter("@role_level", user.RoleLevel);
             _db.AddParameter("@google_id", user.GoogleId);
-            _db.AddParameter("@created_user", user.Username); // tự đăng ký → chính username đó (mục 4)
+            _db.AddParameter("@created_user", strUsername); // NULL → DB ghi chính username vừa sinh (mục 4)
 
             return await _db.ExecStoreObjectFastAsync<User>("sp_user_create", cancellationToken);
         }
@@ -33,13 +35,6 @@ namespace AuthService.Infrastructure.Postgres
         {
             _db.AddParameter("@id", id);
             var user = await _db.ExecStoreObjectFastAsync<User>("sp_user_get_by_id", cancellationToken);
-            return user.Id == Guid.Empty ? null : user;
-        }
-
-        public async Task<User?> GetByUsernameAsync(string username, CancellationToken cancellationToken = default)
-        {
-            _db.AddParameter("@username", username);
-            var user = await _db.ExecStoreObjectFastAsync<User>("sp_user_get_by_username", cancellationToken);
             return user.Id == Guid.Empty ? null : user;
         }
 
@@ -57,15 +52,21 @@ namespace AuthService.Infrastructure.Postgres
             return user.Id == Guid.Empty ? null : user;
         }
 
-        public async Task<PagedResult<User>> GetPagedAsync(RoleLevel? roleLevel, int page, int pageSize, CancellationToken cancellationToken = default)
+        public async Task<PagedResult<User>> GetPagedAsync(RoleLevel? roleLevel, string? keyword, int page, int pageSize, CancellationToken cancellationToken = default)
         {
             _db.AddParameter("@role_level", roleLevel);
+            _db.AddParameter("@keyword", string.IsNullOrWhiteSpace(keyword) ? null : keyword.Trim());
             _db.AddParameter("@page", page);
             _db.AddParameter("@page_size", pageSize);
 
-            var items = await _db.ExecStoreToListObjectAsync<User>("sp_user_get_paged", cancellationToken);
-            return new PagedResult<User> { Items = items, Page = page, PageSize = pageSize, Total = items.Count };
+            var lstRow = await _db.ExecStoreToListObjectAsync<UserPageRow>("sp_user_get_paged", cancellationToken);
+            // total_count (COUNT(*) OVER()) giống nhau ở mọi dòng; trang rỗng thì tổng = 0
+            var intTotal = lstRow.Count == 0 ? 0 : (int)lstRow[0].TotalCount;
+            return new PagedResult<User> { Items = lstRow.Cast<User>().ToList(), Page = page, PageSize = pageSize, Total = intTotal };
         }
+
+        public Task<UserStatsDto> GetStatsAsync(CancellationToken cancellationToken = default)
+            => _db.ExecStoreObjectFastAsync<UserStatsDto>("sp_user_get_stats", cancellationToken);
 
         public async Task<bool> UpdatePasswordAsync(Guid id, string passwordHash, string updatedUser, CancellationToken cancellationToken = default)
         {
@@ -85,6 +86,16 @@ namespace AuthService.Infrastructure.Postgres
             _db.AddParameter("@updated_user", updatedUser);
 
             var result = await _db.ExecuteNonQueryAsStringAsync("sp_user_update_totp_secret", cancellationToken);
+            return ParseBoolResult(result);
+        }
+
+        public async Task<bool> SetFullNameAsync(Guid id, string fullName, string updatedUser, CancellationToken cancellationToken = default)
+        {
+            _db.AddParameter("@id", id);
+            _db.AddParameter("@full_name", fullName);
+            _db.AddParameter("@updated_user", updatedUser);
+
+            var result = await _db.ExecuteNonQueryAsStringAsync("sp_user_set_full_name", cancellationToken);
             return ParseBoolResult(result);
         }
 
@@ -144,6 +155,12 @@ namespace AuthService.Infrastructure.Postgres
 
             var result = await _db.ExecuteNonQueryAsStringAsync("sp_user_soft_delete", cancellationToken);
             return ParseBoolResult(result);
+        }
+
+        /// <summary>Dòng của sp_user_get_paged — thêm cột total_count để phân trang.</summary>
+        private sealed class UserPageRow : User
+        {
+            public long TotalCount { get; set; }
         }
 
         // Postgres trả "True"/"False" (boolean native) qua ExecuteScalar.ToString().

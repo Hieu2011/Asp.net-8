@@ -1,5 +1,5 @@
 using Shared.Common.Contracts;
-using ApiCore8.Api.Middleware;
+using Shared.Logging.ApiLog;
 using ApiCore8.Application.Contracts;
 using ApiCore8.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;

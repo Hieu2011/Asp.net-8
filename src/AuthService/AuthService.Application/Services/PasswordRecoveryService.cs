@@ -19,6 +19,7 @@ namespace AuthService.Application.Services
         private readonly ICaptchaVerifier _captchaVerifier;
         private readonly IEmailSender _emailSender;
         private readonly ILoginHistoryRepository _loginHistory;
+        private readonly ISecurityNotifier _securityNotifier;
         private readonly AuthOptions _options;
 
         public PasswordRecoveryService(
@@ -33,6 +34,7 @@ namespace AuthService.Application.Services
             ICaptchaVerifier captchaVerifier,
             IEmailSender emailSender,
             ILoginHistoryRepository loginHistory,
+            ISecurityNotifier securityNotifier,
             IOptions<AuthOptions> options)
         {
             _userRepository = userRepository;
@@ -46,6 +48,7 @@ namespace AuthService.Application.Services
             _captchaVerifier = captchaVerifier;
             _emailSender = emailSender;
             _loginHistory = loginHistory;
+            _securityNotifier = securityNotifier;
             _options = options.Value;
         }
 
@@ -54,18 +57,17 @@ namespace AuthService.Application.Services
             if (!await _captchaVerifier.VerifyAsync(request.CaptchaToken, remoteIp, cancellationToken))
                 throw new AuthDomainException(AuthErrorCode.CaptchaRequired, "Cần xác thực chống bot.");
 
-            var user = await _userRepository.GetByUsernameAsync(request.Username, cancellationToken);
+            var user = await _userRepository.GetByEmailAsync(EmailPolicy.Normalize(request.Email), cancellationToken);
 
-            // Mục 39 — không phân biệt username tồn tại hay không, kể cả khi đang cooldown: luôn
-            // "thành công" từ góc nhìn caller, chỉ khác là có gửi email thật hay không.
-            if (user == null)
+            // Mục 39 — không phân biệt email tồn tại hay không, bị vô hiệu hóa hay đang bị giới hạn gửi:
+            // luôn "thành công" từ góc nhìn caller, chỉ khác là có gửi email thật hay không.
+            if (user == null || !user.IsActive)
                 return;
 
-            if (await _passwordReset.IsCooldownActiveAsync(user.Id, cancellationToken))
+            if (!await _passwordReset.TryReserveSendAsync(user.Id, cancellationToken))
                 return;
 
             var otp = await _passwordReset.GenerateAndStoreOtpAsync(user.Id, cancellationToken);
-            await _passwordReset.SetCooldownAsync(user.Id, cancellationToken);
 
             await _emailSender.SendAsync(
                 user.Email,
@@ -76,8 +78,8 @@ namespace AuthService.Application.Services
 
         public async Task<VerifyResetOtpResponse> VerifyResetOtpAsync(VerifyResetOtpRequest request, CancellationToken cancellationToken = default)
         {
-            var user = await _userRepository.GetByUsernameAsync(request.Username, cancellationToken);
-            if (user == null || !await _passwordReset.VerifyOtpAsync(user.Id, request.Otp, cancellationToken))
+            var user = await _userRepository.GetByEmailAsync(EmailPolicy.Normalize(request.Email), cancellationToken);
+            if (user == null || !user.IsActive || !await _passwordReset.VerifyOtpAsync(user.Id, request.Otp, cancellationToken))
                 throw new AuthDomainException(AuthErrorCode.ResetOtpInvalid, "Mã xác nhận không hợp lệ hoặc đã hết hạn.");
 
             var resetToken = await _passwordReset.IssueResetTokenAsync(user.Id, cancellationToken);
@@ -86,14 +88,17 @@ namespace AuthService.Application.Services
 
         public async Task<ResetPasswordResponse> ResetPasswordAsync(ResetPasswordRequest request, string remoteIp, CancellationToken cancellationToken = default)
         {
+            // Validate trước khi tiêu token — nhập mật khẩu sai chuẩn thì vẫn còn token để sửa lại
+            PasswordPolicy.Validate(request.NewPassword);
+
             var userId = await _passwordReset.ConsumeResetTokenAsync(request.ResetToken, cancellationToken);
             if (userId == null)
                 throw new AuthDomainException(AuthErrorCode.ResetTokenInvalid, "Yêu cầu đặt lại mật khẩu không hợp lệ hoặc đã hết hạn.");
 
             var user = await _userRepository.GetByIdAsync(userId!.Value, cancellationToken)
                 ?? throw new AuthDomainException(AuthErrorCode.ResetTokenInvalid, "Tài khoản không tồn tại.");
-
-            PasswordPolicy.Validate(request.NewPassword);
+            if (!user.IsActive)
+                throw new AuthDomainException(AuthErrorCode.AccountDisabled, "Tài khoản đã bị vô hiệu hóa.");
 
             await _userRepository.UpdatePasswordAsync(user.Id, _passwordHasher.Hash(request.NewPassword), "system_password_reset", cancellationToken);
 
@@ -110,8 +115,9 @@ namespace AuthService.Application.Services
             await _userRepository.UpdateTotpSecretAsync(user.Id, _totpEncryption.Encrypt(newTotpSecret), true, "system_password_reset", cancellationToken);
 
             await _loginHistory.InsertAsync(user.Id, user.Username, remoteIp, null, "password_reset", true, null, cancellationToken);
+            await _securityNotifier.NotifyPasswordResetAsync(user, remoteIp, cancellationToken);
 
-            return new ResetPasswordResponse { OtpauthUri = _otpService.BuildOtpauthUri(newTotpSecret, user.Username) };
+            return new ResetPasswordResponse { OtpauthUri = _otpService.BuildOtpauthUri(newTotpSecret, user.Email) };
         }
     }
 }

@@ -29,7 +29,8 @@ namespace AuthService.Infrastructure.External
                 {
                     Subject = payload.Subject,
                     Email = payload.Email,
-                    EmailVerified = payload.EmailVerified
+                    EmailVerified = payload.EmailVerified,
+                    Name = payload.Name
                 };
             }
             catch (InvalidJwtException)

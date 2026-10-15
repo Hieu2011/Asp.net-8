@@ -8,5 +8,7 @@ namespace AuthService.Application.Interfaces
     public interface ISessionRevocationCache
     {
         Task MarkRevokedAsync(Guid sessionId, TimeSpan ttl, CancellationToken cancellationToken = default);
+
+        Task<bool> IsRevokedAsync(Guid sessionId, CancellationToken cancellationToken = default);
     }
 }

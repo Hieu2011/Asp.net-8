@@ -3,6 +3,7 @@ using AuthService.Application.Contracts;
 using AuthService.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace AuthService.Api.Controllers
 {
@@ -30,42 +31,61 @@ namespace AuthService.Api.Controllers
             _userManagementService = userManagementService;
         }
 
+        [EnableRateLimiting(AuthRateLimiting.Register)]
         [HttpPost("register")]
         public async Task<APIResult> Register([FromBody] RegisterRequest request, CancellationToken cancellationToken)
             => new(await _authService.RegisterAsync(request, RemoteIp, cancellationToken));
 
+        [EnableRateLimiting(AuthRateLimiting.OtpVerify)]
+        [HttpPost("register/verify")]
+        public async Task<APIResult> VerifyRegister([FromBody] RegisterVerifyRequest request, CancellationToken cancellationToken)
+            => new(await _authService.VerifyRegisterAsync(request, cancellationToken));
+
+        [EnableRateLimiting(AuthRateLimiting.OtpVerify)]
+        [HttpPost("register/resend")]
+        public async Task<APIResult> ResendRegisterOtp([FromBody] RegisterResendRequest request, CancellationToken cancellationToken)
+            => new(await _authService.ResendRegisterOtpAsync(request, cancellationToken));
+
+        [EnableRateLimiting(AuthRateLimiting.Login)]
         [HttpPost("login")]
         public async Task<APIResult> Login([FromBody] LoginRequest request, CancellationToken cancellationToken)
             => new(await _authService.LoginAsync(request, RemoteIp, DeviceInfo, cancellationToken));
 
+        [EnableRateLimiting(AuthRateLimiting.Login)]
         [HttpPost("login/password")]
         public async Task<APIResult> LoginWithPassword([FromBody] LoginWithPasswordRequest request, CancellationToken cancellationToken)
             => new(await _authService.LoginWithPasswordAsync(request, RemoteIp, DeviceInfo, cancellationToken));
 
+        [EnableRateLimiting(AuthRateLimiting.Google)]
         [HttpPost("login/google")]
         public async Task<APIResult> LoginWithGoogle([FromBody] GoogleLoginRequest request, CancellationToken cancellationToken)
             => new(await _googleAuthService.LoginWithGoogleAsync(request, cancellationToken));
 
+        [EnableRateLimiting(AuthRateLimiting.Google)]
         [HttpPost("register/google/complete")]
         public async Task<APIResult> CompleteGoogleSetup([FromBody] GoogleCompleteSetupRequest request, CancellationToken cancellationToken)
             => new(await _googleAuthService.CompleteSetupAsync(request, RemoteIp, cancellationToken));
 
+        [EnableRateLimiting(AuthRateLimiting.Forgot)]
         [HttpPost("password/forgot")]
         public async Task<APIResult> ForgotPassword([FromBody] ForgotPasswordRequest request, CancellationToken cancellationToken)
         {
-            // Mục 39 — response luôn generic dù username tồn tại hay không, tránh lộ oracle username.
+            // Mục 39 — response luôn generic dù email tồn tại hay không, tránh dò tài khoản.
             await _passwordRecoveryService.ForgotPasswordAsync(request, RemoteIp, cancellationToken);
             return new APIResult(new { Message = "Nếu tài khoản tồn tại, mã OTP đã được gửi qua email đã đăng ký." });
         }
 
+        [EnableRateLimiting(AuthRateLimiting.OtpVerify)]
         [HttpPost("password/verify-reset-otp")]
         public async Task<APIResult> VerifyResetOtp([FromBody] VerifyResetOtpRequest request, CancellationToken cancellationToken)
             => new(await _passwordRecoveryService.VerifyResetOtpAsync(request, cancellationToken));
 
+        [EnableRateLimiting(AuthRateLimiting.OtpVerify)]
         [HttpPost("password/reset")]
         public async Task<APIResult> ResetPassword([FromBody] ResetPasswordRequest request, CancellationToken cancellationToken)
             => new(await _passwordRecoveryService.ResetPasswordAsync(request, RemoteIp, cancellationToken));
 
+        [EnableRateLimiting(AuthRateLimiting.Refresh)]
         [HttpPost("token/refresh")]
         public async Task<APIResult> RefreshToken([FromBody] RefreshTokenRequest request, CancellationToken cancellationToken)
             => new(await _authService.RefreshTokenAsync(request.RefreshToken, cancellationToken));

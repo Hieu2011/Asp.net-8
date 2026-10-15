@@ -15,6 +15,7 @@
     <ProjectReference Include="..\ApiCore8.Domain\ApiCore8.Domain.csproj" />
     <ProjectReference Include="..\..\Shared\Shared.Common\Shared.Common.csproj" />
     <ProjectReference Include="..\..\Shared\Shared.DataAccess\Shared.DataAccess.csproj" />
+    <ProjectReference Include="..\..\Shared\Shared.Logging\Shared.Logging.csproj" />
   </ItemGroup>
 
 </Project>

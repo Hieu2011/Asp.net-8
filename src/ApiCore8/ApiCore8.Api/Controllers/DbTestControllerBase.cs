@@ -1,6 +1,6 @@
 using ApiCore8.Infrastructure.Repositories;
 using Shared.Common.Contracts;
-using ApiCore8.Api.Middleware;
+using Shared.Logging.ApiLog;
 using Shared.DataAccess.Abstractions;
 using ApiCore8.Application.Contracts;
 using ApiCore8.Application.Services;

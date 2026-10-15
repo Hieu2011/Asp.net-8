@@ -1,25 +1,19 @@
 using Shared.Logging;
+using Shared.Logging.ApiLog;
+using Shared.Common.Health;
 using Shared.Common.Helpers;
 using ApiCore8.Api;
 using ApiCore8.Api.Middleware;
-using ApiCore8.Api.Services;
-using ApiCore8.Application.Services;
-using ApiCore8.Domain.Entities;
-using ApiCore8.Infrastructure;
-using ApiCore8.Infrastructure.Mongo;
-using Microsoft.Extensions.Configuration;
-using MongoDB.Driver;
 using Serilog;
 using Serilog.Events;
-using System.Threading.Channels;
 
 internal class Program
 {
     private static async Task Main(string[] args)
     {
-        if (args.Contains("--healthcheck"))
+        if (HealthCheckProbe.IsProbeMode(args))
         {
-            Environment.ExitCode = await CheckHealthAsync();
+            Environment.ExitCode = await HealthCheckProbe.RunAsync();
             return;
         }
         WebApplication app = null;
@@ -39,21 +33,14 @@ internal class Program
             // ✅ Infrastructure (Mongo/Redis/Postgres) + Application (repositories)
             builder.Services.AddAppServices(builder.Configuration);
 
-            //// ✅ Background services
-            builder.Services.AddSingleton(Channel.CreateUnbounded<ApiExecutionLog>());
-            builder.Services.AddHostedService<ApiLogBackgroundService>();
+            // Log thực thi API ([LogApi]) → Mongo, ghi nền qua hàng đợi
+            builder.Services.AddApiExecutionLog(builder.Configuration);
 
             app = builder.Build();
             app.UseMiddleware<GlobalExceptionMiddleware>();
 
-            // ✅ Đảm bảo index/TTL cho SystemLogs tồn tại (idempotent, không chặn khởi động nếu lỗi)
-            using (var scope = app.Services.CreateScope())
-            {
-                var mongoDb = scope.ServiceProvider.GetRequiredService<IMongoDatabase>();
-                var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
-                var systemLogsCollection = config["Database:SystemLogsCollection"] ?? SystemLogRepository.DefaultCollectionName;
-                await MongoIndexInitializer.EnsureSystemLogIndexesAsync(mongoDb, systemLogsCollection);
-            }
+            // Index + TTL cho SystemLogs/APILogs (idempotent, lỗi không chặn khởi động)
+            await app.EnsureLogIndexesAsync();
 
             // ✅ Log environment
             object[] arrayLog = new object[] { "Môi trường chạy HPM Service", $"Environment: {app.Environment.EnvironmentName}" };
@@ -73,10 +60,12 @@ internal class Program
             // Healthcheck Coolify gọi liên tục → hạ xuống Verbose để không ghi log rác
             app.UseSerilogRequestLogging(options => options.GetLevel = (httpContext, _, exception) =>
                 exception != null || httpContext.Response.StatusCode >= 500 ? LogEventLevel.Error
-                : httpContext.Request.Path.StartsWithSegments("/health") ? LogEventLevel.Verbose : LogEventLevel.Information);
+                // 4xx (401 token sai, 404, 429...) lên Warning để vẫn vào Mongo SystemLogs, kể cả request bị chặn trước controller
+                : httpContext.Response.StatusCode >= 400 ? LogEventLevel.Warning
+                : HealthCheckProbe.IsHealthRequest(httpContext) ? LogEventLevel.Verbose : LogEventLevel.Information);
 
             app.MapControllers();
-            app.MapHealthChecks("/health");
+            app.MapHealthProbe();
 
             await app.RunAsync();
         }
@@ -88,23 +77,6 @@ internal class Program
         finally
         {
             await Log.CloseAndFlushAsync();
-        }
-    }
-
-    /// <summary>Healthcheck cho Coolify (Container command chặn toán tử shell, image không có curl) — gọi /health của chính app.</summary>
-    private static async Task<int> CheckHealthAsync()
-    {
-        string strPort = (Environment.GetEnvironmentVariable("ASPNETCORE_HTTP_PORTS") ?? "8080").Split(';', ',')[0];
-        try
-        {
-            using HttpClient objHttpClient = new() { Timeout = TimeSpan.FromSeconds(3) };
-            using HttpResponseMessage objResponse = await objHttpClient.GetAsync($"http://127.0.0.1:{strPort}/health");
-            return objResponse.IsSuccessStatusCode ? 0 : 1;
-        }
-        catch (Exception exception)
-        {
-            Console.Error.WriteLine(exception.Message);
-            return 1;
         }
     }
 }

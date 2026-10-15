@@ -3,13 +3,13 @@ namespace AuthService.Application.Contracts
     /// <summary>PLAN.md mục 36 — luồng "Quên mật khẩu"/"Tài khoản bị khóa" dùng chung 1 cơ chế.</summary>
     public class ForgotPasswordRequest
     {
-        public string Username { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
         public string CaptchaToken { get; set; } = string.Empty;
     }
 
     public class VerifyResetOtpRequest
     {
-        public string Username { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
         public string Otp { get; set; } = string.Empty;
     }
 

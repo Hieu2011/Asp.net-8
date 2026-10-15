@@ -4,8 +4,14 @@
       {
         "matcher": "Bash",
         "hooks": [
-          { "type": "command", "command": "node .claude/hooks/block-dangerous.js" },
-          { "type": "command", "command": "node .claude/hooks/no-secrets.js" }
+          {
+            "type": "command",
+            "command": "node .claude/hooks/block-dangerous.js"
+          },
+          {
+            "type": "command",
+            "command": "node .claude/hooks/no-secrets.js"
+          }
         ]
       }
     ],
@@ -13,9 +19,39 @@
       {
         "matcher": "Edit|Write",
         "hooks": [
-          { "type": "command", "command": "node .claude/hooks/format-on-edit.js" }
+          {
+            "type": "command",
+            "command": "node .claude/hooks/format-on-edit.js"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "shell": "powershell",
+            "command": "$strPlan = Join-Path $env:CLAUDE_PROJECT_DIR 'TaskList\\plan.md'; if (Test-Path -LiteralPath $strPlan) { [Console]::OutputEncoding = [Text.Encoding]::UTF8; '=== TaskList/plan.md (tự nạp đầu phiên, chỉ đọc) ==='; Get-Content -LiteralPath $strPlan -Raw -Encoding UTF8 } else { 'Không tìm thấy TaskList/plan.md' }",
+            "timeout": 15,
+            "statusMessage": "Đang nạp TaskList/plan.md..."
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/session-end-log.js\"",
+            "timeout": 15
+          }
         ]
       }
     ]
+  },
+  "enabledPlugins": {
+    "frontend-design@claude-plugins-official": true
   }
 }

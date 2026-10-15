@@ -8,6 +8,7 @@
 
 ## Code & verify
 - Thay đổi lớn/nhiều file: trình plan trước (ghi vào `task.md`), đợi duyệt rồi mới code.
+- **Làm xong phải tự test kỹ hành vi thật trước khi báo xong** — không chỉ build/lint pass. Frontend có tương tác (kéo, click, bàn phím, cảm ứng): chạy thử trên Chrome headless qua CDP (script Node trong scratchpad, không cài thêm thư viện) cho từng cách thao tác, cả desktop + mobile. Đổi cơ chế cũ → test lại mọi cách dùng cũ còn chạy (đừng làm hỏng tính năng đang có).
 - **Unit test: không tự viết/chạy** — chỉ làm khi anh yêu cầu cụ thể. Sau khi sửa code chỉ cần `dotnet build` solution liên quan (0 Error) để verify. Rule này ghi đè mục "Test & Build" ở CLAUDE.md global.
 - Giải thích khái niệm .NET Core mới (DI, async, tuple...) từ bản chất kèm ví dụ — anh đang chuyển từ .NET Framework.
 

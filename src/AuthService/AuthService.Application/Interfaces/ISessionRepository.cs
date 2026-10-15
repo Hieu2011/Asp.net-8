@@ -16,7 +16,8 @@ namespace AuthService.Application.Interfaces
         /// </summary>
         Task<(Session Session, bool IsCurrentMatch)?> FindByRefreshTokenHashAsync(string refreshTokenHash, CancellationToken cancellationToken = default);
 
-        Task<bool> RotateRefreshTokenAsync(Guid id, string newRefreshTokenHash, string updatedUser, CancellationToken cancellationToken = default);
+        /// <summary>Chỉ xoay khi refresh_token_hash hiện tại đúng bằng <paramref name="oldRefreshTokenHash"/> (compare-and-swap). false = đã bị request khác xoay/thu hồi.</summary>
+        Task<bool> RotateRefreshTokenAsync(Guid id, string oldRefreshTokenHash, string newRefreshTokenHash, string updatedUser, CancellationToken cancellationToken = default);
 
         Task<List<Session>> GetActiveByUserAsync(Guid userId, CancellationToken cancellationToken = default);
 
@@ -25,7 +26,7 @@ namespace AuthService.Application.Interfaces
 
         Task<bool> RevokeAsync(Guid id, string updatedUser, CancellationToken cancellationToken = default);
 
-        /// <summary>Trả về SỐ session vừa bị revoke (mục 33/34/42/disable/delete).</summary>
-        Task<int> RevokeAllByUserAsync(Guid userId, string updatedUser, CancellationToken cancellationToken = default);
+        /// <summary>Revoke mọi session còn sống, trả về ĐÚNG danh sách id vừa revoke (mục 33/34/42/disable/delete) — kể cả session tạo ngay trước đó.</summary>
+        Task<List<Guid>> RevokeAllByUserAsync(Guid userId, string updatedUser, CancellationToken cancellationToken = default);
     }
 }

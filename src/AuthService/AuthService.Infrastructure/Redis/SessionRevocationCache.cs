@@ -16,6 +16,11 @@ namespace AuthService.Infrastructure.Redis
         }
 
         public Task MarkRevokedAsync(Guid sessionId, TimeSpan ttl, CancellationToken cancellationToken = default)
-            => _redis.GetDatabase().StringSetAsync($"revoked_session:{sessionId}", "1", ttl);
+            => _redis.GetDatabase().StringSetAsync(RevokedKey(sessionId), "1", ttl);
+
+        public Task<bool> IsRevokedAsync(Guid sessionId, CancellationToken cancellationToken = default)
+            => _redis.GetDatabase().KeyExistsAsync(RevokedKey(sessionId));
+
+        private static string RevokedKey(Guid sessionId) => $"revoked_session:{sessionId}";
     }
 }

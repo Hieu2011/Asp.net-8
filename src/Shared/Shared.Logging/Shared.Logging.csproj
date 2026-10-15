@@ -11,4 +11,7 @@
     <PackageReference Include="MongoDB.Driver" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Shared.Common\Shared.Common.csproj" />
+  </ItemGroup>
 </Project>
