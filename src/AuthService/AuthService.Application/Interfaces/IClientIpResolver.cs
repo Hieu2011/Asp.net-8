@@ -8,7 +8,7 @@ namespace AuthService.Application.Interfaces
     {
         /// <summary>
         /// Ưu tiên cfConnectingIp → xForwardedFor → remoteIpAddress. Chỉ tin header khi
-        /// remoteIpAddress nằm trong dải IP chính thức của Cloudflare, ngược lại dùng thẳng remoteIpAddress.
+        /// remoteIpAddress thuộc dải IP Cloudflare hoặc <c>Auth:TrustedProxies</c>, ngược lại dùng thẳng remoteIpAddress.
         /// </summary>
         string Resolve(string remoteIpAddress, string? cfConnectingIp, string? xForwardedFor);
     }

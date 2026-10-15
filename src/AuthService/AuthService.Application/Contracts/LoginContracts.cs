@@ -1,10 +1,10 @@
 namespace AuthService.Application.Contracts
 {
-    /// <summary>PLAN.md mục 7 — POST /auth/login (luồng chính, Username + OTP). CaptchaToken chỉ bắt
+    /// <summary>PLAN.md mục 7 — POST /auth/login (luồng chính, Email + OTP — AUTH-07). CaptchaToken chỉ bắt
     /// buộc khi otp_fail_count >= 1 (mục 44), nên để nullable — service tự quyết định có bắt buộc không.</summary>
     public class LoginRequest
     {
-        public string Username { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
         public string Otp { get; set; } = string.Empty;
         public string? CaptchaToken { get; set; }
     }
@@ -12,7 +12,7 @@ namespace AuthService.Application.Contracts
     /// <summary>POST /auth/login/password — fallback sau 3 lần sai OTP (mục 29), luôn bắt buộc captcha.</summary>
     public class LoginWithPasswordRequest
     {
-        public string Username { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
         public string CaptchaToken { get; set; } = string.Empty;
     }

@@ -3,6 +3,7 @@ using System.Security.Claims;
 using AuthService.Application.Interfaces;
 using AuthService.Domain;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Logging.ApiLog;
 
 namespace AuthService.Api.Controllers
 {
@@ -11,6 +12,7 @@ namespace AuthService.Api.Controllers
     /// HttpContext ở từng Controller (mục 8 Bước 3, Controller mỏng).
     /// </summary>
     [ApiController]
+    [LogApi]
     public abstract class AuthApiControllerBase : ControllerBase
     {
         private readonly IClientIpResolver _clientIpResolver;

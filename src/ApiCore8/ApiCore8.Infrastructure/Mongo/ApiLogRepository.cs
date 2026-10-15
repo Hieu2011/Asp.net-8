@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 using ApiCore8.Application.Contracts;
 using Shared.DataAccess.Mongo;
 using ApiCore8.Application.Interfaces;
-using ApiCore8.Domain.Entities;
+using Shared.Logging.ApiLog;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -26,23 +26,6 @@ namespace ApiCore8.Infrastructure.Mongo
         {
             var collectionName = configuration["Database:MongoCollection"] ?? "APILogs";
             _collection = database.GetCollection<ApiExecutionLog>(collectionName);
-        }
-
-        /// <summary>
-        /// Insert ApiExecutionLog vào MongoDB
-        /// </summary>
-        public async Task<bool> InsertLog(ApiExecutionLog log)
-        {
-            try
-            {
-                await _collection.InsertOneAsync(log);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                _log.Error(ex, "Error inserting ApiExecutionLog");
-                return false;
-            }
         }
 
         /// <summary>

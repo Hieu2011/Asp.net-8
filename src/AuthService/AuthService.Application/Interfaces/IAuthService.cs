@@ -9,7 +9,13 @@ namespace AuthService.Application.Interfaces
     /// </summary>
     public interface IAuthService
     {
-        Task<RegisterResponse> RegisterAsync(RegisterRequest request, string remoteIp, CancellationToken cancellationToken = default);
+        /// <summary>Bước 1 đăng ký: kiểm tra + gửi mã OTP về email, chưa tạo tài khoản (AUTH-09).</summary>
+        Task<RegisterOtpSentResponse> RegisterAsync(RegisterRequest request, string remoteIp, CancellationToken cancellationToken = default);
+
+        /// <summary>Bước 2: đúng mã → tạo tài khoản, trả otpauth URI để quét QR.</summary>
+        Task<RegisterResponse> VerifyRegisterAsync(RegisterVerifyRequest request, CancellationToken cancellationToken = default);
+
+        Task<RegisterOtpSentResponse> ResendRegisterOtpAsync(RegisterResendRequest request, CancellationToken cancellationToken = default);
 
         Task<TokenResponse> LoginAsync(LoginRequest request, string remoteIp, string? deviceInfo, CancellationToken cancellationToken = default);
 

@@ -11,6 +11,7 @@ COPY ["src/AuthService/AuthService.Domain/AuthService.Domain.csproj", "src/AuthS
 COPY ["src/Shared/Shared.Common/Shared.Common.csproj", "src/Shared/Shared.Common/"]
 COPY ["src/Shared/Shared.DataAccess/Shared.DataAccess.csproj", "src/Shared/Shared.DataAccess/"]
 COPY ["src/Shared/Shared.Caching/Shared.Caching.csproj", "src/Shared/Shared.Caching/"]
+COPY ["src/Shared/Shared.Logging/Shared.Logging.csproj", "src/Shared/Shared.Logging/"]
 RUN dotnet restore "src/AuthService/AuthService.Api/AuthService.Api.csproj"
 
 COPY src/AuthService/ src/AuthService/

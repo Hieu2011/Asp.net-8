@@ -5,6 +5,7 @@ using AuthService.Application;
 using AuthService.Application.Contracts;
 using AuthService.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Logging.ApiLog;
 
 namespace AuthService.Api.Controllers
 {
@@ -12,6 +13,7 @@ namespace AuthService.Api.Controllers
     /// client_id/client_secret đi qua header Authorization: Basic, KHÔNG qua [Authorize]/JWT vì
     /// đây chính là endpoint CẤP token, không phải endpoint cần token.</summary>
     [Route("auth/token")]
+    [LogApi]
     public class TokenController : ControllerBase
     {
         private readonly IClientTokenService _clientTokenService;

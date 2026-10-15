@@ -29,8 +29,13 @@ namespace AuthService.Api.Controllers
 
         [RequireMinRoleLevel(RoleLevel.Manager)]
         [HttpGet("users")]
-        public async Task<APIResult> GetUsers([FromQuery] RoleLevel? roleLevel, [FromQuery] int page = 1, [FromQuery] int pageSize = 20, CancellationToken cancellationToken = default)
-            => new(await _userManagementService.GetUsersAsync(roleLevel, page, pageSize, cancellationToken));
+        public async Task<APIResult> GetUsers([FromQuery] RoleLevel? roleLevel, [FromQuery] string? keyword, [FromQuery] int page = 1, [FromQuery] int pageSize = 20, CancellationToken cancellationToken = default)
+            => new(await _userManagementService.GetUsersAsync(roleLevel, keyword, page, pageSize, cancellationToken));
+
+        [RequireMinRoleLevel(RoleLevel.Manager)]
+        [HttpGet("admin/stats")]
+        public async Task<APIResult> GetStats(CancellationToken cancellationToken)
+            => new(await _userManagementService.GetStatsAsync(cancellationToken));
 
         [RequireMinRoleLevel(RoleLevel.Admin)]
         [HttpPut("users/{id:guid}/role")]
@@ -49,6 +54,14 @@ namespace AuthService.Api.Controllers
         }
 
         [RequireMinRoleLevel(RoleLevel.Admin)]
+        [HttpPut("users/{id:guid}/enable")]
+        public async Task<APIResult> EnableUser(Guid id, CancellationToken cancellationToken)
+        {
+            await _userManagementService.EnableAsync(CurrentUserId, CurrentRoleLevel, CurrentUsername, id, cancellationToken);
+            return new APIResult(new { Success = true });
+        }
+
+        [RequireMinRoleLevel(RoleLevel.Admin)]
         [HttpDelete("users/{id:guid}")]
         public async Task<APIResult> DeleteUser(Guid id, CancellationToken cancellationToken)
         {
@@ -60,7 +73,7 @@ namespace AuthService.Api.Controllers
         [HttpPut("users/{id:guid}/unlock")]
         public async Task<APIResult> UnlockUser(Guid id, CancellationToken cancellationToken)
         {
-            await _userManagementService.UnlockAsync(CurrentUsername, id, cancellationToken);
+            await _userManagementService.UnlockAsync(CurrentRoleLevel, CurrentUsername, id, cancellationToken);
             return new APIResult(new { Success = true });
         }
 

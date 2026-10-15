@@ -41,9 +41,10 @@ namespace AuthService.Infrastructure.Postgres
             return row.Id == Guid.Empty ? null : (row, row.MatchType == "current");
         }
 
-        public async Task<bool> RotateRefreshTokenAsync(Guid id, string newRefreshTokenHash, string updatedUser, CancellationToken cancellationToken = default)
+        public async Task<bool> RotateRefreshTokenAsync(Guid id, string oldRefreshTokenHash, string newRefreshTokenHash, string updatedUser, CancellationToken cancellationToken = default)
         {
             _db.AddParameter("@id", id);
+            _db.AddParameter("@old_refresh_token_hash", oldRefreshTokenHash);
             _db.AddParameter("@new_refresh_token_hash", newRefreshTokenHash);
             _db.AddParameter("@updated_user", updatedUser);
 
@@ -69,13 +70,13 @@ namespace AuthService.Infrastructure.Postgres
             return ParseBoolResult(result);
         }
 
-        public async Task<int> RevokeAllByUserAsync(Guid userId, string updatedUser, CancellationToken cancellationToken = default)
+        public async Task<List<Guid>> RevokeAllByUserAsync(Guid userId, string updatedUser, CancellationToken cancellationToken = default)
         {
             _db.AddParameter("@user_id", userId);
             _db.AddParameter("@updated_user", updatedUser);
 
-            var result = await _db.ExecuteNonQueryAsStringAsync("sp_session_revoke_all_by_user", cancellationToken);
-            return int.TryParse(result, out var count) ? count : 0;
+            var lstRow = await _db.ExecStoreToListObjectAsync<RevokedSessionRow>("sp_session_revoke_all_by_user", cancellationToken);
+            return lstRow.Select(x => x.Id).ToList();
         }
 
         private static bool ParseBoolResult(string result) => result.Trim() switch
@@ -84,6 +85,11 @@ namespace AuthService.Infrastructure.Postgres
             "0" => false,
             _ => bool.TryParse(result, out var success) && success
         };
+
+        private sealed class RevokedSessionRow
+        {
+            public Guid Id { get; set; }
+        }
 
         /// <summary>Chỉ dùng nội bộ để map thêm cột match_type từ sp_session_find_by_refresh_hash (mục 6/20).</summary>
         private class SessionMatchRow : Session

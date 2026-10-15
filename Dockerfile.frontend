@@ -1,0 +1,27 @@
+# Build context = root repo. Next build output: standalone (server.js + node_modules tối thiểu)
+FROM node:24-alpine AS deps
+WORKDIR /app
+ENV HUSKY=0
+RUN npm install -g pnpm@10.14.0
+COPY frontend/package.json frontend/pnpm-lock.yaml frontend/pnpm-workspace.yaml ./
+RUN pnpm install --frozen-lockfile
+
+FROM deps AS build
+COPY frontend/ ./
+# NEXT_PUBLIC_* được nhúng vào bundle lúc build → truyền qua build-arg theo từng môi trường
+ARG NEXT_PUBLIC_SITE_URL
+ARG NEXT_PUBLIC_TURNSTILE_SITE_KEY
+ARG NEXT_PUBLIC_GOOGLE_CLIENT_ID
+ENV NEXT_TELEMETRY_DISABLED=1
+RUN pnpm build
+
+FROM node:24-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 PORT=3000 HOSTNAME=0.0.0.0
+COPY --from=build --chown=node:node /app/.next/standalone ./
+COPY --from=build --chown=node:node /app/.next/static ./.next/static
+COPY --from=build --chown=node:node /app/public ./public
+# User có sẵn trong image node, không chạy root
+USER node
+EXPOSE 3000
+CMD ["node", "server.js"]

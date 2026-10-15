@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
 using Serilog;
+using Serilog.Events;
 using Serilog.Sinks.Graylog;
 using Serilog.Sinks.Graylog.Core.Transport;
 using Serilog.Sinks.MongoDB;
@@ -74,9 +75,12 @@ namespace Shared.Logging
                 mongoUrlBuilder.DatabaseName = mongoDatabase;
                 var mongoUrl = mongoUrlBuilder.ToMongoUrl();
 
+                // Mongo chỉ giữ cảnh báo/lỗi (mặc định Warning) — request thành công đã có ở ApiLogs ([LogApi]), Console vẫn đủ mức
+                var mongoMinimumLevel = configuration.GetValue("Serilog:MongoMinimumLevel", LogEventLevel.Warning);
                 loggerConfig.WriteTo.MongoDBBson(
                     mongoUrl.ToString(),
-                    collectionName: systemLogsCollection);
+                    collectionName: systemLogsCollection,
+                    restrictedToMinimumLevel: mongoMinimumLevel);
             }
 
             Log.Logger = loggerConfig.CreateLogger();

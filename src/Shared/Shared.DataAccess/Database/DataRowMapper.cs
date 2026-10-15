@@ -54,11 +54,13 @@ namespace Shared.DataAccess.Database
                     // Postgres (uuid)/SQL Server (uniqueidentifier) trả sẵn System.Guid; Oracle không có kiểu
                     // UUID native, phải lưu dạng chuỗi (VARCHAR2) → trả về string, cần Guid.Parse thay vì cast thẳng.
                     object convertedValue;
-                    if (propertyType == typeof(Guid))
+                    // Nullable (DateTime?, int?...) xử lý theo kiểu gốc — Convert.ChangeType không nhận Nullable.
+                    var targetType = Nullable.GetUnderlyingType(propertyType) ?? propertyType;
+                    if (targetType == typeof(Guid))
                     {
                         convertedValue = data is Guid guidValue ? guidValue : Guid.Parse(data!.ToString()!);
                     }
-                    else if (propertyType == typeof(DateTime))
+                    else if (targetType == typeof(DateTime))
                     {
                         // Toàn bộ hệ thống chỉ lưu UTC (DateTime.UtcNow/now()/SYSUTCDATETIME()/SYSTIMESTAMP)
                         // — nhưng chỉ Npgsql tự gắn Kind=Utc cho cột timestamptz; SqlClient/Oracle trả về
@@ -73,16 +75,16 @@ namespace Shared.DataAccess.Database
                         // Postgres TEXT[] (VD allowed_scopes/allowed_ips) → Npgsql trả thẳng string[].
                         convertedValue = stringArray.ToList();
                     }
-                    else if (propertyType.IsEnum)
+                    else if (targetType.IsEnum)
                     {
                         // VD RoleLevel (SMALLINT -> Npgsql trả Int16). Convert.ChangeType KHÔNG tự
                         // convert được số nguyên sang enum ("Invalid cast from 'System.Int16' to
                         // '...'") — phải qua Enum.ToObject.
-                        convertedValue = Enum.ToObject(propertyType, data);
+                        convertedValue = Enum.ToObject(targetType, data);
                     }
                     else
                     {
-                        convertedValue = Convert.ChangeType(data, propertyType);
+                        convertedValue = Convert.ChangeType(data, targetType);
                     }
 
                     property.SetValue(obj, convertedValue, null);

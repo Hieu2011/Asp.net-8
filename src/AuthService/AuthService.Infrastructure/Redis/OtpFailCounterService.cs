@@ -10,6 +10,45 @@ namespace AuthService.Infrastructure.Redis
     /// password_fail_count/account_locked_until/account_lockout_count, tất cả theo :{userId}.</remarks>
     public class OtpFailCounterService : IOtpLockoutService
     {
+        private const int MaxOtpAttempt = 3;
+        private const int MaxPasswordAttempt = 3;
+        // KEYS[1]=otp_fail_count, KEYS[2]=otp_locked_until; ARGV[1]=TTL counter (ms), ARGV[2]=số lượt tối đa
+        private const string ReserveOtpAttemptScript = """
+            if redis.call('EXISTS', KEYS[2]) == 1 then return -1 end
+            local c = redis.call('INCR', KEYS[1])
+            if c == 1 then redis.call('PEXPIRE', KEYS[1], ARGV[1]) end
+            if c > tonumber(ARGV[2]) then redis.call('DECR', KEYS[1]) return -1 end
+            return c
+            """;
+        private const string ReleaseOtpAttemptScript = """
+            if tonumber(redis.call('GET', KEYS[1]) or '0') > 0 then redis.call('DECR', KEYS[1]) end
+            return 1
+            """;
+        // Chỉ nhận step lớn hơn step đã dùng — chặn cả replay mã cũ hơn trong cửa sổ ±1
+        private const string RecordOtpStepScript = """
+            local last = tonumber(redis.call('GET', KEYS[1]) or '-1')
+            if tonumber(ARGV[1]) <= last then return 0 end
+            redis.call('SET', KEYS[1], ARGV[1], 'EX', 90)
+            return 1
+            """;
+        // Nguyên tử: đúng 1 request chạm ngưỡng mới khóa + leo thang; tài khoản đang khóa thì không đếm nữa
+        // (request song song đã lọt qua bước kiểm tra khóa không được đếm thêm vòng mới → không leo thang lên vĩnh viễn trong 1 loạt).
+        // KEYS: password_fail_count, account_locked_until, account_lockout_count; ARGV: TTL khóa (ms), cửa sổ leo thang (ms), ngưỡng
+        private const string PasswordFailScript = """
+            if redis.call('EXISTS', KEYS[2]) == 1 then return {0, 0} end
+            local c = redis.call('INCR', KEYS[1])
+            if c == 1 then redis.call('PEXPIRE', KEYS[1], ARGV[1]) end
+            if c < tonumber(ARGV[3]) then return {c, tonumber(redis.call('GET', KEYS[3]) or '0')} end
+            redis.call('SET', KEYS[2], '1', 'PX', ARGV[1])
+            redis.call('DEL', KEYS[1])
+            local e = redis.call('INCR', KEYS[3])
+            redis.call('PEXPIRE', KEYS[3], ARGV[2])
+            return {0, e}
+            """;
+
+        // Cửa sổ nhớ số lần bị khóa tạm — hết cửa sổ thì không còn leo thang lên khóa vĩnh viễn (mục 35)
+        private static readonly TimeSpan LockoutEscalationWindow = TimeSpan.FromHours(24);
+
         private readonly IConnectionMultiplexer _redis;
         private readonly AuthOptions _options;
 
@@ -28,34 +67,30 @@ namespace AuthService.Infrastructure.Redis
         private static string AccountLockKey(Guid userId) => $"account_locked_until:{userId}";
         private static string AccountLockoutCountKey(Guid userId) => $"account_lockout_count:{userId}";
 
-        public async Task<int> IncrementOtpFailAsync(Guid userId, CancellationToken cancellationToken = default)
+        public async Task<int?> TryReserveOtpAttemptAsync(Guid userId, CancellationToken cancellationToken = default)
         {
-            var key = OtpFailKey(userId);
-            var count = await Db.StringIncrementAsync(key);
+            // Counter tự hết hạn theo OtpLockoutDuration — user bỏ dở sau 1-2 lần sai thì không bị nhớ mãi
+            var lngAttempt = (long)await Db.ScriptEvaluateAsync(ReserveOtpAttemptScript,
+                [OtpFailKey(userId), OtpLockKey(userId)],
+                [(long)_options.OtpLockoutDuration.TotalMilliseconds, MaxOtpAttempt]);
+            return lngAttempt < 0 ? null : (int)lngAttempt;
+        }
 
-            // TTL cho counter — nếu không set, key tồn tại vĩnh viễn khi user bỏ dở (sai 1-2 lần
-            // rồi không thử lại nữa). Dùng lại đúng cửa sổ OtpLockoutDuration cho "quên" số lần sai
-            // cũ nếu quá lâu không có lần thử tiếp theo.
-            if (count == 1)
-                await Db.KeyExpireAsync(key, _options.OtpLockoutDuration);
+        public Task ReleaseOtpAttemptAsync(Guid userId, CancellationToken cancellationToken = default)
+            => Db.ScriptEvaluateAsync(ReleaseOtpAttemptScript, [OtpFailKey(userId)]);
 
-            if (count < 3)
-                return (int)count;
+        public async Task RecordOtpFailureAsync(Guid userId, int attemptNumber, CancellationToken cancellationToken = default)
+        {
+            if (attemptNumber < MaxOtpAttempt)
+                return;
 
             // Đạt 3 lần sai — khóa riêng đường OTP + reset counter (mục 17).
             await Db.StringSetAsync(OtpLockKey(userId), "1", _options.OtpLockoutDuration);
-            await Db.KeyDeleteAsync(key);
-            return 0;
+            await Db.KeyDeleteAsync(OtpFailKey(userId));
         }
 
         public Task ResetOtpFailAsync(Guid userId, CancellationToken cancellationToken = default)
             => Db.KeyDeleteAsync(OtpFailKey(userId));
-
-        public async Task<int> GetOtpFailCountAsync(Guid userId, CancellationToken cancellationToken = default)
-        {
-            var value = await Db.StringGetAsync(OtpFailKey(userId));
-            return value.HasValue ? (int)value : 0;
-        }
 
         public Task<bool> IsOtpLockedAsync(Guid userId, CancellationToken cancellationToken = default)
             => Db.KeyExistsAsync(OtpLockKey(userId));
@@ -64,37 +99,15 @@ namespace AuthService.Infrastructure.Redis
             => Db.KeyTimeToLiveAsync(OtpLockKey(userId));
 
         public async Task<bool> TryRecordOtpStepAsync(Guid userId, long timeStep, CancellationToken cancellationToken = default)
-        {
-            var key = OtpStepKey(userId);
-            var previous = await Db.StringGetAsync(key);
-            if (previous.HasValue && (long)previous == timeStep)
-                return false; // Mục 30 — step trùng lần trước, coi là replay dù mã đúng.
-
-            await Db.StringSetAsync(key, timeStep, TimeSpan.FromSeconds(60));
-            return true;
-        }
+            => (long)await Db.ScriptEvaluateAsync(RecordOtpStepScript, [OtpStepKey(userId)], [timeStep]) == 1;
 
         public async Task<(int FailCount, int LockoutEscalationCount)> IncrementPasswordFailAsync(Guid userId, CancellationToken cancellationToken = default)
         {
-            var key = PasswordFailKey(userId);
-            var failCount = await Db.StringIncrementAsync(key);
-
-            // TTL cho counter — tránh tồn tại vĩnh viễn nếu user bỏ dở giữa chừng (cùng lý do với
-            // otp_fail_count ở trên).
-            if (failCount == 1)
-                await Db.KeyExpireAsync(key, _options.AccountLockoutDuration);
-
-            if (failCount < 3)
-            {
-                var currentEscalation = await Db.StringGetAsync(AccountLockoutCountKey(userId));
-                return ((int)failCount, currentEscalation.HasValue ? (int)currentEscalation : 0);
-            }
-
-            // Đạt ngưỡng — khóa cả OTP lẫn Password (mục 18) + tăng escalation count (mục 35).
-            await Db.StringSetAsync(AccountLockKey(userId), "1", _options.AccountLockoutDuration);
-            await Db.KeyDeleteAsync(key);
-            var escalation = await Db.StringIncrementAsync(AccountLockoutCountKey(userId));
-            return (0, (int)escalation);
+            // Counter có TTL (user bỏ dở không bị nhớ mãi); đạt 3 → khóa cả OTP lẫn Password (mục 18) + tăng escalation (mục 35)
+            var arrResult = (RedisValue[])(await Db.ScriptEvaluateAsync(PasswordFailScript,
+                [PasswordFailKey(userId), AccountLockKey(userId), AccountLockoutCountKey(userId)],
+                [(long)_options.AccountLockoutDuration.TotalMilliseconds, (long)LockoutEscalationWindow.TotalMilliseconds, MaxPasswordAttempt]))!;
+            return ((int)arrResult[0], (int)arrResult[1]);
         }
 
         public Task ResetPasswordFailAsync(Guid userId, CancellationToken cancellationToken = default)

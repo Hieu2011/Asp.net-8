@@ -35,6 +35,7 @@ namespace AuthService.Api.Filters
             AuthErrorCode.Forbidden => StatusCodes.Status403Forbidden,
             AuthErrorCode.SelfTargetNotAllowed => StatusCodes.Status403Forbidden,
             AuthErrorCode.SessionNotFound => StatusCodes.Status404NotFound,
+            AuthErrorCode.TooManyRequests => StatusCodes.Status429TooManyRequests,
             _ => StatusCodes.Status400BadRequest
         };
     }

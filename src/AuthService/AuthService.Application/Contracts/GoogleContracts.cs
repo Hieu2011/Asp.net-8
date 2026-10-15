@@ -9,7 +9,7 @@ namespace AuthService.Application.Contracts
     /// <summary>
     /// Đúng 1 trong 2 nhánh sẽ có giá trị (mục 46):
     /// - Email chưa tồn tại → RequiresSetup=true + SetupToken.
-    /// - Email đã tồn tại (đã/chưa link) → RequiresOtp=true + Username, KHÔNG có token nào ở đây.
+    /// - Email đã tồn tại (đã/chưa link) → RequiresOtp=true + Email, KHÔNG có token nào ở đây.
     /// </summary>
     public class GoogleLoginResponse
     {
@@ -17,7 +17,7 @@ namespace AuthService.Application.Contracts
         public string? SetupToken { get; set; }
 
         public bool RequiresOtp { get; set; }
-        public string? Username { get; set; }
+        public string? Email { get; set; }
     }
 
     public class GoogleCompleteSetupRequest

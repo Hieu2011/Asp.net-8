@@ -30,9 +30,21 @@ namespace AuthService.Application
         ClientCredentialInvalid = 20,
         ClientIpNotAllowed = 21,
         ClientDisabled = 22,
-        UsernameAlreadyExists = 23,
+        // 23 (UsernameAlreadyExists) bỏ từ AUTH-07 — username do hệ thống sinh
         EmailAlreadyExists = 24,
         ResetOtpCooldownActive = 25,
-        UserNotFound = 26
+        UserNotFound = 26,
+        EmailInvalid = 27,
+        FullNameInvalid = 28,
+        RegisterTokenInvalid = 29,
+        RegisterOtpInvalid = 30,
+        RegisterOtpCooldown = 31,
+        QrChallengeInvalid = 32,
+        // 33 (QrRateLimited) bỏ từ AUTH-11 đợt 2 — thay bằng rate limiter chung (TooManyRequests)
+        AccountDisabled = 34,
+        RoleInvalid = 35,
+        TooManyRequests = 36,
+        /// <summary>Refresh token vừa được request song song khác xoay (trong cửa sổ ân hạn) — client giữ nguyên cookie, không phải bị đánh cắp.</summary>
+        RefreshTokenConcurrent = 37
     }
 }

@@ -1,5 +1,3 @@
-using System.Security.Cryptography;
-using System.Linq;
 using AuthService.Application.Contracts;
 using AuthService.Application.Interfaces;
 using AuthService.Domain;
@@ -46,8 +44,10 @@ namespace AuthService.Application.Services
             if (!payload.EmailVerified)
                 throw new AuthDomainException(AuthErrorCode.GoogleEmailNotVerified, "Email Google chưa được xác thực.");
 
+            var strEmail = EmailPolicy.Normalize(payload.Email);
+            var strFullName = FullNamePolicy.FromExternal(payload.Name);
             var user = await _userRepository.GetByGoogleIdAsync(payload.Subject, cancellationToken)
-                ?? await _userRepository.GetByEmailAsync(payload.Email, cancellationToken);
+                ?? await _userRepository.GetByEmailAsync(strEmail, cancellationToken);
 
             if (user != null)
             {
@@ -60,15 +60,18 @@ namespace AuthService.Application.Services
                     await _userRepository.LinkGoogleAsync(user.Id, payload.Subject, "system_google_login", cancellationToken);
                 }
 
-                return new GoogleLoginResponse { RequiresOtp = true, Username = user.Username };
+                // User cũ chưa có họ tên → lấy tên Google (store chỉ ghi khi full_name đang NULL)
+                if (string.IsNullOrEmpty(user.FullName) && strFullName != null)
+                    await _userRepository.SetFullNameAsync(user.Id, strFullName, "system_google_login", cancellationToken);
+
+                return new GoogleLoginResponse { RequiresOtp = true, Email = user.Email };
             }
 
-            // Email chưa tồn tại — tạo user mới, chưa có password/TOTP (mục 46)
-            var username = await GenerateUniqueUsernameAsync(payload.Email, cancellationToken);
+            // Email chưa tồn tại — tạo user mới, chưa có password/TOTP (mục 46); username do DB tự sinh (AUTH-07)
             var newUser = new User
             {
-                Username = username,
-                Email = payload.Email,
+                Email = strEmail,
+                FullName = strFullName,
                 GoogleId = payload.Subject,
                 RoleLevel = RoleLevel.Customer,
                 IsActive = true
@@ -85,40 +88,23 @@ namespace AuthService.Application.Services
             if (!await _captchaVerifier.VerifyAsync(request.CaptchaToken, remoteIp, cancellationToken))
                 throw new AuthDomainException(AuthErrorCode.CaptchaInvalid, "Xác thực chống bot không hợp lệ.");
 
+            // Validate trước khi tiêu token — nhập mật khẩu sai chuẩn thì vẫn còn token để sửa lại
+            PasswordPolicy.Validate(request.NewPassword);
+
             var userId = await _googleSetupToken.ConsumeSetupTokenAsync(request.SetupToken, cancellationToken)
                 ?? throw new AuthDomainException(AuthErrorCode.GoogleSetupTokenInvalid, "Yêu cầu hoàn tất đăng ký không hợp lệ hoặc đã hết hạn.");
 
             var user = await _userRepository.GetByIdAsync(userId, cancellationToken)
                 ?? throw new AuthDomainException(AuthErrorCode.GoogleSetupTokenInvalid, "Tài khoản không tồn tại.");
-
-            PasswordPolicy.Validate(request.NewPassword);
+            if (!user.IsActive)
+                throw new AuthDomainException(AuthErrorCode.AccountDisabled, "Tài khoản đã bị vô hiệu hóa.");
 
             await _userRepository.UpdatePasswordAsync(user.Id, _passwordHasher.Hash(request.NewPassword), "system_google_setup", cancellationToken);
 
             var totpSecret = _otpService.GenerateSecret();
             await _userRepository.UpdateTotpSecretAsync(user.Id, _totpEncryption.Encrypt(totpSecret), true, "system_google_setup", cancellationToken);
 
-            return new GoogleCompleteSetupResponse { OtpauthUri = _otpService.BuildOtpauthUri(totpSecret, user.Username) };
-        }
-
-        /// <summary>Username không lấy trực tiếp từ email (không unique theo domain) — sinh từ local-part,
-        /// thêm hậu tố số ngẫu nhiên nếu đã bị trùng.</summary>
-        private async Task<string> GenerateUniqueUsernameAsync(string email, CancellationToken cancellationToken)
-        {
-            var localPart = email.Contains('@') ? email[..email.IndexOf('@')] : email;
-            var basePart = new string(localPart.Where(char.IsLetterOrDigit).ToArray()).ToLowerInvariant();
-            if (string.IsNullOrEmpty(basePart)) basePart = "user";
-
-            var candidate = basePart;
-            for (var attempt = 0; attempt < 10; attempt++)
-            {
-                if (await _userRepository.GetByUsernameAsync(candidate, cancellationToken) == null)
-                    return candidate;
-
-                candidate = $"{basePart}{RandomNumberGenerator.GetInt32(1000, 9999)}";
-            }
-
-            throw new AuthDomainException(AuthErrorCode.UsernameAlreadyExists, "Không thể tạo username tự động, vui lòng thử lại.");
+            return new GoogleCompleteSetupResponse { OtpauthUri = _otpService.BuildOtpauthUri(totpSecret, user.Email) };
         }
     }
 }

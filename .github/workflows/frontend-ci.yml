@@ -1,0 +1,51 @@
+name: CI - Frontend check
+run-name: "🎨 Frontend check · ${{ github.event.pull_request.title || github.event.head_commit.message }}"
+
+# Chỉ chạy khi có đổi frontend — typecheck + lint + prettier + build
+on:
+  push:
+    branches: ['main']
+    paths: ['frontend/**', '.github/workflows/frontend-ci.yml']
+  pull_request:
+    paths: ['frontend/**', '.github/workflows/frontend-ci.yml']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: frontend-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: frontend
+    env:
+      HUSKY: 0
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: frontend/.nvmrc
+
+      - name: Install pnpm
+        run: npm install -g pnpm@10.14.0
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/share/pnpm/store
+          key: pnpm-${{ runner.os }}-${{ hashFiles('frontend/pnpm-lock.yaml') }}
+          restore-keys: pnpm-${{ runner.os }}-
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Typecheck + lint + prettier
+        run: pnpm check
+
+      - name: Build
+        run: pnpm build

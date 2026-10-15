@@ -10,7 +10,9 @@ namespace AuthService.Application
         {
             // Application Service / Use Case (mục 5b) — orchestration, Controller chỉ gọi thẳng đây.
             // Interface + implementation đều nằm ở Application vì không tự làm I/O.
+            services.AddScoped<ISessionTokenIssuer, SessionTokenIssuer>();
             services.AddScoped<IAuthService, AuthenticationService>();
+            services.AddScoped<IQrLoginService, QrLoginService>();
             services.AddScoped<IPasswordRecoveryService, PasswordRecoveryService>();
             services.AddScoped<IGoogleAuthService, GoogleAuthService>();
             services.AddScoped<IUserManagementService, UserManagementService>();

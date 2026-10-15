@@ -1,0 +1,7 @@
+# Chặn commit code frontend sai rule (eslint + prettier trên file đã stage)
+cd frontend || exit 0
+if ! command -v pnpm >/dev/null 2>&1; then
+  echo "[husky] Không tìm thấy pnpm — bỏ qua lint-staged (CI vẫn kiểm tra)"
+  exit 0
+fi
+pnpm exec lint-staged

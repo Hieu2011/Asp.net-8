@@ -10,6 +10,13 @@ namespace AuthService.Infrastructure.Redis
     /// <inheritdoc cref="IGoogleSetupTokenService" />
     public class GoogleSetupTokenService : IGoogleSetupTokenService
     {
+        // GET + DEL nguyên tử — 2 request song song không cùng dùng được 1 token
+        private const string GetDeleteScript = """
+            local v = redis.call('GET', KEYS[1])
+            if v then redis.call('DEL', KEYS[1]) end
+            return v
+            """;
+
         private readonly IConnectionMultiplexer _redis;
         private readonly AuthOptions _options;
 
@@ -32,12 +39,7 @@ namespace AuthService.Infrastructure.Redis
 
         public async Task<Guid?> ConsumeSetupTokenAsync(string setupToken, CancellationToken cancellationToken = default)
         {
-            var key = TokenKey(HashToken(setupToken));
-            var value = await Db.StringGetAsync(key);
-            if (!value.HasValue)
-                return null;
-
-            await Db.KeyDeleteAsync(key);
+            var value = (string?)await Db.ScriptEvaluateAsync(GetDeleteScript, [TokenKey(HashToken(setupToken))]);
             return Guid.TryParse(value, out var userId) ? userId : null;
         }
 
