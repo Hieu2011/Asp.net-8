@@ -1,0 +1,2 @@
+# Luôn giữ LF trong repo và working tree (Prettier yêu cầu LF, tránh autocrlf đổi file khi chuyển nhánh)
+* text=auto eol=lf
