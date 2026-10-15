@@ -3,7 +3,7 @@ import { headers } from 'next/headers';
 
 import { AUTH_ERROR_CODE } from '@/features/auth/types';
 import type { ActionResult, ApiResult } from '@/features/auth/types';
-import { serverEnv } from '@/lib/env.server';
+import { getServerEnv } from '@/lib/env.server';
 
 type CallOptions = {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
@@ -32,8 +32,9 @@ export async function callAuthApi<T>(strPath: string, objOption: CallOptions = {
   if (strClientIP) dicHeader['X-Forwarded-For'] = strClientIP;
   const strUserAgent = objIncoming.get('user-agent');
   if (strUserAgent) dicHeader['User-Agent'] = strUserAgent;
+  const objUrl = new URL(strPath, getServerEnv().AUTH_API_URL);
   try {
-    const objResponse = await fetch(new URL(strPath, serverEnv.AUTH_API_URL), {
+    const objResponse = await fetch(objUrl, {
       method,
       headers: dicHeader,
       body: body === undefined ? undefined : JSON.stringify(body),
